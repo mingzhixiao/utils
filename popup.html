@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Dev Toolbox Pro</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="app-shell">
+      <aside class="side-rail">
+        <div class="brand-block">
+          <p class="eyebrow">Developer Toolkit</p>
+          <h1>Dev Toolbox Pro</h1>
+          <p class="hero-text">把常用开发工具整理成更好找、更耐看的工作台。</p>
+        </div>
+
+        <nav class="panel-nav" id="topNav">
+          <button class="panel-chip active" data-panel="encodingSection" type="button">
+            <span class="chip-title">编码工具</span>
+            <span class="chip-desc">URL、Unicode、Base64</span>
+          </button>
+          <button class="panel-chip" data-panel="jsonSection" type="button">
+            <span class="chip-title">JSON 工具</span>
+            <span class="chip-desc">格式化、树视图、差异对比</span>
+          </button>
+          <button class="panel-chip" data-panel="timeSection" type="button">
+            <span class="chip-title">时间工具</span>
+            <span class="chip-desc">当前时间、双向转换</span>
+          </button>
+          <button class="panel-chip" data-panel="imageSection" type="button">
+            <span class="chip-title">图片工具</span>
+            <span class="chip-desc">压缩、批量看图、失败筛选</span>
+          </button>
+          <button class="panel-chip" data-panel="esSection" type="button">
+            <span class="chip-title">ES 工具</span>
+            <span class="chip-desc">Console、cURL、Bulk</span>
+          </button>
+        </nav>
+
+        <div class="side-note">
+          <span class="note-dot"></span>
+          当前布局支持单屏切换，不再需要上下翻很久找工具。
+        </div>
+      </aside>
+
+      <main class="workspace">
+        <header class="workspace-header">
+          <div>
+            <p class="eyebrow">Focused Workspace</p>
+            <h2 id="workspaceTitle">编码工具</h2>
+            <p class="workspace-subtitle" id="workspaceSubtitle">常见文本编码和解码集中在一个面板里。</p>
+          </div>
+          <div class="hero-actions">
+            <button class="ghost-button" data-action="openOptionsPage" type="button">全页打开</button>
+            <button class="ghost-button" id="scrollTopBtn" type="button">回到顶部</button>
+          </div>
+        </header>
+
+        <section class="tool-panel active" id="encodingSection" data-panel-title="编码工具" data-panel-description="常见文本编码和解码集中在一个面板里。">
+          <div class="section-banner">
+            <div>
+              <p class="panel-kicker">Encoding</p>
+              <h3>常用编码转换</h3>
+              <p class="section-text">用统一左右布局处理 URL、Unicode、Base64，不再在多个小卡片间跳来跳去。</p>
+            </div>
+            <div class="section-tags">
+              <span>URL</span>
+              <span>Unicode</span>
+              <span>Base64</span>
+            </div>
+          </div>
+
+          <div class="split-workbench">
+            <article class="card workspace-pane">
+              <div class="card-header">
+                <h3>输入与方式</h3>
+                <span class="info-badge" id="encodingActiveBadge">URL</span>
+              </div>
+              <div class="mode-switch" id="encodingTypeSwitch">
+                <button class="mode-pill active" data-encoding-type="url" type="button">URL</button>
+                <button class="mode-pill" data-encoding-type="unicode" type="button">Unicode</button>
+                <button class="mode-pill" data-encoding-type="base64" type="button">Base64</button>
+              </div>
+              <p class="helper-text" id="encodingModeHint">适合处理 query 参数、回调地址和浏览器地址栏内容。</p>
+              <textarea id="encodingInput" class="workbench-input" placeholder="输入需要转换的内容"></textarea>
+              <div class="action-row">
+                <button data-action="runEncodingEncode" type="button">编码</button>
+                <button data-action="runEncodingDecode" type="button">解码</button>
+                <button class="secondary" data-action="fillEncodingResult" type="button">结果回填</button>
+                <button class="secondary" data-action="clearEncodingPanels" type="button">清空</button>
+              </div>
+            </article>
+
+            <article class="card workspace-pane">
+              <div class="card-header">
+                <h3>转换结果</h3>
+                <button class="copy-btn" data-copy-target="encodingOutput" type="button">复制结果</button>
+              </div>
+              <div class="compare-stats">
+                <div class="compare-stat">
+                  <span>当前方式</span>
+                  <strong id="encodingModeName">URL 编码 / 解码</strong>
+                </div>
+                <div class="compare-stat">
+                  <span>输出方向</span>
+                  <strong id="encodingLastAction">等待操作</strong>
+                </div>
+                <div class="compare-stat">
+                  <span>结果长度</span>
+                  <strong id="encodingOutputLength">0</strong>
+                </div>
+              </div>
+              <textarea id="encodingOutput" class="output wide-output" placeholder="转换结果会显示在这里"></textarea>
+              <p class="helper-text">左侧先选一种编码方式，再执行编码或解码；右侧结果可直接复制或回填继续处理。</p>
+            </article>
+          </div>
+        </section>
+
+        <section class="tool-panel" id="jsonSection" data-panel-title="JSON 工具" data-panel-description="转换、树视图和差异分析拆成独立面板，更容易定位。">
+          <div class="section-banner">
+            <div>
+              <p class="panel-kicker">JSON</p>
+              <h3>处理、查看、对比</h3>
+              <p class="section-text">把 JSON 的日常操作拆成三个清晰工作区，避免工具都堆在下面。</p>
+            </div>
+            <div class="section-tags">
+              <span>Format</span>
+              <span>Tree</span>
+              <span>Diff</span>
+            </div>
+          </div>
+
+          <div class="section-tabs" data-subtab-group="json">
+            <button class="section-tab active" data-subtab-target="jsonTransformPane" type="button">转换处理</button>
+            <button class="section-tab" data-subtab-target="jsonTreePane" type="button">树视图</button>
+            <button class="section-tab" data-subtab-target="jsonDiffPane" type="button">差异对比</button>
+          </div>
+
+          <div class="subpanel-stack">
+            <div class="subpanel active" id="jsonTransformPane">
+              <div class="grid two">
+                <article class="card tall">
+                  <div class="card-header">
+                    <h3>JSON 输入</h3>
+                    <button class="copy-btn" data-copy-target="jsonInput" type="button">复制输入</button>
+                  </div>
+                  <textarea id="jsonInput" placeholder='输入 JSON、被转义的 JSON 字符串，或 CSV'></textarea>
+                  <div class="action-row wrap">
+                    <button data-action="jsonFormat" type="button">格式化</button>
+                    <button data-action="jsonMinify" type="button">压缩</button>
+                    <button data-action="jsonEscape" type="button">转义</button>
+                    <button data-action="jsonUnescape" type="button">去除转义</button>
+                    <button data-action="jsonToCsv" type="button">JSON 转 CSV</button>
+                    <button data-action="csvToJson" type="button">CSV 转 JSON</button>
+                  </div>
+                </article>
+
+                <article class="card tall">
+                  <div class="card-header">
+                    <h3>JSON 结果</h3>
+                    <button class="copy-btn" data-copy-target="jsonOutput" type="button">复制结果</button>
+                  </div>
+                  <textarea id="jsonOutput" class="output" placeholder="处理结果"></textarea>
+                </article>
+              </div>
+            </div>
+
+            <div class="subpanel" id="jsonTreePane">
+              <article class="card tree-card">
+                <div class="card-header">
+                  <h3>JSON 树视图</h3>
+                  <div class="action-row compact">
+                    <button class="secondary" data-action="jsonRenderTree" type="button">刷新</button>
+                    <button class="secondary" data-action="jsonExpandTree" type="button">展开全部</button>
+                    <button class="secondary" data-action="jsonCollapseTree" type="button">折叠全部</button>
+                  </div>
+                </div>
+                <div id="jsonTree" class="tree-view empty-state">输入合法 JSON 后可查看树结构</div>
+              </article>
+            </div>
+
+            <div class="subpanel" id="jsonDiffPane">
+              <article class="card">
+                <div class="card-header">
+                  <h3>JSON 对比</h3>
+                  <button class="copy-btn" data-copy-target="jsonDiffOutput" type="button">复制摘要</button>
+                </div>
+                <div class="grid two">
+                  <textarea id="jsonDiffLeft" placeholder="左侧 JSON"></textarea>
+                  <textarea id="jsonDiffRight" placeholder="右侧 JSON"></textarea>
+                </div>
+                <div class="action-row">
+                  <button data-action="jsonCompare" type="button">开始对比</button>
+                  <button class="secondary" data-action="jsonLoadDiffLeft" type="button">主输入填左侧</button>
+                  <button class="secondary" data-action="jsonLoadDiffRight" type="button">主结果填右侧</button>
+                  <button class="secondary" data-action="jsonDiffExpandAll" type="button">展开全部</button>
+                  <button class="secondary" data-action="jsonDiffCollapseAll" type="button">折叠全部</button>
+                </div>
+                <div class="compare-stats diff-stats">
+                  <div class="compare-stat">
+                    <span>差异总数</span>
+                    <strong id="jsonDiffTotal">0</strong>
+                  </div>
+                  <div class="compare-stat">
+                    <span>新增</span>
+                    <strong id="jsonDiffAdded">0</strong>
+                  </div>
+                  <div class="compare-stat">
+                    <span>删除</span>
+                    <strong id="jsonDiffRemoved">0</strong>
+                  </div>
+                  <div class="compare-stat">
+                    <span>变更</span>
+                    <strong id="jsonDiffChanged">0</strong>
+                  </div>
+                </div>
+                <div class="diff-viewer-shell">
+                  <div class="diff-viewer-titlebar">
+                    <span>结构化对比视图</span>
+                    <span class="info-badge">Side by Side</span>
+                  </div>
+                  <div id="jsonDiffViewer" class="diff-viewer empty-state">输入两份合法 JSON 后可查看结构化差异</div>
+                </div>
+                <pre id="jsonDiffOutput" class="diff-output empty-state">输入两份合法 JSON 后可查看差异摘要</pre>
+              </article>
+            </div>
+          </div>
+        </section>
+
+        <section class="tool-panel" id="timeSection" data-panel-title="时间工具" data-panel-description="当前时间和两种常用转换放在同一屏里，减少来回跳转。">
+          <div class="section-banner">
+            <div>
+              <p class="panel-kicker">Time</p>
+              <h3>时间戳与时间互转</h3>
+              <p class="section-text">输入一个值即可自动识别是时间还是时间戳，再在右侧给出完整转换结果。</p>
+            </div>
+            <div class="section-tags">
+              <span>Now</span>
+              <span>Timestamp</span>
+              <span>DateTime</span>
+            </div>
+          </div>
+
+          <div class="split-workbench">
+            <article class="card workspace-pane">
+              <div class="card-header">
+                <h3>输入与当前时间</h3>
+                <button class="copy-btn" data-copy-target="nowDisplay" type="button">复制当前时间</button>
+              </div>
+              <div class="mini-stat-grid">
+                <div class="stat-item">
+                  <span>本地时间</span>
+                  <strong id="nowDisplay">-</strong>
+                </div>
+                <div class="stat-item">
+                  <span>秒级时间戳</span>
+                  <strong id="nowSeconds">-</strong>
+                </div>
+                <div class="stat-item">
+                  <span>毫秒级时间戳</span>
+                  <strong id="nowMilliseconds">-</strong>
+                </div>
+              </div>
+              <textarea id="timeSmartInput" class="workbench-input" placeholder="输入 10/13 位时间戳，或 2026-04-24 18:30:00"></textarea>
+              <div class="action-row">
+                <button data-action="smartConvertTime" type="button">智能转换</button>
+                <button class="secondary" data-action="fillNowSeconds" type="button">当前秒戳</button>
+                <button class="secondary" data-action="fillNowDatetime" type="button">当前时间</button>
+                <button class="secondary" data-action="fillTimePrimaryResult" type="button">结果回填</button>
+                <button class="secondary" data-action="clearTimePanels" type="button">清空</button>
+              </div>
+              <p class="helper-text">支持秒级时间戳、毫秒级时间戳、`yyyy-MM-dd HH:mm:ss` 和浏览器可识别的日期时间格式。</p>
+            </article>
+
+            <article class="card workspace-pane">
+              <div class="card-header">
+                <h3>识别结果</h3>
+                <button class="copy-btn" data-copy-target="timeConversionOutput" type="button">复制结果</button>
+              </div>
+              <div class="result-metrics">
+                <div class="compare-stat">
+                  <span>识别类型</span>
+                  <strong id="timeDetectedType">等待输入</strong>
+                </div>
+                <div class="compare-stat">
+                  <span id="timePrimaryLabel">主结果</span>
+                  <strong id="timePrimaryValue">-</strong>
+                </div>
+                <div class="compare-stat">
+                  <span id="timeSecondaryLabel">补充结果</span>
+                  <strong id="timeSecondaryValue">-</strong>
+                </div>
+                <div class="compare-stat">
+                  <span>时区</span>
+                  <strong id="timeResultZone">-</strong>
+                </div>
+              </div>
+              <textarea id="timeConversionOutput" class="output wide-output" placeholder="转换结果会显示在这里"></textarea>
+              <p class="helper-text">输入后会自动识别类型，右侧会给出适合复制的完整结果和关键摘要。</p>
+            </article>
+          </div>
+        </section>
+
+        <section class="tool-panel" id="imageSection" data-panel-title="图片工具" data-panel-description="把压缩和批量看图拆开，方便单独操作，也更容易快速定位。">
+          <div class="section-banner">
+            <div>
+              <p class="panel-kicker">Image</p>
+              <h3>压缩与批量看图</h3>
+              <p class="section-text">图片压缩和图片地址对比预览分别独立，降低操作干扰。</p>
+            </div>
+            <div class="section-tags">
+              <span>Compress</span>
+              <span>Preview</span>
+              <span>Failed Only</span>
+            </div>
+          </div>
+
+          <div class="section-tabs" data-subtab-group="image">
+            <button class="section-tab active" data-subtab-target="imageCompressPane" type="button">图片压缩</button>
+            <button class="section-tab" data-subtab-target="imageComparePane" type="button">批量对比</button>
+          </div>
+
+          <div class="subpanel-stack">
+            <div class="subpanel active" id="imageCompressPane">
+              <article class="card">
+                <div class="card-header">
+                  <h3>百分比压缩</h3>
+                </div>
+                <label class="upload-box" for="imageCompressInput">
+                  <input id="imageCompressInput" type="file" accept="image/*" multiple />
+                  <span>选择一张或多张图片</span>
+                </label>
+                <label class="range-label" for="compressQuality">
+                  压缩比例：<strong id="compressQualityValue">80%</strong>
+                </label>
+                <input id="compressQuality" type="range" min="10" max="100" value="80" />
+                <div class="action-row">
+                  <button data-action="compressImages" type="button">开始压缩</button>
+                </div>
+                <div id="compressResult" class="result-list empty-state">压缩结果会显示在这里</div>
+              </article>
+            </div>
+
+            <div class="subpanel" id="imageComparePane">
+              <article class="card">
+                <div class="card-header">
+                  <h3>批量解析图片地址并对比查看</h3>
+                </div>
+                <textarea id="imageUrlInput" placeholder="粘贴大段文本，自动提取其中的图片 URL"></textarea>
+                <div class="action-row">
+                  <button data-action="parseImageUrls" type="button">解析图片地址</button>
+                  <button class="secondary" data-action="copyParsedImageUrls" type="button">复制地址列表</button>
+                  <button class="secondary" data-action="toggleFailedOnly" id="toggleFailedOnlyBtn" type="button">只看失败</button>
+                </div>
+                <div class="field-grid">
+                  <label>
+                    <span>对比列数</span>
+                    <select id="imageCompareColumns">
+                      <option value="1">1 列</option>
+                      <option value="2" selected>2 列</option>
+                      <option value="3">3 列</option>
+                      <option value="4">4 列</option>
+                      <option value="5">5 列</option>
+                      <option value="6">6 列</option>
+                      <option value="7">7 列</option>
+                      <option value="8">8 列</option>
+                      <option value="9">9 列</option>
+                      <option value="10">10 列</option>
+                    </select>
+                  </label>
+                  <label class="range-label" for="imageCompareZoom">
+                    预览缩放：<strong id="imageCompareZoomValue">100%</strong>
+                  </label>
+                </div>
+                <input id="imageCompareZoom" type="range" min="60" max="180" value="100" />
+                <div class="compare-stats">
+                  <div class="compare-stat">
+                    <span>总数</span>
+                    <strong id="imageTotalCount">0</strong>
+                  </div>
+                  <div class="compare-stat">
+                    <span>成功</span>
+                    <strong id="imageLoadedCount">0</strong>
+                  </div>
+                  <div class="compare-stat">
+                    <span>失败</span>
+                    <strong id="imageFailedCount">0</strong>
+                  </div>
+                </div>
+                <div id="imageCompareResult" class="image-compare-grid empty-state">解析出的图片会显示在这里</div>
+              </article>
+            </div>
+          </div>
+        </section>
+
+        <section class="tool-panel" id="esSection" data-panel-title="ES 工具" data-panel-description="查询结果转换、字段筛选和导出格式都收敛在一个操作面板里。">
+          <div class="section-banner">
+            <div>
+              <p class="panel-kicker">Elasticsearch</p>
+              <h3>查询结果转 API 语句</h3>
+              <p class="section-text">支持 Console 和 cURL，两栏布局更适合边调参数边看输出。</p>
+            </div>
+            <div class="section-tags">
+              <span>Index</span>
+              <span>Bulk</span>
+              <span>cURL</span>
+            </div>
+          </div>
+
+          <div class="grid two">
+            <article class="card tall">
+              <div class="card-header">
+                <h3>查询结果输入</h3>
+              </div>
+              <textarea id="esInput" placeholder='粘贴 ES 查询结果 JSON，例如 hits.hits、数组文档或单条 _source 文档'></textarea>
+              <div class="field-grid">
+                <label>
+                  <span>目标索引名</span>
+                  <input id="esIndexName" type="text" placeholder="可修改索引名，留空时使用原索引" />
+                </label>
+                <label>
+                  <span>输出模式</span>
+                  <select id="esMode">
+                    <option value="index">Index API</option>
+                    <option value="update">Update API</option>
+                    <option value="bulkIndex">Bulk Index</option>
+                    <option value="bulkUpdate">Bulk Update</option>
+                    <option value="bulkDelete">Bulk Delete</option>
+                  </select>
+                </label>
+              </div>
+              <div class="field-grid">
+                <label>
+                  <span>导出格式</span>
+                  <select id="esOutputStyle">
+                    <option value="console">Kibana Console</option>
+                    <option value="curl">cURL</option>
+                  </select>
+                </label>
+                <label>
+                  <span>ES 地址</span>
+                  <input id="esBaseUrl" type="text" value="http://localhost:9200" placeholder="例如 http://localhost:9200" />
+                </label>
+              </div>
+              <div class="field-grid">
+                <label>
+                  <span>ID 字段名（可选）</span>
+                  <input id="esIdField" type="text" placeholder="当原始数据没有 _id 时可指定，例如 id" />
+                </label>
+                <label>
+                  <span>导出字段（可选）</span>
+                  <input id="esSourceFields" type="text" placeholder="逗号分隔，如 user.id,name,age" />
+                </label>
+              </div>
+              <div class="action-row">
+                <button data-action="convertEsData" type="button">生成 API 语句</button>
+              </div>
+              <p class="helper-text">支持数组、<code>hits.hits</code>、单条文档；可只保留指定字段，并导出 <code>Kibana Console</code> 或 <code>cURL</code>。</p>
+            </article>
+
+            <article class="card tall">
+              <div class="card-header">
+                <h3>输出结果</h3>
+                <button class="copy-btn" data-copy-target="esOutput" type="button">复制结果</button>
+              </div>
+              <textarea id="esOutput" class="output" placeholder="生成的 Index / Update / Bulk API 语句"></textarea>
+            </article>
+          </div>
+        </section>
+      </main>
+
+      <div id="toast" class="toast"></div>
+    </div>
+    <script src="app.js"></script>
+  </body>
+</html>
