@@ -18,7 +18,7 @@
         <nav class="panel-nav" id="topNav">
           <button class="panel-chip active" data-panel="encodingSection" type="button">
             <span class="chip-title">编码工具</span>
-            <span class="chip-desc">URL、Unicode、Base64</span>
+            <span class="chip-desc">URL、Unicode、Base64、转义</span>
           </button>
           <button class="panel-chip" data-panel="jsonSection" type="button">
             <span class="chip-title">JSON 工具</span>
@@ -51,10 +51,6 @@
             <h2 id="workspaceTitle">编码工具</h2>
             <p class="workspace-subtitle" id="workspaceSubtitle">常见文本编码和解码集中在一个面板里。</p>
           </div>
-          <div class="hero-actions">
-            <button class="ghost-button" data-action="openOptionsPage" type="button">全页打开</button>
-            <button class="ghost-button" id="scrollTopBtn" type="button">回到顶部</button>
-          </div>
         </header>
 
         <section class="tool-panel active" id="encodingSection" data-panel-title="编码工具" data-panel-description="常见文本编码和解码集中在一个面板里。">
@@ -62,12 +58,13 @@
             <div>
               <p class="panel-kicker">Encoding</p>
               <h3>常用编码转换</h3>
-              <p class="section-text">用统一左右布局处理 URL、Unicode、Base64，不再在多个小卡片间跳来跳去。</p>
+              <p class="section-text">用统一左右布局处理 URL、Unicode、Base64 和字符串转义，不再在多个小卡片间跳来跳去。</p>
             </div>
             <div class="section-tags">
               <span>URL</span>
               <span>Unicode</span>
               <span>Base64</span>
+              <span>Escape</span>
             </div>
           </div>
 
@@ -81,12 +78,13 @@
                 <button class="mode-pill active" data-encoding-type="url" type="button">URL</button>
                 <button class="mode-pill" data-encoding-type="unicode" type="button">Unicode</button>
                 <button class="mode-pill" data-encoding-type="base64" type="button">Base64</button>
+                <button class="mode-pill" data-encoding-type="escape" type="button">转义</button>
               </div>
               <p class="helper-text" id="encodingModeHint">适合处理 query 参数、回调地址和浏览器地址栏内容。</p>
               <textarea id="encodingInput" class="workbench-input" placeholder="输入需要转换的内容"></textarea>
               <div class="action-row">
-                <button data-action="runEncodingEncode" type="button">编码</button>
-                <button data-action="runEncodingDecode" type="button">解码</button>
+                <button id="encodingEncodeBtn" data-action="runEncodingEncode" type="button">编码</button>
+                <button id="encodingDecodeBtn" data-action="runEncodingDecode" type="button">解码</button>
                 <button class="secondary" data-action="fillEncodingResult" type="button">结果回填</button>
                 <button class="secondary" data-action="clearEncodingPanels" type="button">清空</button>
               </div>
@@ -149,8 +147,6 @@
                   <div class="action-row wrap">
                     <button data-action="jsonFormat" type="button">格式化</button>
                     <button data-action="jsonMinify" type="button">压缩</button>
-                    <button data-action="jsonEscape" type="button">转义</button>
-                    <button data-action="jsonUnescape" type="button">去除转义</button>
                     <button data-action="jsonToCsv" type="button">JSON 转 CSV</button>
                     <button data-action="csvToJson" type="button">CSV 转 JSON</button>
                   </div>
@@ -357,10 +353,7 @@
                   <label>
                     <span>对比列数</span>
                     <select id="imageCompareColumns">
-                      <option value="1">1 列</option>
-                      <option value="2" selected>2 列</option>
-                      <option value="3">3 列</option>
-                      <option value="4">4 列</option>
+                      <option value="4" selected>4 列</option>
                       <option value="5">5 列</option>
                       <option value="6">6 列</option>
                       <option value="7">7 列</option>
@@ -370,10 +363,10 @@
                     </select>
                   </label>
                   <label class="range-label" for="imageCompareZoom">
-                    预览缩放：<strong id="imageCompareZoomValue">100%</strong>
+                    预览缩放：<strong id="imageCompareZoomValue">60%</strong>
                   </label>
                 </div>
-                <input id="imageCompareZoom" type="range" min="60" max="180" value="100" />
+                <input id="imageCompareZoom" type="range" min="60" max="180" value="60" />
                 <div class="compare-stats">
                   <div class="compare-stat">
                     <span>总数</span>
@@ -408,7 +401,7 @@
             </div>
           </div>
 
-          <div class="grid two">
+          <div class="split-workbench es-workbench">
             <article class="card tall">
               <div class="card-header">
                 <h3>查询结果输入</h3>
@@ -432,10 +425,11 @@
               </div>
               <div class="field-grid">
                 <label>
-                  <span>导出格式</span>
+                  <span>输出格式</span>
                   <select id="esOutputStyle">
                     <option value="console">Kibana Console</option>
-                    <option value="curl">cURL</option>
+                    <option value="curl">cURL (bash)</option>
+                    <option value="curlPowerShell">cURL (PowerShell)</option>
                   </select>
                 </label>
                 <label>
@@ -456,15 +450,37 @@
               <div class="action-row">
                 <button data-action="convertEsData" type="button">生成 API 语句</button>
               </div>
-              <p class="helper-text">支持数组、<code>hits.hits</code>、单条文档；可只保留指定字段，并导出 <code>Kibana Console</code> 或 <code>cURL</code>。</p>
+              <p class="helper-text">支持数组、<code>hits.hits</code>、单条文档；可只保留指定字段，并输出 <code>Kibana Console</code>、<code>cURL (bash)</code> 或 <code>cURL (PowerShell)</code>。</p>
             </article>
 
-            <article class="card tall">
+            <article class="card tall es-output-card">
               <div class="card-header">
-                <h3>输出结果</h3>
+                <div class="es-output-heading">
+                  <h3>输出结果</h3>
+                  <p class="helper-text">生成后可直接复制，适合贴到 Kibana Console、bash 或 PowerShell。</p>
+                </div>
                 <button class="copy-btn" data-copy-target="esOutput" type="button">复制结果</button>
               </div>
-              <textarea id="esOutput" class="output" placeholder="生成的 Index / Update / Bulk API 语句"></textarea>
+              <div class="compare-stats es-output-stats">
+                <div class="compare-stat">
+                  <span>文档数</span>
+                  <strong id="esDocumentCount">0</strong>
+                </div>
+                <div class="compare-stat">
+                  <span>请求类型</span>
+                  <strong id="esModeLabel">Index API</strong>
+                </div>
+                <div class="compare-stat">
+                  <span>输出格式</span>
+                  <strong id="esFormatLabel">Kibana Console</strong>
+                </div>
+                <div class="compare-stat">
+                  <span>总行数</span>
+                  <strong id="esOutputLineCount">0</strong>
+                </div>
+              </div>
+              <textarea id="esOutput" class="output es-output-area" placeholder="生成的 Index / Update / Bulk API 语句"></textarea>
+              <p class="helper-text">Bulk 文本会自动补齐 ES 需要的结尾换行；带特殊字符的文档 ID 也会自动做路径编码。</p>
             </article>
           </div>
         </section>

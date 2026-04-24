@@ -3,8 +3,8 @@ const state = {
   parsedImageItems: [],
   encodingType: "url",
   imageCompareSettings: {
-    columns: 2,
-    zoom: 100,
+    columns: 4,
+    zoom: 60,
     failedOnly: false,
   },
   toastTimer: null,
@@ -78,9 +78,6 @@ function bindNavigation() {
     button.addEventListener("click", () => {
       activatePanel(button.dataset.panel);
     });
-  });
-  $("scrollTopBtn").addEventListener("click", () => {
-    window.scrollTo({ top: 0, behavior: "smooth" });
   });
   const initialPanel =
     document.querySelector(".tool-panel.active")?.id ??
@@ -157,6 +154,10 @@ const encodingModes = {
     name: "URL 编码 / 解码",
     hint: "适合处理 query 参数、回调地址和浏览器地址栏内容。",
     placeholder: "输入 URL 参数、路径或普通文本",
+    encodeLabel: "编码",
+    decodeLabel: "解码",
+    encodeResultLabel: "原文 → 编码",
+    decodeResultLabel: "编码 → 原文",
     encode: (value) => encodeURIComponent(value),
     decode: (value) => decodeURIComponent(value),
   },
@@ -165,6 +166,10 @@ const encodingModes = {
     name: "Unicode 编码 / 解码",
     hint: "适合处理带 \\uXXXX 的转义文本和中文字符互转。",
     placeholder: "输入中文，或 \\u4f60\\u597d 这样的文本",
+    encodeLabel: "编码",
+    decodeLabel: "解码",
+    encodeResultLabel: "原文 → 编码",
+    decodeResultLabel: "编码 → 原文",
     encode: (value) => toUnicodeEscape(value),
     decode: (value) => fromUnicodeEscape(value),
   },
@@ -173,8 +178,24 @@ const encodingModes = {
     name: "Base64 编码 / 解码",
     hint: "适合处理接口传输文本、调试 token 片段和简单文本封装。",
     placeholder: "输入任意 UTF-8 文本或 Base64 内容",
+    encodeLabel: "编码",
+    decodeLabel: "解码",
+    encodeResultLabel: "原文 → 编码",
+    decodeResultLabel: "编码 → 原文",
     encode: (value) => encodeBase64Utf8(value),
     decode: (value) => decodeBase64Utf8(value),
+  },
+  escape: {
+    badge: "Escape",
+    name: "字符串转义 / 去除转义",
+    hint: "适合把普通文本转成可嵌入 JSON 或代码字符串的转义文本，也可反向还原。",
+    placeholder: "输入普通文本，或带 \\n、\\t、\\\" 的转义字符串",
+    encodeLabel: "转义",
+    decodeLabel: "去除转义",
+    encodeResultLabel: "原文 → 转义文本",
+    decodeResultLabel: "转义文本 → 原文",
+    encode: (value) => jsonEscapeString(value),
+    decode: (value) => jsonUnescapeString(value),
   },
 };
 
@@ -187,6 +208,8 @@ function updateEncodingUi() {
   setText("encodingModeName", mode.name);
   setText("encodingModeHint", mode.hint);
   $("encodingInput").placeholder = mode.placeholder;
+  setText("encodingEncodeBtn", mode.encodeLabel);
+  setText("encodingDecodeBtn", mode.decodeLabel);
 }
 
 function updateEncodingOutputMeta(result, directionLabel) {
@@ -199,7 +222,7 @@ function runEncodingTransform(direction) {
   const input = $("encodingInput").value;
   const result = direction === "encode" ? mode.encode(input) : mode.decode(input);
   setOutput("encodingOutput", result);
-  updateEncodingOutputMeta(result, direction === "encode" ? "原文 → 编码" : "编码 → 原文");
+  updateEncodingOutputMeta(result, direction === "encode" ? mode.encodeResultLabel : mode.decodeResultLabel);
 }
 
 function bindEncodingActions() {
@@ -755,8 +778,6 @@ function bindJsonActions() {
       setOutput("jsonOutput", JSON.stringify(parsed));
       renderJsonTree(parsed);
     },
-    jsonEscape: () => setOutput("jsonOutput", jsonEscapeString($("jsonInput").value)),
-    jsonUnescape: () => setOutput("jsonOutput", jsonUnescapeString($("jsonInput").value)),
     jsonToCsv: () => {
       const parsed = safeJsonParse($("jsonInput").value);
       setOutput("jsonOutput", jsonToCsv(parsed));
@@ -1034,11 +1055,16 @@ function updateImageCompareStats() {
 
 function applyImageCompareLayout() {
   const container = $("imageCompareResult");
-  const { columns, zoom, failedOnly } = state.imageCompareSettings;
-  container.style.setProperty("--image-columns", String(columns));
-  container.style.setProperty("--preview-height", `${Math.round((zoom / 100) * 240)}px`);
-  setText("imageCompareZoomValue", `${zoom}%`);
-  $("imageCompareColumns").value = String(columns);
+  const safeColumns = Math.max(4, Number(state.imageCompareSettings.columns) || 4);
+  const safeZoom = Math.min(180, Math.max(60, Number(state.imageCompareSettings.zoom) || 60));
+  const { failedOnly } = state.imageCompareSettings;
+  state.imageCompareSettings.columns = safeColumns;
+  state.imageCompareSettings.zoom = safeZoom;
+  container.style.setProperty("--image-columns", String(safeColumns));
+  container.style.setProperty("--preview-height", `${Math.round((safeZoom / 100) * 240)}px`);
+  setText("imageCompareZoomValue", `${safeZoom}%`);
+  $("imageCompareColumns").value = String(safeColumns);
+  $("imageCompareZoom").value = String(safeZoom);
   $("toggleFailedOnlyBtn").textContent = failedOnly ? "查看全部" : "只看失败";
 }
 
@@ -1269,17 +1295,65 @@ function encodeEsPathSegment(value) {
   return encodeURIComponent(String(value));
 }
 
+function ensureTrailingNewline(value) {
+  if (!value) {
+    return "";
+  }
+  return value.endsWith("\n") ? value : `${value}\n`;
+}
+
+function countOutputLines(value) {
+  if (!value) {
+    return 0;
+  }
+  const normalized = value.replace(/\r\n/g, "\n");
+  const trimmed = normalized.endsWith("\n") ? normalized.slice(0, -1) : normalized;
+  return trimmed ? trimmed.split("\n").length : 0;
+}
+
+const esModeLabels = {
+  index: "Index API",
+  update: "Update API",
+  bulkIndex: "Bulk Index",
+  bulkUpdate: "Bulk Update",
+  bulkDelete: "Bulk Delete",
+};
+
+const esOutputStyleLabels = {
+  console: "Kibana Console",
+  curl: "cURL (bash)",
+  curlPowerShell: "cURL (PowerShell)",
+};
+
+function syncEsSelectionMeta() {
+  setText("esModeLabel", esModeLabels[$("esMode").value] || "-");
+  setText("esFormatLabel", esOutputStyleLabels[$("esOutputStyle").value] || "-");
+}
+
+function resetEsOutputMeta() {
+  setText("esDocumentCount", 0);
+  setText("esOutputLineCount", 0);
+  syncEsSelectionMeta();
+}
+
+function updateEsOutputMeta(documents, output) {
+  setText("esDocumentCount", documents.length);
+  setText("esOutputLineCount", countOutputLines(output));
+  syncEsSelectionMeta();
+}
+
 function buildEsConsoleOutput(documents, mode, targetIndexName) {
   const lines = [];
   documents.forEach((doc) => {
     const indexName = targetIndexName || doc.index || "your_index";
+    const encodedId = encodeEsPathSegment(doc.id);
     if (mode === "index") {
-      lines.push(`PUT /${indexName}/_doc/${doc.id}`);
+      lines.push(`PUT /${indexName}/_doc/${encodedId}`);
       lines.push(JSON.stringify(doc.source, null, 2));
       return;
     }
     if (mode === "update") {
-      lines.push(`POST /${indexName}/_update/${doc.id}`);
+      lines.push(`POST /${indexName}/_update/${encodedId}`);
       lines.push(
         JSON.stringify(
           {
@@ -1306,7 +1380,11 @@ function buildEsConsoleOutput(documents, mode, targetIndexName) {
       lines.push(JSON.stringify({ delete: { _index: indexName, _id: doc.id } }));
     }
   });
-  return lines.join("\n");
+  const output = lines.join("\n");
+  if (mode === "bulkIndex" || mode === "bulkUpdate" || mode === "bulkDelete") {
+    return ensureTrailingNewline(output);
+  }
+  return output;
 }
 
 function buildCurlRequest(method, url, body, contentType = "application/json") {
@@ -1363,14 +1441,74 @@ function buildEsCurlOutput(documents, mode, targetIndexName, baseUrl) {
     .join("\n\n");
 }
 
+function buildPowerShellCurlRequest(method, url, body, contentType = "application/json") {
+  if (!body) {
+    return `curl.exe -X ${method} "${url}"`;
+  }
+  return [
+    "@'",
+    body,
+    `'@ | curl.exe -X ${method} "${url}" \``,
+    `  -H "Content-Type: ${contentType}" \``,
+    "  --data-binary @-",
+  ].join("\n");
+}
+
+function buildEsPowerShellCurlOutput(documents, mode, targetIndexName, baseUrl) {
+  const rootUrl = normalizeBaseUrl(baseUrl);
+
+  if (mode === "bulkIndex" || mode === "bulkUpdate" || mode === "bulkDelete") {
+    const ndjsonBody = buildEsConsoleOutput(documents, mode, targetIndexName);
+    return buildPowerShellCurlRequest(
+      "POST",
+      `${rootUrl}/_bulk`,
+      ndjsonBody,
+      "application/x-ndjson"
+    );
+  }
+
+  return documents
+    .map((doc) => {
+      const indexName = targetIndexName || doc.index || "your_index";
+      const encodedId = encodeEsPathSegment(doc.id);
+      if (mode === "index") {
+        return buildPowerShellCurlRequest(
+          "PUT",
+          `${rootUrl}/${indexName}/_doc/${encodedId}`,
+          JSON.stringify(doc.source, null, 2)
+        );
+      }
+      return buildPowerShellCurlRequest(
+        "POST",
+        `${rootUrl}/${indexName}/_update/${encodedId}`,
+        JSON.stringify(
+          {
+            doc: doc.source,
+            doc_as_upsert: true,
+          },
+          null,
+          2
+        )
+      );
+    })
+    .join("\n\n");
+}
+
 function buildEsOutput(documents, mode, targetIndexName, outputStyle, baseUrl) {
   if (outputStyle === "curl") {
     return buildEsCurlOutput(documents, mode, targetIndexName, baseUrl);
+  }
+  if (outputStyle === "curlPowerShell") {
+    return buildEsPowerShellCurlOutput(documents, mode, targetIndexName, baseUrl);
   }
   return buildEsConsoleOutput(documents, mode, targetIndexName);
 }
 
 function bindEsActions() {
+  resetEsOutputMeta();
+  $("esMode").addEventListener("change", syncEsSelectionMeta);
+  $("esOutputStyle").addEventListener("change", syncEsSelectionMeta);
+
   const actions = {
     convertEsData: () => {
       const input = safeJsonParse($("esInput").value);
@@ -1380,9 +1518,10 @@ function bindEsActions() {
       const documents = normalizeEsDocuments(input, $("esIdField").value.trim(), sourceFields);
       const output = buildEsOutput(documents, mode, $("esIndexName").value.trim(), outputStyle, $("esBaseUrl").value.trim());
       setOutput("esOutput", output);
+      updateEsOutputMeta(documents, output);
       showToast(
         `已生成 ${documents.length} 条记录${sourceFields.length ? `，筛选 ${sourceFields.length} 个字段` : ""}，格式：${
-          outputStyle === "curl" ? "cURL" : "Kibana Console"
+          esOutputStyleLabels[outputStyle] || "Kibana Console"
         }`
       );
     },
@@ -1413,15 +1552,6 @@ function init() {
   bindTimeActions();
   bindImageActions();
   bindEsActions();
-  bindActions({
-    openOptionsPage: () => {
-      if (globalThis.chrome?.runtime?.openOptionsPage) {
-        globalThis.chrome.runtime.openOptionsPage();
-        return;
-      }
-      window.open("popup.html", "_blank");
-    },
-  });
 }
 
 document.addEventListener("DOMContentLoaded", init);
