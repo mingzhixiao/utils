@@ -1,24 +1,59 @@
 # Dev Toolbox Pro
 
-一个免构建的浏览器扩展工具箱，包含：
+Dev Toolbox Pro now uses one shared frontend for both:
 
-- 编码工具：URL、Unicode、Base64 编码解码
-- JSON 工具：格式化、压缩、转义、去除转义、树视图、JSON/CSV 互转、复制、双 JSON 差异对比
-- 时间工具：当前秒/毫秒时间戳、时间戳与时间互转
-- 图片工具：按百分比压缩、批量提取文本中的图片地址并对比查看，支持列数/缩放联动和失败高亮
-- ES 工具：将 Elasticsearch 查询结果转换成 Index API、Update API、Bulk Index、Bulk Update、Bulk Delete 语句，可修改索引名、筛选导出字段，并导出 Kibana Console 或 cURL 格式
+- the browser extension
+- a Cloudflare Pages deployment
 
-## 使用方式
+The shared page lives under `site/`, so the extension and the website always use the same HTML, CSS, and JavaScript.
 
-1. 打开 Chrome 或 Edge 扩展管理页。
-2. 开启“开发者模式”。
-3. 选择“加载已解压的扩展程序”。
-4. 选择当前目录 `G:\workspace2\login33\utils`。
-5. 点击扩展图标时会默认以整页方式打开工具台。
+## Features
 
-## 文件说明
+- Encoding tools: URL, Unicode, Base64, and string escape/unescape
+- JSON tools: format, minify, tree view, diff, JSON/CSV conversion
+- Time tools: current time and timestamp/date conversion
+- Image tools: compression and batch image comparison
+- Elasticsearch tools: Console output, bash cURL, PowerShell cURL, and bulk helpers
 
-- `manifest.json`：扩展清单
-- `popup.html`：主界面
-- `styles.css`：样式
-- `app.js`：全部工具逻辑
+## Project Structure
+
+```text
+.
+├─ background.js
+├─ manifest.json
+├─ site/
+│  ├─ index.html
+│  ├─ app.js
+│  ├─ styles.css
+│  └─ icons/
+└─ README.md
+```
+
+## Browser Extension
+
+Load the repository root as an unpacked extension in Chrome or Edge:
+
+1. Open the extensions page.
+2. Enable developer mode.
+3. Choose "Load unpacked".
+4. Select this repository root.
+
+The extension entry point is `site/index.html`, configured through `manifest.json`.
+
+## Cloudflare Pages
+
+This repository can be deployed to Cloudflare Pages without a build step.
+
+Recommended Pages settings:
+
+- Production branch: `main`
+- Build command: `exit 0`
+- Build output directory: `site`
+
+That publishes only the shared web assets and excludes extension-only files such as `manifest.json` and `background.js`.
+
+## Notes
+
+- `manifest.json` points the extension to `site/index.html`.
+- Extension icons are also served from `site/icons/`.
+- If you change the UI, edit files in `site/` only.
