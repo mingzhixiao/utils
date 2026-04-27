@@ -1391,12 +1391,13 @@ function buildCurlRequest(method, url, body, contentType = "application/json") {
   if (!body) {
     return `curl -X ${method} "${url}"`;
   }
+
+  const bashSafeBody = String(body).replace(/'/g, `'\"'\"'`);
+
   return [
     `curl -X ${method} "${url}" \\`,
     `  -H "Content-Type: ${contentType}" \\`,
-    "  --data-binary @- <<'JSON'",
-    body,
-    "JSON",
+    `  --data-binary '${bashSafeBody}'`,
   ].join("\n");
 }
 
@@ -1405,13 +1406,12 @@ function buildEsCurlOutput(documents, mode, targetIndexName, baseUrl) {
 
   if (mode === "bulkIndex" || mode === "bulkUpdate" || mode === "bulkDelete") {
     const ndjsonBody = buildEsConsoleOutput(documents, mode, targetIndexName);
-    return [
-      `curl -X POST "${rootUrl}/_bulk" \\`,
-      '  -H "Content-Type: application/x-ndjson" \\',
-      "  --data-binary @- <<'NDJSON'",
+    return buildCurlRequest(
+      "POST",
+      `${rootUrl}/_bulk`,
       ndjsonBody,
-      "NDJSON",
-    ].join("\n");
+      "application/x-ndjson"
+    );
   }
 
   return documents
