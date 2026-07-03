@@ -5,6 +5,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Dev Toolbox Pro</title>
     <link rel="stylesheet" href="styles.css" />
+    <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.2/dist/jspdf.umd.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/build/pdf.min.js"></script>
+    <script>
+      if (typeof pdfjsLib !== "undefined") {
+        pdfjsLib.GlobalWorkerOptions.workerSrc =
+          "https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/build/pdf.worker.min.js";
+      }
+    </script>
   </head>
   <body>
     <div class="app-shell">
@@ -24,6 +33,10 @@
             <span class="chip-title">JSON 工具</span>
             <span class="chip-desc">格式化、树视图、差异对比</span>
           </button>
+          <button class="panel-chip" data-panel="sqlSection" type="button">
+            <span class="chip-title">SQL 工具</span>
+            <span class="chip-desc">压缩、去注释、函数括号整理</span>
+          </button>
           <button class="panel-chip" data-panel="timeSection" type="button">
             <span class="chip-title">时间工具</span>
             <span class="chip-desc">当前时间、双向转换</span>
@@ -31,6 +44,10 @@
           <button class="panel-chip" data-panel="imageSection" type="button">
             <span class="chip-title">图片工具</span>
             <span class="chip-desc">压缩、批量看图、失败筛选</span>
+          </button>
+          <button class="panel-chip" data-panel="fapiaoSection" type="button">
+            <span class="chip-title">发票工具</span>
+            <span class="chip-desc">图片合并 PDF / Word</span>
           </button>
           <button class="panel-chip" data-panel="esSection" type="button">
             <span class="chip-title">ES 工具</span>
@@ -224,6 +241,62 @@
           </div>
         </section>
 
+        <section class="tool-panel" id="sqlSection" data-panel-title="SQL 工具" data-panel-description="去除注释与多余空白，并整理函数名与括号之间的空格。">
+          <div class="section-banner">
+            <div>
+              <p class="panel-kicker">SQL</p>
+              <h3>SQL 压缩</h3>
+              <p class="section-text">一键压缩 SQL：移除注释、合并空白，并去除函数名与左括号之间的空格（如 COUNT (*) → COUNT(*)）。</p>
+            </div>
+            <div class="section-tags">
+              <span>Compress</span>
+              <span>Comment</span>
+              <span>Function</span>
+            </div>
+          </div>
+
+          <div class="split-workbench">
+            <article class="card workspace-pane">
+              <div class="card-header">
+                <h3>输入 SQL</h3>
+                <span class="info-badge" id="sqlInputCharCount">0 字符</span>
+              </div>
+              <textarea id="sqlInput" class="workbench-input" placeholder="在此粘贴 SQL 语句...&#10;&#10;例如:&#10;SELECT COUNT(*), SUM(price) FROM orders;"></textarea>
+              <div class="action-row wrap">
+                <button data-action="compressSql" type="button">压缩</button>
+                <button class="secondary" data-action="clearSqlPanels" type="button">清空</button>
+                <button class="secondary" data-action="fillSqlExampleSelect" type="button">简单</button>
+                <button class="secondary" data-action="fillSqlExampleInsert" type="button">插入</button>
+                <button class="secondary" data-action="fillSqlExampleComplex" type="button">复杂 SQL</button>
+              </div>
+              <p class="helper-text">支持 Ctrl+Enter 快速压缩；所有处理均在浏览器本地完成，不上传服务器。</p>
+            </article>
+
+            <article class="card workspace-pane">
+              <div class="card-header">
+                <h3>压缩结果</h3>
+                <button class="copy-btn" data-copy-target="sqlOutput" type="button">复制结果</button>
+              </div>
+              <div class="compare-stats">
+                <div class="compare-stat">
+                  <span>输出长度</span>
+                  <strong id="sqlOutputCharCount">0 字符</strong>
+                </div>
+                <div class="compare-stat">
+                  <span>压缩比</span>
+                  <strong id="sqlCompressRatio">-</strong>
+                </div>
+                <div class="compare-stat">
+                  <span>行数</span>
+                  <strong><span id="sqlLineCountBefore">0</span> → <span id="sqlLineCountAfter">0</span></strong>
+                </div>
+              </div>
+              <textarea id="sqlOutput" class="output wide-output" readonly placeholder="压缩结果会显示在这里"></textarea>
+              <p class="helper-text">压缩后会移除多行/单行注释，合并换行与多余空格，并整理逗号与括号后的间距。</p>
+            </article>
+          </div>
+        </section>
+
         <section class="tool-panel" id="timeSection" data-panel-title="时间工具" data-panel-description="当前时间和两种常用转换放在同一屏里，减少来回跳转。">
           <div class="section-banner">
             <div>
@@ -385,6 +458,85 @@
               </article>
             </div>
           </div>
+        </section>
+
+        <section class="tool-panel" id="fapiaoSection" data-panel-title="发票工具" data-panel-description="拖拽发票图片或 PDF，按页面尺寸合并导出 PDF 或 Word。">
+          <div class="section-banner">
+            <div>
+              <p class="panel-kicker">Invoice</p>
+              <h3>发票图片合并</h3>
+              <p class="section-text">支持 JPG / PNG / WEBP / BMP / PDF，可配置纸张与图片尺寸，一键生成 PDF 或 Word。</p>
+            </div>
+            <div class="section-tags">
+              <span>PDF</span>
+              <span>Word</span>
+              <span>Drag Sort</span>
+            </div>
+          </div>
+
+          <article class="card">
+            <div class="card-header">
+              <h3>页面与图片设置</h3>
+            </div>
+            <p class="helper-text section-label">页面设置</p>
+            <div class="field-grid fapiao-field-grid">
+              <label>
+                <span>纸张</span>
+                <select id="fapiaoPageSize">
+                  <option value="a4">A4（21 × 29.7 cm）</option>
+                  <option value="a5">A5（14.8 × 21 cm）</option>
+                  <option value="custom">自定义</option>
+                </select>
+              </label>
+              <label id="fapiaoCustomWidthGroup" class="hidden-field">
+                <span>页面宽度（cm）</span>
+                <input id="fapiaoPageWidth" type="number" value="21" step="0.1" min="0.1" />
+              </label>
+              <label id="fapiaoCustomHeightGroup" class="hidden-field">
+                <span>页面高度（cm）</span>
+                <input id="fapiaoPageHeight" type="number" value="29.7" step="0.1" min="0.1" />
+              </label>
+            </div>
+            <p class="helper-text section-label">图片设置（在页面上的位置和大小）</p>
+            <div class="field-grid fapiao-field-grid">
+              <label>
+                <span>图片宽度（cm）</span>
+                <input id="fapiaoImgWidth" type="number" value="21" step="0.1" min="0.1" />
+              </label>
+              <label>
+                <span>图片高度（cm）</span>
+                <input id="fapiaoImgHeight" type="number" value="11" step="0.1" min="0.1" />
+              </label>
+              <label>
+                <span>图片间距（cm）</span>
+                <input id="fapiaoImgGap" type="number" value="0" step="0.1" min="0" />
+              </label>
+              <label>
+                <span>距左边距（cm）</span>
+                <input id="fapiaoImgOffsetX" type="number" value="0" step="0.1" min="0" />
+              </label>
+            </div>
+          </article>
+
+          <article class="card">
+            <div class="card-header">
+              <h3>文件列表</h3>
+              <span class="info-badge" id="fapiaoFileCount">0 张</span>
+            </div>
+            <label class="upload-box fapiao-drop-zone" id="fapiaoDropZone" for="fapiaoFileInput">
+              <input id="fapiaoFileInput" type="file" accept="image/*,.pdf" multiple />
+              <strong>拖拽发票图片或 PDF 到此处，或点击选择文件</strong>
+              <span class="helper-text">支持 JPG / PNG / WEBP / BMP / PDF（PDF 每页作为一张图片）</span>
+            </label>
+            <div id="fapiaoPreviewList" class="fapiao-preview-list empty-state">尚未添加文件</div>
+            <p class="fapiao-progress" id="fapiaoProgress"></p>
+            <div class="action-row wrap">
+              <button data-action="generateFapiaoPdf" id="fapiaoGeneratePdfBtn" type="button" disabled>生成并下载 PDF</button>
+              <button class="accent-green" data-action="generateFapiaoWord" id="fapiaoGenerateWordBtn" type="button" disabled>生成并下载 Word</button>
+              <button class="secondary" data-action="clearFapiaoList" id="fapiaoClearBtn" type="button" style="display: none">清空列表</button>
+            </div>
+            <p class="helper-text">可拖拽列表项调整顺序；所有处理均在浏览器本地完成，不上传服务器。</p>
+          </article>
         </section>
 
         <section class="tool-panel" id="esSection" data-panel-title="ES 工具" data-panel-description="查询结果转换、字段筛选和导出格式都收敛在一个操作面板里。">

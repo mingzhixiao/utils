@@ -1,0 +1,27 @@
+# Do not upload dev dependencies or local Wrangler state
+node_modules/
+.wrangler/
+.mf/
+
+# Secrets (local dev only)
+.dev.vars
+.dev.vars.*
+
+# VCS & editor files
+.git/
+.idea/
+.vscode/
+
+# Browser extension files (web deploy uses site/ only)
+background.js
+manifest.json
+
+# Project metadata (not needed on Cloudflare)
+package.json
+package-lock.json
+README.md
+
+# OS junk
+**/.DS_Store
+**/Thumbs.db
+desktop.ini

@@ -1,0 +1,26 @@
+{
+  "name": "utils",
+  "version": "1.0.0",
+  "description": "Dev Toolbox Pro now uses one shared frontend for both:",
+  "main": "background.js",
+  "scripts": {
+    "deploy": "wrangler deploy",
+    "deploy:pages": "wrangler pages deploy site --project-name utils",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mingzhixiao/utils.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/mingzhixiao/utils/issues"
+  },
+  "homepage": "https://github.com/mingzhixiao/utils#readme",
+  "devDependencies": {
+    "wrangler": "^4.107.0"
+  }
+}

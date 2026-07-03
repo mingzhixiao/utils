@@ -924,6 +924,119 @@ textarea.output {
   display: none;
 }
 
+.hidden-field {
+  display: none;
+}
+
+.section-label {
+  margin: 0 0 10px;
+  font-weight: 600;
+  color: var(--muted-strong);
+}
+
+.fapiao-drop-zone.active {
+  border-color: var(--accent);
+  background: var(--accent-soft);
+  color: var(--accent-strong);
+}
+
+.fapiao-field-grid {
+  margin-bottom: 16px;
+}
+
+.fapiao-preview-list {
+  display: grid;
+  gap: 8px;
+  margin: 14px 0;
+}
+
+.fapiao-preview-list.empty-state {
+  display: grid;
+  place-items: center;
+  min-height: 72px;
+  padding: 16px;
+  border-radius: var(--radius-md);
+  border: 1px dashed rgba(107, 114, 128, 0.22);
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.fapiao-preview-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 12px;
+  border-radius: var(--radius-sm);
+  border: 1px solid rgba(95, 74, 51, 0.12);
+  background: rgba(255, 255, 255, 0.88);
+  cursor: grab;
+}
+
+.fapiao-preview-item .thumb {
+  width: 52px;
+  height: 33px;
+  object-fit: cover;
+  border-radius: 4px;
+  border: 1px solid rgba(95, 74, 51, 0.12);
+  flex-shrink: 0;
+}
+
+.fapiao-preview-item .name {
+  flex: 1;
+  font-size: 12px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.fapiao-preview-item .size {
+  font-size: 11px;
+  color: var(--muted);
+  flex-shrink: 0;
+}
+
+.fapiao-preview-item .del-btn {
+  border: none;
+  background: none;
+  color: var(--danger);
+  cursor: pointer;
+  font-size: 18px;
+  line-height: 1;
+  padding: 2px 6px;
+}
+
+.fapiao-progress {
+  min-height: 20px;
+  margin: 0 0 8px;
+  text-align: center;
+  font-size: 13px;
+  color: var(--muted);
+}
+
+.fapiao-progress.success {
+  color: var(--teal);
+}
+
+.fapiao-progress.error {
+  color: var(--danger);
+}
+
+.action-row button.accent-green {
+  border-color: transparent;
+  background: linear-gradient(135deg, var(--teal), #0d9488);
+  color: #fff;
+  box-shadow: 0 14px 26px rgba(15, 118, 110, 0.18);
+}
+
+.action-row button.accent-green:hover {
+  filter: brightness(0.95);
+}
+
+.action-row button.accent-green:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
 .result-list,
 .image-compare-grid {
   display: grid;
