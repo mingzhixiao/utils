@@ -1,10 +1,19 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="zh-CN" data-theme="dark">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Dev Toolbox Pro</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="styles.css" />
+    <script>
+      (function() {
+        const savedTheme = localStorage.getItem('dev-toolbox-theme') || 'dark';
+        document.documentElement.setAttribute('data-theme', savedTheme);
+      })();
+    </script>
     <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.2/dist/jspdf.umd.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/build/pdf.min.js"></script>
@@ -19,45 +28,98 @@
     <div class="app-shell">
       <aside class="side-rail">
         <div class="brand-block">
-          <p class="eyebrow">Developer Toolkit</p>
-          <h1>Dev Toolbox Pro</h1>
+          <div class="logo-area">
+            <svg class="logo-icon" viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/>
+              <polyline points="3.27 6.96 12 12.01 20.73 6.96"/>
+              <line x1="12" y1="22.08" x2="12" y2="12"/>
+            </svg>
+          </div>
+          <div>
+            <p class="eyebrow">Developer Toolkit</p>
+            <h1>Dev Toolbox Pro</h1>
+          </div>
         </div>
 
         <nav class="panel-nav" id="topNav">
           <button class="panel-chip active" data-panel="encodingSection" type="button">
-            <span class="chip-title">编码工具</span>
+            <div class="chip-lead">
+              <svg class="nav-icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 18l6-6-6-6M8 6L2 12l6 6"/></svg>
+              <span class="chip-title">编码工具</span>
+            </div>
             <span class="chip-desc">URL、Unicode、Base64、转义</span>
           </button>
           <button class="panel-chip" data-panel="jsonSection" type="button">
-            <span class="chip-title">JSON 工具</span>
+            <div class="chip-lead">
+              <svg class="nav-icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a3 3 0 0 0-3 3v3a3 3 0 0 1-3 3 3 3 0 0 1 3 3v3a3 3 0 0 0 3 3M12 2a3 3 0 0 1 3 3v3a3 3 0 0 0 3 3 3 3 0 0 0-3 3v3a3 3 0 0 1-3 3"/></svg>
+              <span class="chip-title">JSON 工具</span>
+            </div>
             <span class="chip-desc">格式化、树视图、差异对比</span>
           </button>
           <button class="panel-chip" data-panel="sqlSection" type="button">
-            <span class="chip-title">SQL 工具</span>
+            <div class="chip-lead">
+              <svg class="nav-icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M3 5v6c0 1.66 4 3 9 3s9-1.34 9-3V5M3 11v6c0 1.66 4 3 9 3s9-1.34 9-3v-6"/></svg>
+              <span class="chip-title">SQL 工具</span>
+            </div>
             <span class="chip-desc">压缩、去注释、函数括号整理</span>
           </button>
           <button class="panel-chip" data-panel="timeSection" type="button">
-            <span class="chip-title">时间工具</span>
+            <div class="chip-lead">
+              <svg class="nav-icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+              <span class="chip-title">时间工具</span>
+            </div>
             <span class="chip-desc">当前时间、双向转换</span>
           </button>
           <button class="panel-chip" data-panel="imageSection" type="button">
-            <span class="chip-title">图片工具</span>
+            <div class="chip-lead">
+              <svg class="nav-icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+              <span class="chip-title">图片工具</span>
+            </div>
             <span class="chip-desc">压缩、批量看图、失败筛选</span>
           </button>
           <button class="panel-chip" data-panel="fapiaoSection" type="button">
-            <span class="chip-title">发票工具</span>
+            <div class="chip-lead">
+              <svg class="nav-icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+              <span class="chip-title">发票工具</span>
+            </div>
             <span class="chip-desc">图片合并 PDF / Word</span>
           </button>
+          <button class="panel-chip" data-panel="httpSection" type="button">
+            <div class="chip-lead">
+              <svg class="nav-icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+              <span class="chip-title">HTTP 工具</span>
+            </div>
+            <span class="chip-desc">GET/POST 互转 cURL</span>
+          </button>
           <button class="panel-chip" data-panel="esSection" type="button">
-            <span class="chip-title">ES 工具</span>
+            <div class="chip-lead">
+              <svg class="nav-icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="4 17 10 11 4 5"/><line x1="12" y1="19" x2="20" y2="19"/></svg>
+              <span class="chip-title">ES 工具</span>
+            </div>
             <span class="chip-desc">Console、cURL、Bulk</span>
           </button>
           <a class="panel-chip panel-link" href="md-index.html">
-            <span class="chip-title">Markdown 阅读</span>
+            <div class="chip-lead">
+              <svg class="nav-icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2zM22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+              <span class="chip-title">Markdown 阅读</span>
+            </div>
             <span class="chip-desc">独立页面 · 目录导航 · 代码高亮</span>
           </a>
         </nav>
 
+        <div class="sidebar-footer">
+          <button id="themeToggleBtn" class="theme-toggle-btn" type="button" aria-label="切换主题">
+            <div class="theme-toggle-inner">
+              <svg class="sun-icon" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+              <svg class="moon-icon" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+              <span class="theme-text">切换主题</span>
+            </div>
+          </button>
+          <div class="system-status">
+            <span class="status-dot online"></span>
+            <span class="status-text">本地服务就绪</span>
+          </div>
+        </div>
       </aside>
 
       <main class="workspace">
@@ -535,6 +597,117 @@
             </div>
             <p class="helper-text">可拖拽列表项调整顺序；所有处理均在浏览器本地完成，不上传服务器。</p>
           </article>
+        </section>
+
+        <section class="tool-panel" id="httpSection" data-panel-title="HTTP 工具" data-panel-description="GET 与 POST 请求互转，支持 Form 表单和 JSON 参数格式。">
+          <div class="section-banner">
+            <div>
+              <p class="panel-kicker">HTTP</p>
+              <h3>GET / POST 互转 cURL</h3>
+              <p class="section-text">支持 GET URL 与 POST（Form / JSON）双向转换，自动生成对应参数的 cURL 命令。</p>
+            </div>
+            <div class="section-tags">
+              <span>GET</span>
+              <span>Form</span>
+              <span>JSON</span>
+              <span>cURL</span>
+            </div>
+          </div>
+
+          <div class="split-workbench">
+            <article class="card workspace-pane">
+              <div class="card-header">
+                <h3>请求参数</h3>
+              </div>
+              <div class="field-grid">
+                <label>
+                  <span>输入类型</span>
+                  <select id="httpInputMode">
+                    <option value="json">JSON 请求体</option>
+                    <option value="getUrl">GET URL（含查询参数）</option>
+                  </select>
+                </label>
+                <label>
+                  <span>请求体格式</span>
+                  <select id="httpBodyFormat">
+                    <option value="form">Form 表单</option>
+                    <option value="json">JSON</option>
+                  </select>
+                </label>
+              </div>
+              <label>
+                <span id="httpFormUrlLabel">请求 URL</span>
+                <input id="httpFormUrl" type="text" placeholder="https://example.com/api/submit" />
+              </label>
+              <div class="field-grid">
+                <label>
+                  <span>输出方法</span>
+                  <select id="httpOutputMethod">
+                    <option value="GET">GET</option>
+                    <option value="POST" selected>POST</option>
+                    <option value="PUT">PUT</option>
+                    <option value="PATCH">PATCH</option>
+                  </select>
+                </label>
+                <label id="httpFormKeyStyleGroup">
+                  <span>嵌套键风格</span>
+                  <select id="httpFormKeyStyle">
+                    <option value="bracket">括号式 user[name]</option>
+                    <option value="dot">点号式 user.name</option>
+                  </select>
+                </label>
+                <label>
+                  <span>输出格式</span>
+                  <select id="httpFormOutputStyle">
+                    <option value="curl">cURL (bash)</option>
+                    <option value="curlPowerShell">cURL (PowerShell)</option>
+                  </select>
+                </label>
+              </div>
+              <label id="httpFormJsonGroup">
+                <span>请求体 JSON</span>
+                <textarea id="httpFormJsonInput" class="workbench-input" placeholder='{"username": "admin", "profile": {"age": 25}, "tags": ["a", "b"]}'></textarea>
+              </label>
+              <div class="action-row">
+                <button data-action="convertHttpFormCurl" type="button">生成 cURL</button>
+                <button class="secondary" data-action="fillHttpFormExample" type="button">填充示例</button>
+                <button class="secondary" data-action="clearHttpFormPanels" type="button">清空</button>
+              </div>
+              <p class="helper-text" id="httpInputModeHint">选择输入类型和输出方法后，可双向转换 GET 查询参数与 POST 请求体。</p>
+            </article>
+
+            <article class="card workspace-pane">
+              <div class="card-header">
+                <h3>cURL 输出</h3>
+                <button class="copy-btn" data-copy-target="httpFormOutput" type="button">复制结果</button>
+              </div>
+              <div class="compare-stats">
+                <div class="compare-stat">
+                  <span>字段数</span>
+                  <strong id="httpFormFieldCount">0</strong>
+                </div>
+                <div class="compare-stat">
+                  <span>输入类型</span>
+                  <strong id="httpInputModeLabel">JSON 请求体</strong>
+                </div>
+                <div class="compare-stat">
+                  <span>请求体格式</span>
+                  <strong id="httpBodyFormatLabel">Form 表单</strong>
+                </div>
+                <div class="compare-stat">
+                  <span>输出方法</span>
+                  <strong id="httpOutputMethodLabel">POST</strong>
+                </div>
+                <div class="compare-stat">
+                  <span>输出格式</span>
+                  <strong id="httpFormFormatLabel">cURL (bash)</strong>
+                </div>
+              </div>
+              <textarea id="httpFormBodyPreview" class="output" readonly placeholder="参数预览"></textarea>
+              <textarea id="httpFormOutput" class="output wide-output" placeholder="生成的 cURL 命令会显示在这里"></textarea>
+              <p class="helper-text">上方为参数预览（GET 为 query，POST 为请求体），下方为完整 cURL 命令，参数保持原文不转义。</p>
+            </article>
+          </div>
         </section>
 
         <section class="tool-panel" id="esSection" data-panel-title="ES 工具" data-panel-description="查询结果转换、字段筛选和导出格式都收敛在一个操作面板里。">
