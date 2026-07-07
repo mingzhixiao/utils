@@ -20,6 +20,8 @@
     </script>
     <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.2/dist/jspdf.umd.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/mammoth@1.8.0/mammoth.browser.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/build/pdf.min.js"></script>
     <script>
       if (typeof pdfjsLib !== "undefined") {
@@ -122,6 +124,13 @@
               <span class="chip-title">Office 工具</span>
             </div>
             <span class="chip-desc">Excel/Word 图片提取</span>
+          </button>
+          <button class="panel-chip" data-panel="wordPdfSection" type="button">
+            <div class="chip-lead">
+              <svg class="nav-icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+              <span class="chip-title">Word 转 PDF</span>
+            </div>
+            <span class="chip-desc">本地转换、直接下载</span>
           </button>
           <a class="panel-chip panel-link" href="md-index.html">
             <div class="chip-lead">
@@ -1001,6 +1010,44 @@
               </div>
             </div>
             <div id="excelImageGrid" class="excel-image-grid empty-state">选择 Excel / Word 文件后可提取其中的图片</div>
+          </article>
+        </section>
+
+        <section class="tool-panel" id="wordPdfSection" data-panel-title="Word 转 PDF" data-panel-description="将 .docx 在浏览器本地转换为 PDF，可预览后直接下载。">
+          <div class="section-banner">
+            <div>
+              <p class="panel-kicker">Word → PDF</p>
+              <h3>转换并下载 PDF</h3>
+              <p class="section-text">支持 .docx / .docm，使用 mammoth 转为 HTML 后由浏览器本地生成 PDF，全程不上传服务器。</p>
+            </div>
+            <div class="section-tags">
+              <span>Convert</span>
+              <span>Preview</span>
+              <span>Download</span>
+            </div>
+          </div>
+
+          <article class="card">
+            <div class="card-header">
+              <h3>选择 Word 文件</h3>
+              <span class="info-badge" id="wordPdfBadge">未选择</span>
+            </div>
+            <label class="upload-box word-pdf-drop-zone" id="wordPdfDropZone" for="wordPdfFileInput">
+              <input id="wordPdfFileInput" type="file" accept=".docx,.docm,application/vnd.openxmlformats-officedocument.wordprocessingml.document" />
+              <svg class="upload-icon" viewBox="0 0 24 24" width="36" height="36" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                <polyline points="14 2 14 8 20 8"/>
+              </svg>
+              <strong>拖拽 Word 文件到此处，或点击选择</strong>
+              <span class="helper-text">仅支持 .docx / .docm，所有处理均在浏览器本地完成，不上传服务器。</span>
+            </label>
+            <div class="action-row wrap">
+              <button data-action="wordPdfConvert" type="button" id="wordPdfConvertBtn" disabled>转换为 PDF</button>
+              <button class="accent-green" data-action="wordPdfDownload" type="button" id="wordPdfDownloadBtn" disabled>下载 PDF</button>
+              <button class="secondary" data-action="wordPdfClear" type="button" id="wordPdfClearBtn" style="display: none">清空</button>
+            </div>
+            <p class="word-pdf-progress" id="wordPdfProgress"></p>
+            <div id="wordPdfPreview" class="word-pdf-preview empty-state">转换后可在此预览</div>
           </article>
         </section>
       </main>

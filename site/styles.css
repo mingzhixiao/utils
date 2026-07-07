@@ -2113,3 +2113,89 @@ html[data-theme="light"] .fapiao-preview-list.empty-state {
     grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
   }
 }
+
+/* Word 转 PDF 工具 */
+.word-pdf-drop-zone.active {
+  border-color: var(--accent);
+  background: var(--accent-soft);
+  color: var(--text);
+  box-shadow: 0 0 0 4px var(--accent-soft);
+}
+
+.word-pdf-progress {
+  min-height: 20px;
+  margin: 0 0 12px;
+  text-align: center;
+  font-size: 13px;
+  color: var(--muted);
+}
+
+.word-pdf-progress.success {
+  color: var(--teal);
+}
+
+.word-pdf-progress.error {
+  color: var(--danger);
+}
+
+.word-pdf-preview {
+  margin-top: 12px;
+  max-height: 620px;
+  overflow: auto;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 0;
+  background: rgba(0, 0, 0, 0.18);
+}
+
+.word-pdf-preview.empty-state {
+  min-height: 120px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.word-pdf-content {
+  background: #ffffff;
+  color: #1f2937;
+  padding: 32px 40px;
+  font-family: "Inter", "Microsoft YaHei", system-ui, sans-serif;
+  font-size: 15px;
+  line-height: 1.7;
+  max-width: 800px;
+  margin: 0 auto;
+  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.25);
+}
+
+.word-pdf-content img {
+  max-width: 100%;
+  height: auto;
+}
+
+.word-pdf-content table {
+  border-collapse: collapse;
+  width: 100%;
+  margin: 12px 0;
+}
+
+.word-pdf-content th,
+.word-pdf-content td {
+  border: 1px solid #cbd5e1;
+  padding: 6px 10px;
+}
+
+.word-pdf-content h1,
+.word-pdf-content h2,
+.word-pdf-content h3 {
+  line-height: 1.3;
+  margin: 0.6em 0 0.3em;
+}
+
+@media (max-width: 600px) {
+  .word-pdf-content {
+    padding: 20px 18px;
+    font-size: 14px;
+  }
+}
