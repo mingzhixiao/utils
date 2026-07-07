@@ -44,6 +44,12 @@
             <p class="eyebrow">Developer Toolkit</p>
             <h1>Dev Toolbox Pro</h1>
           </div>
+          <button id="sidebarCloseBtn" class="sidebar-close-btn" type="button" aria-label="关闭菜单">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="18" y1="6" x2="6" y2="18"></line>
+              <line x1="6" y1="6" x2="18" y2="18"></line>
+            </svg>
+          </button>
         </div>
 
         <nav class="panel-nav" id="topNav">
@@ -95,6 +101,13 @@
               <span class="chip-title">HTTP 工具</span>
             </div>
             <span class="chip-desc">GET/POST 互转 cURL</span>
+          </button>
+          <button class="panel-chip" data-panel="arraySection" type="button">
+            <div class="chip-lead">
+              <svg class="nav-icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
+              <span class="chip-title">数组工具</span>
+            </div>
+            <span class="chip-desc">换行/逗号/JSON 互转</span>
           </button>
           <button class="panel-chip" data-panel="esSection" type="button">
             <div class="chip-lead">
@@ -152,6 +165,13 @@
 
       <main class="workspace">
         <header class="workspace-header">
+          <button id="menuToggleBtn" class="menu-toggle-btn" type="button" aria-label="打开菜单">
+            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="3" y1="12" x2="21" y2="12"></line>
+              <line x1="3" y1="6" x2="21" y2="6"></line>
+              <line x1="3" y1="18" x2="21" y2="18"></line>
+            </svg>
+          </button>
           <div>
             <p class="eyebrow">Focused Workspace</p>
             <h2 id="workspaceTitle">编码工具</h2>
@@ -521,6 +541,9 @@
                   <label>
                     <span>对比列数</span>
                     <select id="imageCompareColumns">
+                      <option value="1">1 列</option>
+                      <option value="2">2 列</option>
+                      <option value="3">3 列</option>
                       <option value="4" selected>4 列</option>
                       <option value="5">5 列</option>
                       <option value="6">6 列</option>
@@ -750,6 +773,78 @@
           </div>
         </section>
 
+        <section class="tool-panel" id="arraySection" data-panel-title="数组工具" data-panel-description="换行、逗号、JSON 数组等多种格式之间快速互转。">
+          <div class="section-banner">
+            <div>
+              <p class="panel-kicker">Array</p>
+              <h3>数组格式互转</h3>
+              <p class="section-text">支持换行分隔、逗号分隔、JSON 数组、双引号逗号四种格式相互转换，并支持去重和排序。</p>
+            </div>
+            <div class="section-tags">
+              <span>换行</span>
+              <span>逗号</span>
+              <span>JSON</span>
+              <span>去重</span>
+            </div>
+          </div>
+
+          <div class="split-workbench">
+            <article class="card workspace-pane">
+              <div class="card-header">
+                <h3>输入</h3>
+              </div>
+              <label>
+                <span>输入格式</span>
+                <select id="arrayInputFormat">
+                  <option value="auto">自动检测</option>
+                  <option value="newline">每行一个</option>
+                  <option value="comma">逗号分隔</option>
+                  <option value="jsonArray">JSON 数组</option>
+                  <option value="quotedComma">双引号逗号</option>
+                </select>
+              </label>
+              <textarea id="arrayInput" placeholder="粘贴数据，支持自动检测格式&#10;例如：&#10;26070713452925944&#10;26070713331025518&#10;26070713195124733"></textarea>
+              <div class="action-row">
+                <button data-action="convertArray" type="button">转换</button>
+                <button class="secondary" data-action="dedupArray" type="button">去重</button>
+                <button class="secondary" data-action="sortArrayAsc" type="button">升序</button>
+                <button class="secondary" data-action="sortArrayDesc" type="button">降序</button>
+              </div>
+            </article>
+
+            <article class="card workspace-pane">
+              <div class="card-header">
+                <h3>输出</h3>
+                <button class="copy-btn" data-copy-target="arrayOutput" type="button">复制结果</button>
+              </div>
+              <div class="compare-stats">
+                <div class="compare-stat">
+                  <span>条目数</span>
+                  <strong id="arrayItemCount">0</strong>
+                </div>
+                <div class="compare-stat">
+                  <span>去重后</span>
+                  <strong id="arrayUniqueCount">0</strong>
+                </div>
+                <div class="compare-stat">
+                  <span>输出格式</span>
+                  <strong id="arrayOutputFormatLabel">每行一个</strong>
+                </div>
+              </div>
+              <label>
+                <span>输出格式</span>
+                <select id="arrayOutputFormat">
+                  <option value="newline">每行一个</option>
+                  <option value="comma">逗号分隔</option>
+                  <option value="jsonArray">JSON 数组</option>
+                  <option value="quotedComma">双引号逗号</option>
+                </select>
+              </label>
+              <textarea id="arrayOutput" class="output wide-output" readonly placeholder="转换结果会显示在这里"></textarea>
+            </article>
+          </div>
+        </section>
+
         <section class="tool-panel" id="esSection" data-panel-title="ES 工具" data-panel-description="查询结果转换、字段筛选和导出格式都收敛在一个操作面板里。">
           <div class="section-banner">
             <div>
@@ -850,6 +945,7 @@
       </main>
 
       <div id="toast" class="toast"></div>
+      <div class="sidebar-overlay" id="sidebarOverlay"></div>
     </div>
     <script src="app.js"></script>
   </body>

@@ -563,6 +563,39 @@
             0%, 100% { opacity: 0.4; }
             50% { opacity: 1; }
         }
+
+        /* ========== 移动端响应式适配 ========== */
+        @media (max-width: 768px) {
+            .content-body {
+                flex-direction: column;
+            }
+            .input-panel {
+                width: 100% !important;
+                min-width: 0 !important;
+                height: 300px;
+                border-right: none !important;
+                border-bottom: 1px solid var(--border-color);
+            }
+            .input-panel.collapsed {
+                height: 0 !important;
+            }
+            .preview-panel {
+                padding: 20px !important;
+            }
+            .toc-sidebar {
+                position: fixed;
+                top: 56px;
+                right: 0;
+                bottom: 0;
+                width: 100% !important;
+                min-width: 0 !important;
+                border-left: none !important;
+                border-top: 1px solid var(--border-color);
+            }
+            .toc-sidebar.collapsed {
+                margin-right: -100% !important;
+            }
+        }
     </style>
     <script src="https://cdn.busuanzi.cc/busuanzi/3.6.9/busuanzi.min.js" defer></script>
 </head>
