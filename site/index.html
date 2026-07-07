@@ -116,6 +116,13 @@
             </div>
             <span class="chip-desc">Console、cURL、Bulk</span>
           </button>
+          <button class="panel-chip" data-panel="excelSection" type="button">
+            <div class="chip-lead">
+              <svg class="nav-icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><rect x="3" y="13" width="18" height="8" rx="1"/><path d="M3 17h18"/><path d="M7 13v8M12 13v8M17 13v8"/></svg>
+              <span class="chip-title">Office 工具</span>
+            </div>
+            <span class="chip-desc">Excel/Word 图片提取</span>
+          </button>
           <a class="panel-chip panel-link" href="md-index.html">
             <div class="chip-lead">
               <svg class="nav-icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2zM22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
@@ -941,6 +948,60 @@
               <p class="helper-text">Bulk 文本会自动补齐 ES 需要的结尾换行；带特殊字符的文档 ID 也会自动做路径编码。</p>
             </article>
           </div>
+        </section>
+        <section class="tool-panel" id="excelSection" data-panel-title="Office 图片提取" data-panel-description="从 Excel / Word 中提取内嵌图片，勾选后单独或打包下载。">
+          <div class="section-banner">
+            <div>
+              <p class="panel-kicker">Office</p>
+              <h3>提取并下载图片</h3>
+              <p class="section-text">支持 .xlsx / .xlsm（xl/media）与 .docx / .docm（word/media），读取压缩包内的图片，按缩略图勾选，可逐个或打包下载。</p>
+            </div>
+            <div class="section-tags">
+              <span>Extract</span>
+              <span>Select</span>
+              <span>Download</span>
+            </div>
+          </div>
+
+          <article class="card">
+            <div class="card-header">
+              <h3>选择 Excel / Word 文件</h3>
+              <span class="info-badge" id="excelFileBadge">未选择</span>
+            </div>
+            <label class="upload-box excel-drop-zone" id="excelDropZone" for="excelFileInput">
+              <input id="excelFileInput" type="file" accept=".xlsx,.xlsm,.docx,.docm,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.openxmlformats-officedocument.wordprocessingml.document" />
+              <svg class="upload-icon" viewBox="0 0 24 24" width="36" height="36" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                <polyline points="17 8 12 3 7 8"/>
+                <line x1="12" y1="3" x2="12" y2="15"/>
+              </svg>
+              <strong>拖拽 Excel / Word 文件到此处，或点击选择</strong>
+              <span class="helper-text">仅支持 xlsx / xlsm / docx / docm，所有处理均在浏览器本地完成，不上传服务器。</span>
+            </label>
+            <div class="action-row wrap">
+              <button data-action="excelSelectAll" type="button" class="secondary">全选</button>
+              <button data-action="excelSelectNone" type="button" class="secondary">取消全选</button>
+              <button data-action="excelDownloadSelected" type="button" id="excelDownloadBtn" disabled>下载选中图片</button>
+              <button class="accent-green" data-action="excelDownloadZip" type="button" id="excelDownloadZipBtn" disabled>打包下载 ZIP</button>
+              <button class="secondary" data-action="excelClearList" type="button" id="excelClearBtn" style="display: none">清空</button>
+            </div>
+            <p class="excel-progress" id="excelProgress"></p>
+            <div class="compare-stats excel-stats">
+              <div class="compare-stat">
+                <span>图片总数</span>
+                <strong id="excelTotalCount">0</strong>
+              </div>
+              <div class="compare-stat">
+                <span>已选中</span>
+                <strong id="excelSelectedCount">0</strong>
+              </div>
+              <div class="compare-stat">
+                <span>总大小</span>
+                <strong id="excelTotalSize">0 B</strong>
+              </div>
+            </div>
+            <div id="excelImageGrid" class="excel-image-grid empty-state">选择 Excel / Word 文件后可提取其中的图片</div>
+          </article>
         </section>
       </main>
 
