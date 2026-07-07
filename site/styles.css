@@ -37,6 +37,10 @@
   --input-border-hover: rgba(255, 255, 255, 0.18);
   --input-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.24);
   --input-placeholder: rgba(148, 163, 184, 0.72);
+  --tab-bg: rgba(0, 0, 0, 0.15);
+  --output-bg: rgba(0, 0, 0, 0.25);
+  --pane-accent-border: rgba(99, 102, 241, 0.25);
+  --overlay-subtle: rgba(0, 0, 0, 0.12);
 }
 
 html[data-theme="light"] {
@@ -71,6 +75,10 @@ html[data-theme="light"] {
   --input-border-hover: rgba(79, 70, 229, 0.28);
   --input-shadow: inset 0 1px 2px rgba(15, 23, 42, 0.04), 0 1px 2px rgba(15, 23, 42, 0.03);
   --input-placeholder: #94a3b8;
+  --tab-bg: rgba(15, 23, 42, 0.05);
+  --output-bg: rgba(15, 23, 42, 0.04);
+  --pane-accent-border: rgba(79, 70, 229, 0.18);
+  --overlay-subtle: rgba(15, 23, 42, 0.06);
 }
 
 * {
@@ -163,9 +171,19 @@ summary {
   flex-shrink: 0;
 }
 
-.logo-icon {
-  stroke-dasharray: 100;
-  animation: drawLogo 3s ease infinite;
+/* Logo animation - performance aware */
+@media (prefers-reduced-motion: no-preference) {
+  .logo-icon {
+    stroke-dasharray: 100;
+    animation: drawLogo 3s ease 1;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .logo-icon {
+    stroke-dasharray: none;
+    animation: none;
+  }
 }
 
 @keyframes drawLogo {
@@ -177,7 +195,7 @@ summary {
 .eyebrow,
 .panel-kicker {
   margin: 0 0 4px;
-  font-size: 10px;
+  font-size: 11px;
   font-weight: 700;
   letter-spacing: 0.14em;
   text-transform: uppercase;
@@ -267,7 +285,7 @@ summary {
 }
 
 .chip-desc {
-  color: rgba(255, 255, 255, 0.45);
+  color: rgba(255, 255, 255, 0.55);
   font-size: 11px;
   line-height: 1.4;
   padding-left: 28px;
@@ -562,7 +580,7 @@ html[data-theme="light"] .moon-icon {
 .section-tabs {
   display: flex;
   gap: 6px;
-  background: rgba(0, 0, 0, 0.15);
+  background: var(--tab-bg);
   padding: 4px;
   border-radius: var(--radius-md);
   align-self: flex-start;
@@ -641,6 +659,12 @@ html[data-theme="light"] .moon-icon {
   min-height: 460px;
 }
 
+/* Split workspace - right pane visual distinction */
+.split-workbench .workspace-pane:last-child {
+  border-left: 3px solid var(--pane-accent-border);
+  padding-left: 22px;
+}
+
 .workspace-pane {
   min-height: 500px;
 }
@@ -674,7 +698,7 @@ html[data-theme="light"] .moon-icon {
 .mode-switch {
   display: flex;
   gap: 6px;
-  background: rgba(0, 0, 0, 0.12);
+  background: var(--overlay-subtle);
   padding: 4px;
   border-radius: var(--radius-md);
   border: 1px solid var(--border);
@@ -815,7 +839,7 @@ textarea {
 }
 
 textarea.output {
-  background: rgba(0, 0, 0, 0.25);
+  background: var(--output-bg);
   border-color: var(--border);
 }
 
@@ -856,7 +880,7 @@ textarea.output {
 .es-output-area {
   min-height: 400px;
   padding: 14px;
-  background: rgba(0, 0, 0, 0.25);
+  background: var(--output-bg);
 }
 
 /* Fields & Labels */
@@ -1122,7 +1146,7 @@ button.secondary:hover {
   gap: 4px;
   padding: 10px 14px;
   border-radius: var(--radius-md);
-  background: rgba(0, 0, 0, 0.12);
+  background: var(--overlay-subtle);
   border: 1px solid var(--border);
 }
 
@@ -1149,7 +1173,7 @@ button.secondary:hover {
   overflow: auto;
   border-radius: var(--radius-lg);
   border: 1px dashed var(--border);
-  background: rgba(0, 0, 0, 0.12);
+  background: var(--overlay-subtle);
   font-family: var(--font-mono);
   font-size: 13px;
 }
@@ -1244,7 +1268,7 @@ button.secondary:hover {
   overflow: auto;
   border-radius: var(--radius-lg);
   border: 1px dashed var(--border);
-  background: rgba(0, 0, 0, 0.12);
+  background: var(--overlay-subtle);
   color: var(--text);
   font-family: var(--font-mono);
   font-size: 12px;
@@ -1274,7 +1298,7 @@ button.secondary:hover {
   overflow: auto;
   border-radius: var(--radius-lg);
   border: 1px solid var(--border);
-  background: rgba(0, 0, 0, 0.12);
+  background: var(--overlay-subtle);
 }
 
 .diff-viewer-head {
