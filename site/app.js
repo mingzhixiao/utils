@@ -2550,6 +2550,18 @@ function formatArrayOutput(items, format) {
   }
 }
 
+function getArrayAffix() {
+  return {
+    prefix: $("arrayPrefix").value,
+    suffix: $("arraySuffix").value,
+  };
+}
+
+function buildArrayOutput(items, format, prefix = "", suffix = "") {
+  const decorated = items.map((item) => `${prefix}${item}${suffix}`);
+  return formatArrayOutput(decorated, format);
+}
+
 function getArrayItems() {
   const input = $("arrayInput").value;
   let format = $("arrayInputFormat").value;
@@ -2565,7 +2577,8 @@ function runArrayConversion() {
     throw new Error("未解析到任何条目");
   }
   const outputFormat = $("arrayOutputFormat").value;
-  const output = formatArrayOutput(items, outputFormat);
+  const { prefix, suffix } = getArrayAffix();
+  const output = buildArrayOutput(items, outputFormat, prefix, suffix);
   setOutput("arrayOutput", output);
   const uniqueItems = [...new Set(items)];
   setText("arrayItemCount", items.length);
@@ -2592,6 +2605,16 @@ function bindArrayActions() {
   $("arrayOutputFormat").addEventListener("change", () => {
     setText("arrayOutputFormatLabel", arrayFormatLabels[$("arrayOutputFormat").value] || "");
   });
+  $("arrayPrefix").addEventListener("input", () => {
+    if ($("arrayInput").value.trim()) {
+      runArrayConversion();
+    }
+  });
+  $("arraySuffix").addEventListener("input", () => {
+    if ($("arrayInput").value.trim()) {
+      runArrayConversion();
+    }
+  });
 
   const actions = {
     convertArray: () => runArrayConversion(),
@@ -2604,7 +2627,8 @@ function bindArrayActions() {
       $("arrayInput").value = formatArrayOutput(deduped, format === "jsonArray" || format === "quotedComma" ? format : "newline");
       // 同步更新输出面板
       const outputFormat = $("arrayOutputFormat").value;
-      setOutput("arrayOutput", formatArrayOutput(deduped, outputFormat));
+      const { prefix, suffix } = getArrayAffix();
+      setOutput("arrayOutput", buildArrayOutput(deduped, outputFormat, prefix, suffix));
       setText("arrayOutputFormatLabel", arrayFormatLabels[outputFormat] || outputFormat);
       showToast(removed > 0
         ? `去重完成：${items.length} 条 → ${deduped.length} 条，移除了 ${removed} 条重复`
@@ -2616,6 +2640,8 @@ function bindArrayActions() {
       items.sort((a, b) => String(a).localeCompare(String(b), undefined, { numeric: true }));
       const format = $("arrayInputFormat").value === "auto" ? detectArrayFormat($("arrayInput").value) : $("arrayInputFormat").value;
       $("arrayInput").value = formatArrayOutput(items, format === "jsonArray" || format === "quotedComma" ? format : "newline");
+      const { prefix: prefixAsc, suffix: suffixAsc } = getArrayAffix();
+      setOutput("arrayOutput", buildArrayOutput(items, $("arrayOutputFormat").value, prefixAsc, suffixAsc));
       setText("arrayItemCount", items.length);
       showToast("已按升序排列");
     },
@@ -2625,6 +2651,8 @@ function bindArrayActions() {
       items.sort((a, b) => String(b).localeCompare(String(a), undefined, { numeric: true }));
       const format = $("arrayInputFormat").value === "auto" ? detectArrayFormat($("arrayInput").value) : $("arrayInputFormat").value;
       $("arrayInput").value = formatArrayOutput(items, format === "jsonArray" || format === "quotedComma" ? format : "newline");
+      const { prefix: prefixDesc, suffix: suffixDesc } = getArrayAffix();
+      setOutput("arrayOutput", buildArrayOutput(items, $("arrayOutputFormat").value, prefixDesc, suffixDesc));
       setText("arrayItemCount", items.length);
       showToast("已按降序排列");
     },
