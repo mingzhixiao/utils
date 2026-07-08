@@ -1,6 +1,6 @@
 {
   "manifest_version": 3,
-  "name": "Dev Toolbox Pro",
+  "name": "工具盒子",
   "version": "1.0.0",
   "description": "Developer toolbox with encoding, JSON, time, image, and Elasticsearch utilities.",
   "options_page": "site/index.html",
@@ -8,7 +8,7 @@
     "service_worker": "background.js"
   },
   "action": {
-    "default_title": "Dev Toolbox Pro"
+    "default_title": "工具盒子"
   },
   "icons": {
     "16": "site/icons/icon16.png",

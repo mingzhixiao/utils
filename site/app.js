@@ -27,7 +27,7 @@ function $(id) {
 function showToast(message, isError = false) {
   const toast = $("toast");
   toast.textContent = message;
-  toast.style.background = isError ? "rgba(185, 28, 28, 0.92)" : "rgba(31, 41, 55, 0.92)";
+  toast.classList.toggle("toast-error", isError);
   toast.classList.add("show");
   clearTimeout(state.toastTimer);
   state.toastTimer = setTimeout(() => toast.classList.remove("show"), 1800);
@@ -39,6 +39,16 @@ function setOutput(id, value) {
 
 function setText(id, value) {
   $(id).textContent = String(value);
+}
+
+function escapeHtml(value) {
+  return String(value).replace(/[&<>"']/g, (char) => ({
+    "&": "&amp;",
+    "<": "&lt;",
+    ">": "&gt;",
+    '"': "&quot;",
+    "'": "&#39;",
+  }[char]));
 }
 
 async function copyText(text) {
@@ -265,7 +275,11 @@ function bindEncodingActions() {
 }
 
 function safeJsonParse(input) {
-  return JSON.parse(input);
+  try {
+    return JSON.parse(input);
+  } catch (error) {
+    throw new Error("JSON 格式错误：" + error.message);
+  }
 }
 
 function jsonEscapeString(input) {
@@ -273,7 +287,7 @@ function jsonEscapeString(input) {
 }
 
 function jsonUnescapeString(input) {
-  return JSON.parse(`"${input.replace(/"/g, '\\"')}"`);
+  return JSON.parse('"' + input + '"');
 }
 
 function normalizeRowValue(value) {
@@ -341,21 +355,74 @@ function parseCsvLine(line) {
   return cells;
 }
 
+function parseCsvDocument(csv) {
+  const rows = [];
+  let row = [];
+  let current = "";
+  let inQuotes = false;
+  const endCell = () => {
+    row.push(current);
+    current = "";
+  };
+  const endRow = () => {
+    rows.push(row);
+    row = [];
+  };
+  let i = 0;
+  while (i < csv.length) {
+    const char = csv[i];
+    const next = csv[i + 1];
+    if (char === '"' && inQuotes && next === '"') {
+      current += '"';
+      i += 2;
+      continue;
+    }
+    if (char === '"') {
+      inQuotes = !inQuotes;
+      i += 1;
+      continue;
+    }
+    if (!inQuotes && char === "\r") {
+      endCell();
+      endRow();
+      i += next === "\n" ? 2 : 1;
+      continue;
+    }
+    if (!inQuotes && char === "\n") {
+      endCell();
+      endRow();
+      i += 1;
+      continue;
+    }
+    if (!inQuotes && char === ",") {
+      endCell();
+      i += 1;
+      continue;
+    }
+    current += char;
+    i += 1;
+  }
+  endCell();
+  if (row.length > 1 || (row.length === 1 && row[0] !== "")) {
+    endRow();
+  }
+  return rows;
+}
+
 function csvToJson(csv) {
-  const lines = csv.split(/\r?\n/).filter((line) => line.trim());
-  if (lines.length < 2) {
+  const rows = parseCsvDocument(csv).filter((row) => row.some((cell) => cell.trim() !== ""));
+  if (rows.length < 2) {
     throw new Error("CSV 至少需要表头和一行数据");
   }
-  const headers = parseCsvLine(lines[0]);
-  const rows = lines.slice(1).map((line) => {
-    const values = parseCsvLine(line);
+  const headers = rows[0];
+  const dataRows = rows.slice(1).map((cells) => {
     const row = {};
     headers.forEach((header, index) => {
-      row[header] = values[index] ?? "";
+      row[header] = cells[index] ?? "";
     });
     return row;
   });
-  return JSON.stringify(rows, null, 2);
+  return JSON.stringify(dataRows, null, 2);
 }
 
 function createTreeLeaf(key, value) {
@@ -839,116 +906,6 @@ function formatDateTime(date) {
   )}:${pad(date.getSeconds())}`;
 }
 
-const sqlExamples = {
-  SELECT: `SELECT u.id, u.name, u.email
-FROM users u
-WHERE u.status = 'active'
-  AND u.created_at > '2024-01-01'
-ORDER BY u.name ASC
-LIMIT 100;`,
-  INSERT: `INSERT INTO orders (user_id, product_id, quantity, price)
-VALUES
-  (101, 5001, 2, 29.99),
-  (102, 5003, 1, 49.99),
-  (103, 5007, 5, 9.99);`,
-  COMPLEX: `SELECT
-  FROM_UNIXTIME(FLOOR(UNIX_TIMESTAMP(create_time) / 600) * 600) AS 十分钟区间,
-  SUM(CASE WHEN success = 1 THEN 1 ELSE 0 END) AS 成功数,
-  SUM(CASE WHEN success = 0 THEN 1 ELSE 0 END) AS 失败数,
-  COUNT(*) AS 总数,
-  CONCAT(ROUND(SUM(CASE WHEN success = 0 THEN 1 ELSE 0 END) * 100.0 / NULLIF(COUNT(*), 0), 1), '%') AS 失败率
-FROM baidu_check_price_log
-WHERE create_time >= DATE_SUB(NOW(), INTERVAL 2 HOUR)
-GROUP BY FLOOR(UNIX_TIMESTAMP(create_time) / 600)
-ORDER BY 十分钟区间
-LIMIT 100;`,
-};
-
-function compressSql(sql) {
-  if (!sql || sql.trim() === "") {
-    return "";
-  }
-  let result = sql
-    .replace(/\/\*[\s\S]*?\*\//g, "")
-    .replace(/--[^\n\r]*/g, "")
-    .replace(/[\r\n\t\f\v]+/g, " ")
-    .replace(/ +/g, " ")
-    .trim();
-  result = result.replace(/\b([a-zA-Z_][a-zA-Z0-9_]*)\s+\(/g, "$1(");
-  result = result.replace(/\s*,\s*/g, ", ");
-  result = result.replace(/\s*\)\s*/g, ") ");
-  result = result.replace(/ +/g, " ").trim();
-  return result;
-}
-
-function updateSqlInputMeta(input) {
-  setText("sqlInputCharCount", `${input.length} 字符`);
-}
-
-function updateSqlOutputMeta(input, output) {
-  const inLen = input.length;
-  const outLen = output.length;
-  setText("sqlOutputCharCount", `${outLen} 字符`);
-  setText("sqlLineCountBefore", input === "" ? 0 : input.split("\n").length);
-  setText("sqlLineCountAfter", output === "" ? 0 : output.split("\n").length);
-  if (inLen > 0 && outLen > 0) {
-    const ratio = (((inLen - outLen) / inLen) * 100).toFixed(1);
-    setText("sqlCompressRatio", `${ratio}%`);
-    return;
-  }
-  setText("sqlCompressRatio", "-");
-}
-
-function runSqlCompress() {
-  const input = $("sqlInput").value;
-  const output = compressSql(input);
-  setOutput("sqlOutput", output);
-  updateSqlInputMeta(input);
-  updateSqlOutputMeta(input, output);
-  if (output) {
-    showToast("SQL 已压缩");
-  }
-}
-
-function bindSqlActions() {
-  updateSqlInputMeta("");
-  updateSqlOutputMeta("", "");
-
-  $("sqlInput").addEventListener("input", (event) => {
-    updateSqlInputMeta(event.target.value);
-  });
-  $("sqlInput").addEventListener("keydown", (event) => {
-    if (event.key === "Enter" && (event.ctrlKey || event.metaKey)) {
-      event.preventDefault();
-      runSqlCompress();
-    }
-  });
-
-  const actions = {
-    compressSql: () => runSqlCompress(),
-    clearSqlPanels: () => {
-      $("sqlInput").value = "";
-      $("sqlOutput").value = "";
-      updateSqlInputMeta("");
-      updateSqlOutputMeta("", "");
-      $("sqlInput").focus();
-    },
-    fillSqlExampleSelect: () => {
-      $("sqlInput").value = sqlExamples.SELECT;
-      runSqlCompress();
-    },
-    fillSqlExampleInsert: () => {
-      $("sqlInput").value = sqlExamples.INSERT;
-      runSqlCompress();
-    },
-    fillSqlExampleComplex: () => {
-      $("sqlInput").value = sqlExamples.COMPLEX;
-      runSqlCompress();
-    },
-  };
-  bindActions(actions);
-}
-
 function updateCurrentTime() {
   const now = new Date();
   $("nowDisplay").textContent = formatDateTime(now);
@@ -1116,9 +1073,7 @@ async function compressSingleImage(file, quality) {
   ctx.drawImage(image, 0, 0);
 
   const mimeType = file.type === "image/png" ? "image/jpeg" : file.type || "image/jpeg";
-  const compressedDataUrl = canvas.toDataURL(mimeType, quality);
-  const response = await fetch(compressedDataUrl);
-  const blob = await response.blob();
+  const blob = await new Promise((resolve) => canvas.toBlob(resolve, mimeType, quality));
   const downloadUrl = URL.createObjectURL(blob);
 
   return {
@@ -1143,10 +1098,10 @@ function renderCompressResults(items) {
     const element = document.createElement("div");
     element.className = "result-item";
     element.innerHTML = `
-      <strong>${item.fileName}</strong>
+      <strong>${escapeHtml(item.fileName)}</strong>
       <div class="meta">原始大小：${formatBytes(item.originalSize)} ｜ 压缩后：${formatBytes(item.compressedSize)} ｜ 缩减：${reduction}%</div>
       <div class="action-row">
-        <a href="${item.downloadUrl}" download="${item.fileName}">下载</a>
+        <a href="${escapeHtml(item.downloadUrl)}" download="${escapeHtml(item.fileName)}">下载</a>
       </div>
     `;
     container.appendChild(element);
@@ -1217,9 +1172,9 @@ function createImageCard(item, index) {
   card.className = "image-card loading";
   card.innerHTML = `
     <span class="image-status loading">加载中</span>
-    <img src="${item.url}" alt="image-${index}" loading="lazy" referrerpolicy="no-referrer" />
+    <img src="${escapeHtml(item.url)}" alt="image-${index}" loading="lazy" referrerpolicy="no-referrer" />
     <div class="image-placeholder"></div>
-    <div class="meta">${item.url}</div>
+    <div class="meta">${escapeHtml(item.url)}</div>
   `;
   const image = card.querySelector("img");
   const syncStatus = (status) => {
@@ -1287,10 +1242,7 @@ function bindImageActions() {
         throw new Error("请先选择图片");
       }
       const quality = Number($("compressQuality").value) / 100;
-      const results = [];
-      for (const file of files) {
-        results.push(await compressSingleImage(file, quality));
-      }
+      const results = await Promise.all(files.map((file) => compressSingleImage(file, quality)));
       renderCompressResults(results);
       showToast(`已压缩 ${results.length} 张图片`);
     },
@@ -2814,9 +2766,9 @@ function renderExcelImages() {
     card.className = `excel-image-card${img.selected ? " selected" : ""}`;
     card.innerHTML = `
       <input type="checkbox" class="excel-check" ${img.selected ? "checked" : ""} />
-      <img src="${img.url}" alt="${img.originalName}" loading="lazy" />
+      <img src="${escapeHtml(img.url)}" alt="${escapeHtml(img.originalName)}" loading="lazy" />
       <div class="meta">
-        <div class="name">${img.name}</div>
+        <div class="name">${escapeHtml(img.name)}</div>
         <div class="size">${formatBytes(img.size)}</div>
       </div>
     `;

@@ -1,6 +1,6 @@
-# Dev Toolbox Pro
+# 工具盒子
 
-Dev Toolbox Pro now uses one shared frontend for both:
+工具盒子 now uses one shared frontend for both:
 
 - the browser extension
 - a Cloudflare Pages deployment

@@ -19,8 +19,8 @@
   --teal-soft: rgba(16, 185, 129, 0.15);
   --danger: #ef4444;
   --danger-soft: rgba(239, 68, 68, 0.15);
-  --shadow-lg: 0 20px 40px rgba(0, 0, 0, 0.4);
   --shadow-md: 0 10px 20px rgba(0, 0, 0, 0.3);
+  --shadow-lg: 0 20px 40px rgba(0, 0, 0, 0.4);
   --shadow-sm: 0 4px 10px rgba(0, 0, 0, 0.2);
   --radius-xl: 20px;
   --radius-lg: 14px;
@@ -995,10 +995,20 @@ input[type="range"]::-moz-range-thumb:hover {
 
 /* Helper text */
 .helper-text {
-  margin: 0;
-  color: var(--muted);
-  font-size: 12px;
-  line-height: 1.5;
+  margin: 8px 0 0;
+  padding: 10px 14px;
+  font-size: 13px;
+  line-height: 1.6;
+  color: var(--accent-strong);
+  background: linear-gradient(135deg, rgba(99, 102, 241, 0.08) 0%, rgba(16, 185, 129, 0.04) 100%);
+  border-left: 3.5px solid var(--accent-strong);
+  border-radius: 0 8px 8px 0;
+}
+
+html[data-theme="light"] .helper-text {
+  color: #4338ca;
+  background: linear-gradient(135deg, #eef2ff 0%, #f0fdf4 100%);
+  border-left-color: #6366f1;
 }
 
 .helper-text code {
@@ -1778,24 +1788,30 @@ html[data-theme="light"] .fapiao-preview-list.empty-state {
   position: fixed;
   right: 32px;
   bottom: 32px;
-  padding: 12px 20px;
-  border-radius: 999px;
-  background: var(--panel-strong);
-  color: var(--text);
-  border: 1px solid var(--border);
-  box-shadow: var(--shadow-lg);
+  padding: 14px 24px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #312e81 0%, #4338ca 100%);
+  color: #fff;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  box-shadow: 0 8px 24px rgba(67, 56, 202, 0.35), 0 0 0 1px rgba(99, 102, 241, 0.3) inset;
   opacity: 0;
   pointer-events: none;
   transform: translateY(16px);
-  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-  font-size: 13px;
-  font-weight: 500;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
   z-index: 1000;
 }
 
 .toast.show {
   opacity: 1;
   transform: translateY(0);
+}
+
+.toast.toast-error {
+  background: linear-gradient(135deg, #991b1b 0%, #dc2626 100%);
+  box-shadow: 0 8px 24px rgba(220, 38, 38, 0.35), 0 0 0 1px rgba(239, 68, 68, 0.3) inset;
 }
 
 /* Mobile menu styles */

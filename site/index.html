@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Dev Toolbox Pro</title>
+    <title>工具盒子</title>
     <link rel="icon" href="favicon.svg" type="image/svg+xml" />
     <link rel="icon" href="icons/icon32.png" sizes="32x32" type="image/png" />
     <link rel="icon" href="icons/icon16.png" sizes="16x16" type="image/png" />
@@ -43,8 +43,8 @@
             </svg>
           </div>
           <div>
-            <p class="eyebrow">Developer Toolkit</p>
-            <h1>Dev Toolbox Pro</h1>
+            <p class="eyebrow">Toolbox</p>
+            <h1>工具盒子</h1>
           </div>
           <button id="sidebarCloseBtn" class="sidebar-close-btn" type="button" aria-label="关闭菜单">
             <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -74,7 +74,7 @@
               <svg class="nav-icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M3 5v6c0 1.66 4 3 9 3s9-1.34 9-3V5M3 11v6c0 1.66 4 3 9 3s9-1.34 9-3v-6"/></svg>
               <span class="chip-title">SQL 工具</span>
             </div>
-            <span class="chip-desc">压缩、去注释、函数括号整理</span>
+            <span class="chip-desc">压缩、去注释、生成 Java 对象</span>
           </button>
           <button class="panel-chip" data-panel="timeSection" type="button">
             <div class="chip-lead">
@@ -372,59 +372,152 @@
           </div>
         </section>
 
-        <section class="tool-panel" id="sqlSection" data-panel-title="SQL 工具" data-panel-description="去除注释与多余空白，并整理函数名与括号之间的空格。">
+        <section class="tool-panel" id="sqlSection" data-panel-title="SQL 工具" data-panel-description="压缩 SQL、去除注释，并根据 CREATE TABLE 生成 Java 实体类。">
           <div class="section-banner">
             <div>
               <p class="panel-kicker">SQL</p>
-              <h3>SQL 压缩</h3>
-              <p class="section-text">一键压缩 SQL：移除注释、合并空白，并去除函数名与左括号之间的空格（如 COUNT (*) → COUNT(*)）。</p>
+              <h3>SQL 处理</h3>
+              <p class="section-text">一键压缩 SQL（移除注释、合并空白、整理函数括号），也可根据 CREATE TABLE 语句生成 Java 实体类。</p>
             </div>
             <div class="section-tags">
               <span>Compress</span>
               <span>Comment</span>
-              <span>Function</span>
+              <span>Java POJO</span>
             </div>
           </div>
 
-          <div class="split-workbench">
-            <article class="card workspace-pane">
-              <div class="card-header">
-                <h3>输入 SQL</h3>
-                <span class="info-badge" id="sqlInputCharCount">0 字符</span>
-              </div>
-              <textarea id="sqlInput" class="workbench-input" placeholder="在此粘贴 SQL 语句...&#10;&#10;例如:&#10;SELECT COUNT(*), SUM(price) FROM orders;"></textarea>
-              <div class="action-row wrap">
-                <button data-action="compressSql" type="button">压缩</button>
-                <button class="secondary" data-action="clearSqlPanels" type="button">清空</button>
-                <button class="secondary" data-action="fillSqlExampleSelect" type="button">简单</button>
-                <button class="secondary" data-action="fillSqlExampleInsert" type="button">插入</button>
-                <button class="secondary" data-action="fillSqlExampleComplex" type="button">复杂 SQL</button>
-              </div>
-              <p class="helper-text">支持 Ctrl+Enter 快速压缩；所有处理均在浏览器本地完成，不上传服务器。</p>
-            </article>
+          <div class="section-tabs" data-subtab-group="sql">
+            <button class="section-tab active" data-subtab-target="sqlCompressPane" type="button">SQL 压缩</button>
+            <button class="section-tab" data-subtab-target="sqlJavaPane" type="button">生成 Java 对象</button>
+          </div>
 
-            <article class="card workspace-pane">
-              <div class="card-header">
-                <h3>压缩结果</h3>
-                <button class="copy-btn" data-copy-target="sqlOutput" type="button">复制结果</button>
+          <div class="subpanel-stack">
+            <div class="subpanel active" id="sqlCompressPane">
+              <div class="split-workbench">
+                <article class="card workspace-pane">
+                  <div class="card-header">
+                    <h3>输入 SQL</h3>
+                    <span class="info-badge" id="sqlInputCharCount">0 字符</span>
+                  </div>
+                  <textarea id="sqlInput" class="workbench-input" placeholder="在此粘贴 SQL 语句...&#10;&#10;例如:&#10;SELECT COUNT(*), SUM(price) FROM orders;"></textarea>
+                  <div class="action-row wrap">
+                    <button data-action="compressSql" type="button">压缩</button>
+                    <button class="secondary" data-action="clearSqlPanels" type="button">清空</button>
+                    <button class="secondary" data-action="fillSqlExampleSelect" type="button">简单</button>
+                    <button class="secondary" data-action="fillSqlExampleInsert" type="button">插入</button>
+                    <button class="secondary" data-action="fillSqlExampleComplex" type="button">复杂 SQL</button>
+                  </div>
+                  <p class="helper-text">支持 Ctrl+Enter 快速压缩；所有处理均在浏览器本地完成，不上传服务器。</p>
+                </article>
+
+                <article class="card workspace-pane">
+                  <div class="card-header">
+                    <h3>压缩结果</h3>
+                    <button class="copy-btn" data-copy-target="sqlOutput" type="button">复制结果</button>
+                  </div>
+                  <div class="compare-stats">
+                    <div class="compare-stat">
+                      <span>输出长度</span>
+                      <strong id="sqlOutputCharCount">0 字符</strong>
+                    </div>
+                    <div class="compare-stat">
+                      <span>压缩比</span>
+                      <strong id="sqlCompressRatio">-</strong>
+                    </div>
+                    <div class="compare-stat">
+                      <span>行数</span>
+                      <strong><span id="sqlLineCountBefore">0</span> → <span id="sqlLineCountAfter">0</span></strong>
+                    </div>
+                  </div>
+                  <textarea id="sqlOutput" class="output wide-output" readonly placeholder="压缩结果会显示在这里"></textarea>
+                  <p class="helper-text">压缩后会移除多行/单行注释，合并换行与多余空格，并整理逗号与括号后的间距。</p>
+                </article>
               </div>
-              <div class="compare-stats">
-                <div class="compare-stat">
-                  <span>输出长度</span>
-                  <strong id="sqlOutputCharCount">0 字符</strong>
-                </div>
-                <div class="compare-stat">
-                  <span>压缩比</span>
-                  <strong id="sqlCompressRatio">-</strong>
-                </div>
-                <div class="compare-stat">
-                  <span>行数</span>
-                  <strong><span id="sqlLineCountBefore">0</span> → <span id="sqlLineCountAfter">0</span></strong>
-                </div>
+            </div>
+
+            <div class="subpanel" id="sqlJavaPane">
+              <div class="split-workbench">
+                <article class="card workspace-pane">
+                  <div class="card-header">
+                    <h3>CREATE TABLE 语句</h3>
+                    <span class="info-badge" id="sqlJavaInputBadge">0 字段</span>
+                  </div>
+                  <textarea id="sqlJavaInput" class="workbench-input" placeholder="在此粘贴 CREATE TABLE 语句...&#10;&#10;例如:&#10;CREATE TABLE `user_info` (&#10;  `id` BIGINT NOT NULL AUTO_INCREMENT COMMENT '主键',&#10;  `user_name` VARCHAR(64) NOT NULL COMMENT '用户名',&#10;  `age` INT DEFAULT NULL,&#10;  `create_time` DATETIME DEFAULT NULL&#10;) ENGINE=InnoDB DEFAULT CHARSET=utf8;"></textarea>
+                  <div class="field-grid">
+                    <label>
+                      <span>类名</span>
+                      <input id="sqlJavaClassName" type="text" placeholder="留空则按表名生成" />
+                    </label>
+                    <label>
+                      <span>包名</span>
+                      <input id="sqlJavaPackage" type="text" placeholder="如 com.example.entity" />
+                    </label>
+                  </div>
+                  <div class="field-grid">
+                    <label>
+                      <span>字段命名</span>
+                      <select id="sqlJavaFieldStyle">
+                        <option value="camel" selected>转驼峰</option>
+                        <option value="original">保持原样</option>
+                      </select>
+                    </label>
+                    <label>
+                      <span>类型策略</span>
+                      <select id="sqlJavaTypeStrategy">
+                        <option value="wrapper" selected>包装类</option>
+                        <option value="primitive">基本类型</option>
+                      </select>
+                    </label>
+                  </div>
+                  <div class="field-grid">
+                    <label>
+                      <span>日期类型</span>
+                      <select id="sqlJavaDateType">
+                        <option value="local">java.time</option>
+                        <option value="sql" selected>java.util / sql</option>
+                      </select>
+                    </label>
+                    <label>
+                      <span>生成风格</span>
+                      <select id="sqlJavaStyle">
+                        <option value="lombok" selected>Lombok @Data</option>
+                        <option value="getterSetter">Getter/Setter</option>
+                        <option value="fields">仅字段</option>
+                      </select>
+                    </label>
+                  </div>
+                  <div class="action-row wrap">
+                    <button data-action="generateJavaFromSql" type="button">生成 Java 对象</button>
+                    <button class="secondary" data-action="fillSqlExampleJava" type="button">示例</button>
+                    <button class="secondary" data-action="clearSqlJavaPanels" type="button">清空</button>
+                  </div>
+                  <p class="helper-text">解析 CREATE TABLE 的列定义，自动映射 Java 类型并生成实体类；支持注释、主键识别与选项配置。所有解析均在浏览器本地完成。</p>
+                </article>
+
+                <article class="card workspace-pane">
+                  <div class="card-header">
+                    <h3>Java 代码</h3>
+                    <button class="copy-btn" data-copy-target="sqlJavaOutput" type="button">复制结果</button>
+                  </div>
+                  <div class="compare-stats">
+                    <div class="compare-stat">
+                      <span>类名</span>
+                      <strong id="sqlJavaClassNameOut">-</strong>
+                    </div>
+                    <div class="compare-stat">
+                      <span>字段数</span>
+                      <strong id="sqlJavaFieldCount">0</strong>
+                    </div>
+                    <div class="compare-stat">
+                      <span>风格</span>
+                      <strong id="sqlJavaStyleOut">Lombok</strong>
+                    </div>
+                  </div>
+                  <textarea id="sqlJavaOutput" class="output wide-output" readonly placeholder="生成的 Java 实体类会显示在这里"></textarea>
+                  <p class="helper-text">生成的代码可直接复制到项目中使用；切换上方选项会即时重新生成。</p>
+                </article>
               </div>
-              <textarea id="sqlOutput" class="output wide-output" readonly placeholder="压缩结果会显示在这里"></textarea>
-              <p class="helper-text">压缩后会移除多行/单行注释，合并换行与多余空格，并整理逗号与括号后的间距。</p>
-            </article>
+            </div>
           </div>
         </section>
 
@@ -1065,6 +1158,7 @@
       <div id="toast" class="toast"></div>
       <div class="sidebar-overlay" id="sidebarOverlay"></div>
     </div>
+    <script src="sql-tool.js"></script>
     <script src="app.js"></script>
   </body>
 </html>
