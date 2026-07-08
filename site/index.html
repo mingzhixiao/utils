@@ -624,12 +624,13 @@
                   <input id="imageCompressInput" type="file" accept="image/*" multiple />
                   <span>选择一张或多张图片</span>
                 </label>
+                <div id="imagePreviewGrid" class="image-preview-grid" style="display:none;"></div>
                 <label class="range-label" for="compressQuality">
                   压缩比例：<strong id="compressQualityValue">80%</strong>
                 </label>
                 <input id="compressQuality" type="range" min="10" max="100" value="80" />
                 <div class="action-row">
-                  <button data-action="compressImages" type="button">开始压缩</button>
+                  <button data-action="compressImages" type="button">下载全部</button>
                 </div>
                 <div id="compressResult" class="result-list empty-state">压缩结果会显示在这里</div>
               </article>
@@ -1159,6 +1160,7 @@
       <div class="sidebar-overlay" id="sidebarOverlay"></div>
     </div>
     <script src="sql-tool.js"></script>
+    <script src="image-tool.js"></script>
     <script src="app.js"></script>
   </body>
 </html>
