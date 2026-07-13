@@ -582,6 +582,200 @@ function renderJsonDiffOutput(diffs) {
 }
 
 
+// —— JSON 路径提取 ——
+// 支持语法：
+//   $              根节点（或省略）
+//   .key / key     按键取值（可直接以键名开头）
+//   ["k"] / ['k'] 含特殊字符的键
+//   [n]            数组下标（支持负数 -1 表示末位）
+//   [*]            数组通配，对数组每个元素应用后续路径，结果收集为数组
+function parseJsonPathSegments(path) {
+  const segments = [];
+  const source = String(path).trim();
+  let i = 0;
+  if (source === "$") {
+    return segments;
+  }
+  if (source[0] === "$") {
+    i = 1;
+  }
+  while (i < source.length) {
+    const char = source[i];
+    if (char === ".") {
+      let j = i + 1;
+      while (j < source.length && source[j] !== "." && source[j] !== "[") {
+        j += 1;
+      }
+      const key = source.slice(i + 1, j);
+      if (key === "") {
+        throw new Error(`路径语法错误：${source.slice(i, i + 8)}`);
+      }
+      segments.push({ type: "key", value: key });
+      i = j;
+    } else if (char === "[") {
+      const close = source.indexOf("]", i);
+      if (close === -1) {
+        throw new Error("路径缺少右括号 ]");
+      }
+      const inner = source.slice(i + 1, close).trim();
+      const quoteMatch = inner.match(/^["'](.*)["']$/);
+      if (quoteMatch) {
+        segments.push({ type: "key", value: quoteMatch[1] });
+      } else if (inner === "*") {
+        segments.push({ type: "wild", value: "*" });
+      } else if (/^-?\d+$/.test(inner)) {
+        segments.push({ type: "index", value: parseInt(inner, 10) });
+      } else {
+        throw new Error(`无效的数组下标：${inner}`);
+      }
+      i = close + 1;
+    } else {
+      let j = i;
+      while (j < source.length && source[j] !== "." && source[j] !== "[") {
+        j += 1;
+      }
+      const key = source.slice(i, j);
+      if (key === "") {
+        throw new Error(`路径语法错误：${source.slice(i, i + 8)}`);
+      }
+      segments.push({ type: "key", value: key });
+      i = j;
+    }
+  }
+  return segments;
+}
+
+
+function describeExtractedType(value) {
+  if (value === null) {
+    return "null";
+  }
+  if (Array.isArray(value)) {
+    return `Array(${value.length})`;
+  }
+  return typeof value;
+}
+
+
+function applyJsonPathSegments(value, segments, start) {
+  if (start >= segments.length) {
+    return value;
+  }
+  const segment = segments[start];
+  if (segment.type === "wild") {
+    if (!Array.isArray(value)) {
+      throw new Error("通配符 [*] 只能用于数组");
+    }
+    return value.map((item) => applyJsonPathSegments(item, segments, start + 1));
+  }
+
+  let next;
+  if (segment.type === "key") {
+    if (value === null || typeof value !== "object") {
+      throw new Error(`无法从 ${value === null ? "null" : typeof value} 中按键 "${segment.value}" 取值`);
+    }
+    if (!(segment.value in value)) {
+      throw new Error(`键 "${segment.value}" 不存在`);
+    }
+    next = value[segment.value];
+  } else {
+    if (!Array.isArray(value)) {
+      throw new Error(`下标 [${segment.value}] 只能用于数组`);
+    }
+    let index = segment.value;
+    if (index < 0) {
+      index = value.length + index;
+    }
+    if (index < 0 || index >= value.length) {
+      throw new Error(`数组下标越界：[${segment.value}]（长度 ${value.length}）`);
+    }
+    next = value[index];
+  }
+  return applyJsonPathSegments(next, segments, start + 1);
+}
+
+
+function extractJsonByPath(jsonValue, path) {
+  const trimmed = path == null ? "" : String(path).trim();
+  if (trimmed === "" || trimmed === "$") {
+    return jsonValue;
+  }
+  const segments = parseJsonPathSegments(trimmed);
+  if (!segments.length) {
+    return jsonValue;
+  }
+  return applyJsonPathSegments(jsonValue, segments, 0);
+}
+
+
+function parseJsonFieldSpecs(text) {
+  return String(text)
+    .split(",")
+    .map((part) => part.trim())
+    .filter((part) => part !== "")
+    .map((part) => {
+      const match = part.match(/^([\p{L}\p{N}_$][\p{L}\p{N}_$]*)\s*:\s*(.+)$/u);
+      const raw = match ? match[2].trim() : part;
+      // 子路径以 $ 开头表示从根节点取值（跨层引用），否则从当前元素取值。
+      const fromRoot = raw[0] === "$";
+      return { alias: match ? match[1] : null, subpath: raw, fromRoot };
+    });
+}
+
+
+function lastSegmentAlias(subpath) {
+  const segments = parseJsonPathSegments(subpath);
+  const last = segments[segments.length - 1];
+  if (last && last.type === "key") {
+    return last.value;
+  }
+  return subpath;
+}
+
+
+// 批量投影提取：以 basePath 解析出的每个元素（或单个对象）为基准，
+// 按 fields 中列出的子路径取出对应值，组装成对象；basePath 留空则使用整份 JSON。
+// fields 形如 "name, roles" 或 "用户名:name, 角色:roles"，支持 别名:子路径。
+// 子路径以 $ 开头（如 $["store name"]）表示从根节点取值，可将根上的字段拼进每条结果，
+// 实现类似 [{ "store name": <根>, "name": <元素> }, ...] 的跨层组合。
+function extractJsonProjection(root, basePath, fieldsText) {
+  const baseSegments = parseJsonPathSegments(basePath == null ? "" : String(basePath).trim());
+  const baseValue = baseSegments.length
+    ? applyJsonPathSegments(root, baseSegments, 0)
+    : root;
+  const specs = parseJsonFieldSpecs(fieldsText);
+  if (!specs.length) {
+    throw new Error("请至少填写一个字段");
+  }
+
+  const projectOne = (element) => {
+    const result = {};
+    specs.forEach((spec) => {
+      const alias = spec.alias || lastSegmentAlias(spec.subpath);
+      const source = spec.fromRoot ? root : element;
+      const segments = parseJsonPathSegments(spec.subpath);
+      result[alias] = segments.length ? applyJsonPathSegments(source, segments, 0) : source;
+    });
+    return result;
+  };
+
+  if (Array.isArray(baseValue)) {
+    return baseValue.map(projectOne);
+  }
+  return projectOne(baseValue);
+}
+
+
+const JSON_EXTRACT_EXAMPLE = {
+  users: [
+    { id: 1, name: "Alice", roles: ["admin", "user"] },
+    { id: 2, name: "Bob", roles: ["user"] },
+  ],
+  "store name": "Main Store",
+  meta: { total: 2 },
+};
+
+
 function bindJsonActions() {
   updateJsonDiffStats([]);
   const actions = {
@@ -630,6 +824,52 @@ function bindJsonActions() {
     },
     jsonLoadDiffRight: () => {
       $("jsonDiffRight").value = $("jsonOutput").value || $("jsonInput").value;
+    },
+    jsonExtract: () => {
+      const parsed = safeJsonParse($("jsonExtractInput").value);
+      const path = $("jsonExtractPath").value.trim();
+      const result = extractJsonByPath(parsed, path);
+      setOutput("jsonExtractOutput", JSON.stringify(result, null, 2));
+      setText("jsonExtractPathOut", path || "$");
+      setText("jsonExtractType", describeExtractedType(result));
+      showToast("提取成功");
+    },
+    fillJsonExtractExample: () => {
+      setOutput("jsonExtractInput", JSON.stringify(JSON_EXTRACT_EXAMPLE, null, 2));
+      setOutput("jsonExtractPath", "$.users[0].name");
+      $("jsonExtractPath").focus();
+    },
+    fillJsonExtractFieldsExample: () => {
+      setOutput("jsonExtractInput", JSON.stringify(JSON_EXTRACT_EXAMPLE, null, 2));
+      setOutput("jsonExtractBase", "users[*]");
+      setOutput("jsonExtractFields", "name, roles");
+      $("jsonExtractFields").focus();
+    },
+    fillJsonExtractRootExample: () => {
+      setOutput("jsonExtractInput", JSON.stringify(JSON_EXTRACT_EXAMPLE, null, 2));
+      setOutput("jsonExtractBase", "users[*]");
+      setOutput("jsonExtractFields", '$["store name"], name');
+      $("jsonExtractFields").focus();
+    },
+    jsonExtractFields: () => {
+      const parsed = safeJsonParse($("jsonExtractInput").value);
+      const base = $("jsonExtractBase").value.trim();
+      const fields = $("jsonExtractFields").value.trim();
+      const result = extractJsonProjection(parsed, base, fields);
+      setOutput("jsonExtractOutput", JSON.stringify(result, null, 2));
+      setText("jsonExtractPathOut", `${base || "$"} → {${fields}}`);
+      setText("jsonExtractType", describeExtractedType(result));
+      showToast("提取成功");
+    },
+    jsonExtractUseMain: () => {
+      $("jsonExtractInput").value = $("jsonInput").value;
+    },
+    clearJsonExtract: () => {
+      setOutput("jsonExtractInput", "");
+      setOutput("jsonExtractPath", "");
+      setOutput("jsonExtractOutput", "");
+      setText("jsonExtractPathOut", "-");
+      setText("jsonExtractType", "-");
     },
   };
   bindActions(actions);

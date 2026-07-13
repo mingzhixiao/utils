@@ -47,7 +47,7 @@
               <svg class="nav-icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a3 3 0 0 0-3 3v3a3 3 0 0 1-3 3 3 3 0 0 1 3 3v3a3 3 0 0 0 3 3M12 2a3 3 0 0 1 3 3v3a3 3 0 0 0 3 3 3 3 0 0 0-3 3v3a3 3 0 0 1-3 3"/></svg>
               <span class="chip-title">JSON 工具</span>
             </div>
-            <span class="chip-desc">格式化、树视图、差异对比</span>
+            <span class="chip-desc">格式化、树视图、路径提取、差异对比</span>
           </button>
           <button class="panel-chip" data-panel="sqlSection" type="button">
             <div class="chip-lead">
@@ -223,6 +223,7 @@
             <div class="section-tags">
               <span>Format</span>
               <span>Tree</span>
+              <span>Extract</span>
               <span>Diff</span>
             </div>
           </div>
@@ -230,6 +231,7 @@
           <div class="section-tabs" data-subtab-group="json">
             <button class="section-tab active" data-subtab-target="jsonTransformPane" type="button">转换处理</button>
             <button class="section-tab" data-subtab-target="jsonTreePane" type="button">树视图</button>
+            <button class="section-tab" data-subtab-target="jsonExtractPane" type="button">提取数据</button>
             <button class="section-tab" data-subtab-target="jsonDiffPane" type="button">差异对比</button>
           </div>
 
@@ -272,6 +274,63 @@
                 </div>
                 <div id="jsonTree" class="tree-view empty-state">输入合法 JSON 后可查看树结构</div>
               </article>
+            </div>
+
+            <div class="subpanel" id="jsonExtractPane">
+              <div class="split-workbench">
+                <article class="card workspace-pane">
+                  <div class="card-header">
+                    <h3>JSON 与路径</h3>
+                    <button class="copy-btn" data-copy-target="jsonExtractInput" type="button">复制输入</button>
+                  </div>
+                  <textarea id="jsonExtractInput" class="workbench-input" placeholder='粘贴 JSON，例如 {"users":[{"name":"Alice"},{"name":"Bob"}]}'></textarea>
+                  <label class="field-label" for="jsonExtractPath">
+                    <span>提取路径</span>
+                    <input id="jsonExtractPath" type="text" placeholder="例如 $.users[0].name 或 users[*].name" />
+                  </label>
+                  <div class="action-row wrap">
+                    <button data-action="jsonExtract" type="button">提取</button>
+                    <button class="secondary" data-action="fillJsonExtractExample" type="button">示例</button>
+                    <button class="secondary" data-action="jsonExtractUseMain" type="button">用主输入</button>
+                    <button class="secondary" data-action="clearJsonExtract" type="button">清空</button>
+                  </div>
+                  <p class="helper-text">路径语法：<code>$.a.b</code>、<code>a[0].c</code>、<code>a["带空格的键"]</code>；数组支持 <code>[n]</code>、<code>[-1]</code> 末位、<code>[*]</code> 全部元素。</p>
+                  <p class="helper-text section-label">多字段批量提取（如 users[*] 同时取 name 与 roles）</p>
+                  <label class="field-label" for="jsonExtractBase">
+                    <span>基础路径<small>留空则按整份 JSON 投影</small></span>
+                    <input id="jsonExtractBase" type="text" placeholder="例如 users[*] 或 users" />
+                  </label>
+                  <label class="field-label" for="jsonExtractFields">
+                    <span>字段<small>逗号分隔，支持 别名:子路径；子路径以 $ 开头从根取值</small></span>
+                    <input id="jsonExtractFields" type="text" placeholder='例如 name, roles 或 $["store name"], name' />
+                  </label>
+                  <div class="action-row wrap">
+                    <button data-action="jsonExtractFields" type="button">提取字段</button>
+                    <button class="secondary" data-action="fillJsonExtractFieldsExample" type="button">示例(多字段)</button>
+                    <button class="secondary" data-action="fillJsonExtractRootExample" type="button">示例(含根字段)</button>
+                  </div>
+                  <p class="helper-text">跨层引用：字段子路径以 <code>$</code> 开头（如 <code>$["store name"]</code>）表示从整份 JSON 的根取值，可把根上的字段拼进遍历出的每条结果。</p>
+                </article>
+
+                <article class="card workspace-pane">
+                  <div class="card-header">
+                    <h3>提取结果</h3>
+                    <button class="copy-btn" data-copy-target="jsonExtractOutput" type="button">复制结果</button>
+                  </div>
+                  <div class="compare-stats">
+                    <div class="compare-stat">
+                      <span>使用路径</span>
+                      <strong id="jsonExtractPathOut">-</strong>
+                    </div>
+                    <div class="compare-stat">
+                      <span>结果类型</span>
+                      <strong id="jsonExtractType">-</strong>
+                    </div>
+                  </div>
+                  <textarea id="jsonExtractOutput" class="output wide-output" readonly placeholder="提取结果会显示在这里"></textarea>
+                  <p class="helper-text">结果为对象或数组时以格式化 JSON 输出；通配符 <code>[*]</code> 会收集每个匹配元素，返回数组。</p>
+                </article>
+              </div>
             </div>
 
             <div class="subpanel" id="jsonDiffPane">

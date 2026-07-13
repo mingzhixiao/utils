@@ -10,7 +10,7 @@ The shared page lives under `site/`, so the extension and the website always use
 ## Features
 
 - Encoding tools: URL, Unicode, Base64, and string escape/unescape
-- JSON tools: format, minify, tree view, diff, JSON/CSV conversion
+- JSON tools: format, minify, tree view, diff, JSON/CSV conversion, path extraction
 - SQL tools: compress, strip comments, generate Java entity from `CREATE TABLE`
 - Time tools: current time and timestamp/date conversion (cross-browser safe)
 - Image tools: compression and batch image comparison with failed-only filter
