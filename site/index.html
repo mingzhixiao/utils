@@ -8,28 +8,8 @@
     <link rel="icon" href="icons/icon32.png" sizes="32x32" type="image/png" />
     <link rel="icon" href="icons/icon16.png" sizes="16x16" type="image/png" />
     <link rel="apple-touch-icon" href="icons/icon180.png" />
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="styles.css" />
-    <script>
-      (function() {
-        const savedTheme = localStorage.getItem('dev-toolbox-theme') || 'dark';
-        document.documentElement.setAttribute('data-theme', savedTheme);
-      })();
-    </script>
-    <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.2/dist/jspdf.umd.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/mammoth@1.8.0/mammoth.browser.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/build/pdf.min.js"></script>
-    <script>
-      if (typeof pdfjsLib !== "undefined") {
-        pdfjsLib.GlobalWorkerOptions.workerSrc =
-          "https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/build/pdf.worker.min.js";
-      }
-    </script>
-    <script src="https://cdn.busuanzi.cc/busuanzi/3.6.9/busuanzi.min.js" defer></script>
+    <script src="static/theme-init.js"></script>
   </head>
   <body>
     <div class="app-shell">
@@ -142,36 +122,6 @@
         </nav>
 
         <div class="sidebar-footer">
-          <!-- 网站访问统计 -->
-          <div class="site-stats">
-            <div class="stats-header">
-              <svg class="stats-icon" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <line x1="18" y1="20" x2="18" y2="10"></line>
-                <line x1="12" y1="20" x2="12" y2="4"></line>
-                <line x1="6" y1="20" x2="6" y2="14"></line>
-              </svg>
-              <span>访问量统计</span>
-            </div>
-            <div class="stats-grid">
-              <div class="stat-item">
-                <span class="stat-label">今日访问</span>
-                <span class="stat-value" id="busuanzi_today_pv"><span class="loading-dots">...</span></span>
-              </div>
-              <div class="stat-item">
-                <span class="stat-label">今日访客</span>
-                <span class="stat-value" id="busuanzi_today_uv"><span class="loading-dots">...</span></span>
-              </div>
-              <div class="stat-item">
-                <span class="stat-label">本站访问</span>
-                <span class="stat-value" id="busuanzi_site_pv"><span class="loading-dots">...</span></span>
-              </div>
-              <div class="stat-item">
-                <span class="stat-label">本站访客</span>
-                <span class="stat-value" id="busuanzi_site_uv"><span class="loading-dots">...</span></span>
-              </div>
-            </div>
-          </div>
-
           <div class="system-status">
             <span class="status-dot online"></span>
             <span class="status-text">本地服务就绪</span>
@@ -1159,8 +1109,17 @@
       <div id="toast" class="toast"></div>
       <div class="sidebar-overlay" id="sidebarOverlay"></div>
     </div>
-    <script src="sql-tool.js"></script>
-    <script src="image-tool.js"></script>
-    <script src="app.js"></script>
+    <script src="static/sql-tool.js" defer></script>
+    <script src="static/image-tool.js" defer></script>
+    <script src="static/core.js" defer></script>
+    <script src="static/encoding.js" defer></script>
+    <script src="static/json.js" defer></script>
+    <script src="static/time.js" defer></script>
+    <script src="static/fapiao.js" defer></script>
+    <script src="static/es.js" defer></script>
+    <script src="static/http-form.js" defer></script>
+    <script src="static/array.js" defer></script>
+    <script src="static/excel.js" defer></script>
+    <script src="static/word-pdf.js" defer></script>
   </body>
 </html>

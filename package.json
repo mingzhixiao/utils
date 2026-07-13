@@ -6,7 +6,7 @@
   "scripts": {
     "deploy": "wrangler deploy",
     "deploy:pages": "wrangler pages deploy site --project-name utils",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "node --test site/test/pure.test.mjs"
   },
   "repository": {
     "type": "git",

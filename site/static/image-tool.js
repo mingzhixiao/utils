@@ -27,15 +27,18 @@ async function compressSingleImage(file, quality) {
   const ctx = canvas.getContext("2d");
   ctx.drawImage(image, 0, 0);
 
-  const mimeType = file.type === "image/png" ? "image/jpeg" : file.type || "image/jpeg";
+  // PNG 转 WebP 而非 JPEG，保留透明通道（JPEG 不支持透明）
+  const mimeType = file.type === "image/png" ? "image/webp" : file.type || "image/jpeg";
   const blob = await new Promise((resolve) => canvas.toBlob(resolve, mimeType, quality));
   const downloadUrl = URL.createObjectURL(blob);
 
+  const ext = mimeType === "image/jpeg" ? "jpg" : mimeType === "image/webp" ? "webp" : mimeType === "image/png" ? "png" : "img";
   return {
     originalSize: file.size,
     compressedSize: blob.size,
     downloadUrl,
-    fileName: file.name.replace(/\.[^.]+$/, "") + (mimeType === "image/jpeg" ? "-compressed.jpg" : "-compressed.webp"),
+    convertedFromPng: file.type === "image/png",
+    fileName: file.name.replace(/\.[^.]+$/, "") + "-compressed." + ext,
   };
 }
 
@@ -101,11 +104,19 @@ async function updateCompressPreviews(quality) {
   const results = await Promise.all(
     state.imageCompressPreviews.map((p) => compressSingleImage(p.file, quality))
   );
-  state.imageCompressPreviews = state.imageCompressPreviews.map((p, i) => ({
-    ...p,
-    compressedSize: results[i].compressedSize,
-    downloadUrl: results[i].downloadUrl,
-  }));
+  state.imageCompressPreviews = state.imageCompressPreviews.map((p, i) => {
+    // 重新压缩会生成新的 blob URL，先回收旧的，避免内存泄漏
+    if (p.downloadUrl) {
+      URL.revokeObjectURL(p.downloadUrl);
+    }
+    return {
+      ...p,
+      compressedSize: results[i].compressedSize,
+      downloadUrl: results[i].downloadUrl,
+      fileName: results[i].fileName,
+      convertedFromPng: results[i].convertedFromPng,
+    };
+  });
   renderImagePreviews(state.imageCompressPreviews);
 }
 
@@ -202,6 +213,14 @@ function createImageCard(item, index) {
   return card;
 }
 
+function getImageCard(item, index) {
+  // 复用已创建的卡片元素，避免整段重渲染导致已加载图片被重新请求
+  if (!item.card) {
+    item.card = createImageCard(item, index);
+  }
+  return item.card;
+}
+
 function renderImageCompare() {
   const container = $("imageCompareResult");
   const totalItems = state.parsedImageItems.length;
@@ -214,20 +233,21 @@ function renderImageCompare() {
     return;
   }
 
-  const items = state.imageCompareSettings.failedOnly
+  const showFailedOnly = state.imageCompareSettings.failedOnly;
+  const items = showFailedOnly
     ? state.parsedImageItems.filter((item) => item.status === "failed")
     : state.parsedImageItems;
 
   if (!items.length) {
     container.className = "image-compare-grid empty-state";
-    container.textContent = "当前没有失败图片";
+    container.textContent = showFailedOnly ? "当前没有失败图片" : "没有解析到图片地址";
     return;
   }
 
   container.className = "image-compare-grid";
   container.innerHTML = "";
   items.forEach((item, index) => {
-    container.appendChild(createImageCard(item, index));
+    container.appendChild(getImageCard(item, index));
   });
 }
 
@@ -244,10 +264,12 @@ function bindImageActions() {
   $("imageCompressInput").addEventListener("change", async (event) => {
     const files = Array.from(event.target.files || []);
     if (!files.length) {
+      state.imageCompressPreviews.forEach((p) => p.downloadUrl && URL.revokeObjectURL(p.downloadUrl));
       state.imageCompressPreviews = [];
       renderImagePreviews([]);
       return;
     }
+    state.imageCompressPreviews.forEach((p) => p.downloadUrl && URL.revokeObjectURL(p.downloadUrl));
     await loadCompressPreviews(files);
     renderImagePreviews(state.imageCompressPreviews);
     // Auto-compress at current quality
@@ -274,12 +296,14 @@ function bindImageActions() {
         if (p.downloadUrl) {
           const a = document.createElement("a");
           a.href = p.downloadUrl;
-          a.download = p.file.name.replace(/\.[^.]+$/, "") + "-compressed.jpg";
+          a.download = p.fileName || p.file.name.replace(/\.[^.]+$/, "") + "-compressed.jpg";
           a.click();
           setTimeout(() => URL.revokeObjectURL(p.downloadUrl), 1000);
         }
       });
-      showToast(`已下载 ${state.imageCompressPreviews.length} 张图片`);
+      const pngCount = state.imageCompressPreviews.filter((p) => p.convertedFromPng).length;
+      const tip = pngCount ? `（${pngCount} 张 PNG 已转为 WebP 以保留透明通道）` : "";
+      showToast(`已下载 ${state.imageCompressPreviews.length} 张图片${tip}`);
     },
     parseImageUrls: () => {
       state.parsedImageUrls = extractImageUrls($("imageUrlInput").value);

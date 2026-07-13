@@ -11,9 +11,15 @@ The shared page lives under `site/`, so the extension and the website always use
 
 - Encoding tools: URL, Unicode, Base64, and string escape/unescape
 - JSON tools: format, minify, tree view, diff, JSON/CSV conversion
-- Time tools: current time and timestamp/date conversion
-- Image tools: compression and batch image comparison
+- SQL tools: compress, strip comments, generate Java entity from `CREATE TABLE`
+- Time tools: current time and timestamp/date conversion (cross-browser safe)
+- Image tools: compression and batch image comparison with failed-only filter
+- Invoice tools: merge invoice images / PDF into a single PDF or Word document
+- HTTP tools: GET / POST (Form / JSON) to bash / PowerShell cURL
+- Array tools: newline / comma / JSON array / quoted-comma conversions with dedup & sort
 - Elasticsearch tools: Console output, bash cURL, PowerShell cURL, and bulk helpers
+- Office tools: extract embedded images from Excel / Word, download individually or as ZIP
+- Word to PDF: convert `.docx` to PDF locally and download
 
 ## Project Structure
 
@@ -21,10 +27,26 @@ The shared page lives under `site/`, so the extension and the website always use
 .
 ├─ background.js
 ├─ manifest.json
+├─ wrangler.jsonc
 ├─ site/
-│  ├─ index.html
-│  ├─ app.js
+│  ├─ index.html          # main toolbox page
+│  ├─ md-index.html       # standalone Markdown reader (marked + highlight.js)
+│  ├─ static/             # tool scripts, loaded by index.html
+│  │  ├─ core.js          # shared infra: $, navigation, vendor lazy-loader, cURL helpers
+│  │  ├─ encoding.js      # encoding / decoding tools
+│  │  ├─ json.js          # JSON format / tree / diff / CSV
+│  │  ├─ sql-tool.js      # SQL compress + Java POJO
+│  │  ├─ time.js          # time / timestamp conversion
+│  │  ├─ image-tool.js    # image compress + batch compare
+│  │  ├─ fapiao.js        # invoice merge to PDF / Word
+│  │  ├─ es.js            # Elasticsearch output helpers
+│  │  ├─ http-form.js     # HTTP form to cURL
+│  │  ├─ array.js         # array format conversion
+│  │  ├─ excel.js         # Office image extraction
+│  │  ├─ word-pdf.js      # Word to PDF
+│  │  └─ theme-init.js    # early theme setup (no flash)
 │  ├─ styles.css
+│  ├─ vendor/             # third-party libs, loaded on demand (jspdf, jszip, mammoth, html2canvas, pdf(.worker).min.js, marked, highlight.min.js)
 │  └─ icons/
 └─ README.md
 ```
@@ -57,3 +79,4 @@ That publishes only the shared web assets and excludes extension-only files such
 - `manifest.json` points the extension to `site/index.html`.
 - Extension icons are also served from `site/icons/`.
 - If you change the UI, edit files in `site/` only.
+- Heavy third-party libraries under `site/vendor/` (jspdf, jszip, mammoth, html2canvas, pdf.js) are **lazy-loaded only when the related tool runs**, so the first screen stays light. `marked` / `highlight.js` are loaded by `md-index.html` since that page is entirely about Markdown.

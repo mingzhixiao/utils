@@ -1,5 +1,5 @@
 /* SQL 工具相关功能：SQL 压缩 + 根据 CREATE TABLE 生成 Java 对象 */
-/* 依赖 app.js 中的全局函数：$、setText、setOutput、showToast、bindActions */
+/* 依赖全局函数（定义在 core.js）：$、setText、setOutput、showToast、bindActions */
 
 const sqlExamples = {
   SELECT: `SELECT u.id, u.name, u.email
