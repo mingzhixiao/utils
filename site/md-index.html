@@ -151,11 +151,11 @@
             font-size: 13px;
         }
 
-        /* ========== TOC 悬浮开关（右侧） ========== */
+        /* ========== TOC 悬浮开关（顶栏下方右侧，折叠时显示） ========== */
         .toc-toggle-btn {
             position: fixed;
             right: 16px;
-            top: 10px;
+            top: 64px;
             z-index: 20;
             width: 36px;
             height: 36px;
@@ -478,7 +478,30 @@
             border: 1px solid var(--border-color);
             padding: 10px 14px;
             text-align: left;
+            position: relative;
         }
+
+        /* --- 表格行/列复制按钮 --- */
+        .col-copy-btn, .row-copy-btn {
+            position: absolute;
+            display: none;
+            border: none;
+            background: var(--accent-color);
+            color: #fff;
+            font-size: 11px;
+            font-weight: 600;
+            padding: 2px 7px;
+            border-radius: 6px;
+            cursor: pointer;
+            z-index: 6;
+            box-shadow: 0 2px 6px rgba(79, 70, 229, 0.3);
+            line-height: 1.5;
+            white-space: nowrap;
+        }
+        .col-copy-btn { right: 2px; top: 2px; }
+        .row-copy-btn { right: -38px; top: 50%; transform: translateY(-50%); }
+        #preview-content th:hover .col-copy-btn { display: inline-flex; }
+        #preview-content tr:hover .row-copy-btn { display: inline-flex; }
         #preview-content th { background: rgba(15, 23, 42, 0.02); font-weight: 600; color: var(--text-color); }
         #preview-content tr:nth-child(even) { background: rgba(15, 23, 42, 0.005); }
 
@@ -600,7 +623,7 @@
 </head>
 <body>
 
-    <!-- TOC 悬浮开关按钮（TOC 收起时显示，右侧） -->
+    <!-- TOC 悬浮开关按钮（目录收起时显示在顶栏右下方） -->
     <button class="toc-toggle-btn" id="toc-toggle-btn" title="显示目录">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <line x1="3" y1="6" x2="21" y2="6"/><line x1="9" y1="12" x2="21" y2="12"/><line x1="15" y1="18" x2="21" y2="18"/>
@@ -617,6 +640,14 @@
                 </div>
                 <div class="header-actions">
                     <a class="header-btn" href="index.html" title="返回 工具盒子">返回工具箱</a>
+                    <button class="header-btn" id="convert-table-btn" title="将表格数据（Tab / 逗号 / 分号分隔）转换为 Markdown 表格">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <rect x="3" y="3" width="18" height="18" rx="2"/>
+                            <line x1="3" y1="9" x2="21" y2="9"/><line x1="3" y1="15" x2="21" y2="15"/>
+                            <line x1="9" y1="3" x2="9" y2="21"/><line x1="15" y1="3" x2="15" y2="21"/>
+                        </svg>
+                        转表格
+                    </button>
                     <button class="header-btn" id="toggle-input-btn" title="切换编辑面板">
                         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                             <path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/>
@@ -653,7 +684,7 @@
                     </label>
                     <input type="file" id="file-input" accept=".md, .markdown, .txt">
                     <div class="input-body">
-                        <textarea id="markdown-input" placeholder="在此粘贴 Markdown 内容..."></textarea>
+                        <textarea id="markdown-input" placeholder="在此粘贴 Markdown 内容，或粘贴表格数据后点击「转表格」..."></textarea>
                     </div>
                 </div>
 
@@ -664,7 +695,7 @@
                             <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" />
                         </svg>
                         <h2>开始阅读</h2>
-                        <p>请上传 .md 文件或粘贴 Markdown 内容，右侧将实时渲染预览。</p>
+                        <p>请上传 .md 文件或粘贴 Markdown 内容，右侧将实时渲染预览。表格可悬停行/列一键复制数据。</p>
                     </div>
                     <div id="preview-content"></div>
                 </div>
@@ -720,6 +751,79 @@
             }
         });
 
+        // --- 复制文本（带降级方案） ---
+        function copyText(text, btn, okMsg) {
+            const flash = () => {
+                const old = btn.textContent;
+                btn.textContent = okMsg;
+                setTimeout(() => { btn.textContent = old; }, 1000);
+            };
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                navigator.clipboard.writeText(text).then(flash).catch(() => fallbackCopy(text, flash));
+            } else {
+                fallbackCopy(text, flash);
+            }
+        }
+        function fallbackCopy(text, done) {
+            const ta = document.createElement('textarea');
+            ta.value = text;
+            ta.style.position = 'fixed';
+            ta.style.opacity = '0';
+            document.body.appendChild(ta);
+            ta.select();
+            try { document.execCommand('copy'); done(); } catch (e) { /* 忽略 */ }
+            document.body.removeChild(ta);
+        }
+
+        // --- 为表格添加行/列复制按钮 ---
+        function enhanceTables() {
+            previewContent.querySelectorAll('table').forEach(table => {
+                // 列：表头单元格
+                table.querySelectorAll('thead th').forEach((th, colIdx) => {
+                    th.dataset.raw = th.textContent.trim();
+                    const btn = document.createElement('button');
+                    btn.className = 'col-copy-btn';
+                    btn.type = 'button';
+                    btn.textContent = '复制列';
+                    btn.title = '复制整列';
+                    btn.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        const colData = [];
+                        const ths = table.querySelectorAll('thead th');
+                        if (ths[colIdx]) colData.push(ths[colIdx].dataset.raw);
+                        table.querySelectorAll('tbody tr').forEach(tr => {
+                            const cell = tr.children[colIdx];
+                            if (cell) colData.push(cell.dataset.raw || cell.textContent.trim());
+                        });
+                        copyText(colData.join('\n'), btn, '已复制列');
+                    });
+                    th.appendChild(btn);
+                });
+                // 行：表头行 + 数据行（每一行都可复制）
+                table.querySelectorAll('tr').forEach(tr => {
+                    const cells = tr.children;
+                    for (let i = 0; i < cells.length; i++) {
+                        cells[i].dataset.raw = cells[i].textContent.trim();
+                    }
+                    const lastCell = cells[cells.length - 1];
+                    const btn = document.createElement('button');
+                    btn.className = 'row-copy-btn';
+                    btn.type = 'button';
+                    btn.textContent = '复制行';
+                    btn.title = '复制整行';
+                    btn.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        const rowData = [];
+                        for (let i = 0; i < tr.children.length; i++) {
+                            rowData.push(tr.children[i].dataset.raw);
+                        }
+                        copyText(rowData.join('\t'), btn, '已复制行');
+                    });
+                    lastCell.appendChild(btn);
+                });
+            });
+        }
+
         // --- 渲染 ---
         function renderMarkdown(text) {
             if (!text.trim()) {
@@ -735,6 +839,9 @@
             previewContent.innerHTML = html;
 
             previewContent.querySelectorAll('pre code').forEach(block => hljs.highlightElement(block));
+
+            // 为渲染出的表格添加行/列复制按钮
+            enhanceTables();
 
             // 为标题添加 id 并构建目录
             const headings = previewContent.querySelectorAll('h1, h2, h3, h4, h5, h6');
@@ -832,6 +939,92 @@
 
         // --- 事件：文本输入 ---
         markdownInput.addEventListener('input', () => renderMarkdown(markdownInput.value));
+
+        // --- 功能：表格数据 → Markdown 表格 ---
+        const convertTableBtn = document.getElementById('convert-table-btn');
+
+        // 解析一行标准 CSV（支持双引号字段与 "" 转义）
+        function parseCsvLine(line) {
+            const result = [];
+            let cur = '';
+            let inQuotes = false;
+            for (let i = 0; i < line.length; i++) {
+                const ch = line[i];
+                if (inQuotes) {
+                    if (ch === '"') {
+                        if (line[i + 1] === '"') { cur += '"'; i++; }
+                        else { inQuotes = false; }
+                    } else {
+                        cur += ch;
+                    }
+                } else {
+                    if (ch === '"') { inQuotes = true; }
+                    else if (ch === ',') { result.push(cur); cur = ''; }
+                    else { cur += ch; }
+                }
+            }
+            result.push(cur);
+            return result.map(c => c.trim());
+        }
+
+        // 根据各候选分隔符在每行出现的稳定性与数量，选出最合适的分隔符
+        function detectDelimiter(lines) {
+            const candidates = ['\t', ',', ';'];
+            let best = '\t';
+            let bestScore = -1;
+            for (const d of candidates) {
+                const counts = lines.map(l => l.split(d).length - 1);
+                const total = counts.reduce((a, b) => a + b, 0);
+                if (total === 0) continue;
+                const consistent = counts.every(c => c === counts[0]);
+                const score = total + (consistent ? 0.5 : 0);
+                if (score > bestScore) { bestScore = score; best = d; }
+            }
+            return best;
+        }
+
+        // 将粘贴的表格数据解析为二维数组（自动识别 CSV）
+        function parseTable(text) {
+            const rawLines = text
+                .replace(/\r\n/g, '\n')
+                .replace(/\r/g, '\n')
+                .split('\n')
+                .filter(l => l.trim() !== '');
+            if (!rawLines.length) return [];
+
+            // 疑似 CSV：行以引号开头且含 "," 分隔
+            const looksCsv = rawLines.some(l => /^\s*"/.test(l) && l.includes('","'));
+            if (looksCsv) {
+                return rawLines.map(parseCsvLine);
+            }
+            const delim = detectDelimiter(rawLines);
+            return rawLines.map(l => l.split(delim).map(c => c.trim()));
+        }
+
+        function convertToMarkdownTable() {
+            const rows = parseTable(markdownInput.value);
+            if (!rows.length) {
+                alert('请先在左侧粘贴表格数据（第一行作为表头）。');
+                return;
+            }
+            const maxCols = Math.max(...rows.map(r => r.length));
+            if (maxCols <= 1) {
+                alert('未检测到多列表格数据，请确认数据使用 Tab / 逗号 / 分号 / CSV 分隔。');
+                return;
+            }
+            rows.forEach(r => { while (r.length < maxCols) r.push(''); });
+
+            const escaped = rows.map(r => r.map(c => c.replace(/\|/g, '\\|')));
+            const header = escaped[0];
+            const sep = header.map(() => '---');
+            const toRow = r => '| ' + r.join(' | ') + ' |';
+            const md = [toRow(header), toRow(sep), ...escaped.slice(1).map(toRow)].join('\n');
+
+            markdownInput.value = md;
+            renderMarkdown(md);
+        }
+
+        convertTableBtn.addEventListener('click', convertToMarkdownTable);
 
         // --- 事件：文件上传 ---
         fileInput.addEventListener('change', (e) => {

@@ -30,7 +30,7 @@ The shared page lives under `site/`, so the extension and the website always use
 ├─ wrangler.jsonc
 ├─ site/
 │  ├─ index.html          # main toolbox page
-│  ├─ md-index.html       # standalone Markdown reader (marked + highlight.js)
+│  ├─ md-index.html       # standalone Markdown reader (marked + highlight.js)，支持把 Tab / 逗号 / 分号分隔的表格数据一键转换为 Markdown 表格
 │  ├─ static/             # tool scripts, loaded by index.html
 │  │  ├─ core.js          # shared infra: $, navigation, vendor lazy-loader, cURL helpers
 │  │  ├─ encoding.js      # encoding / decoding tools
