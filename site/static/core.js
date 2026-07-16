@@ -162,6 +162,41 @@ function bindSubtabs() {
 }
 
 
+function bindMobileSidebar() {
+  const rail = document.querySelector(".side-rail");
+  const toggle = $("menuToggleBtn");
+  const closeBtn = $("sidebarCloseBtn");
+  const overlay = $("sidebarOverlay");
+  if (!rail || !toggle) {
+    return;
+  }
+  const isMobile = () => window.matchMedia("(max-width: 860px)").matches;
+  const open = () => {
+    if (!isMobile()) return;
+    rail.classList.add("open");
+    if (overlay) overlay.classList.add("show");
+    document.body.style.overflow = "hidden";
+  };
+  const close = () => {
+    rail.classList.remove("open");
+    if (overlay) overlay.classList.remove("show");
+    document.body.style.overflow = "";
+  };
+  toggle.addEventListener("click", open);
+  if (closeBtn) closeBtn.addEventListener("click", close);
+  if (overlay) overlay.addEventListener("click", close);
+  document.addEventListener("keydown", (event) => {
+    if (event.key === "Escape") close();
+  });
+  // 选完工具后自动收起抽屉，避免遮挡内容
+  document.querySelectorAll(".panel-chip").forEach((button) => {
+    button.addEventListener("click", () => {
+      if (isMobile()) close();
+    });
+  });
+}
+
+
 function safeJsonParse(input) {
   try {
     return JSON.parse(input);
@@ -298,6 +333,7 @@ function init() {
   bindCopyButtons();
   bindNavigation();
   bindSubtabs();
+  bindMobileSidebar();
   bindEncodingActions();
   bindJsonActions();
   bindSqlActions();

@@ -1907,6 +1907,7 @@ html[data-theme="light"] .fapiao-preview-list.empty-state {
   justify-content: center;
   width: 40px;
   height: 40px;
+  padding: 0;
   border-radius: var(--radius-md);
   background: var(--accent-soft);
   border: 1px solid var(--border);
@@ -1928,6 +1929,7 @@ html[data-theme="light"] .fapiao-preview-list.empty-state {
   justify-content: center;
   width: 32px;
   height: 32px;
+  padding: 0;
   border-radius: var(--radius-sm);
   background: rgba(255, 255, 255, 0.05);
   border: 1px solid rgba(255, 255, 255, 0.08);
@@ -2299,5 +2301,163 @@ html[data-theme="light"] .fapiao-preview-list.empty-state {
   .word-pdf-content {
     padding: 20px 18px;
     font-size: 14px;
+  }
+}
+
+/* ===== 移动端增强（手机端优化） ===== */
+
+/* 平板/小屏：分栏已变单列，去掉输入/结果面板的左侧竖线，改为顶部分隔线 */
+@media (max-width: 1024px) {
+  .split-workbench .workspace-pane:last-child {
+    border-left: none;
+    padding-left: 0;
+    border-top: 1px solid var(--pane-accent-border);
+    padding-top: 20px;
+    margin-top: 4px;
+  }
+}
+
+@media (max-width: 860px) {
+  .side-rail {
+    padding: 18px 16px;
+    gap: 16px;
+  }
+
+  .brand-block {
+    padding: 12px;
+  }
+
+  .tool-panel {
+    padding: 16px;
+    gap: 16px;
+  }
+
+  .section-banner {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 14px 16px;
+  }
+
+  .section-tags {
+    flex-wrap: wrap;
+  }
+
+  .card {
+    padding: 16px;
+    gap: 14px;
+  }
+
+  /* 减小强制最小高度，避免手机上过度留白 */
+  .workspace-pane {
+    min-height: 0;
+  }
+
+  .card.tall {
+    min-height: 0;
+  }
+
+  textarea.workbench-input {
+    min-height: 200px;
+  }
+
+  textarea.wide-output {
+    min-height: 200px;
+  }
+
+  textarea.output {
+    min-height: 140px;
+  }
+
+  .tall textarea {
+    min-height: 220px;
+  }
+
+  .es-output-area {
+    min-height: 220px;
+  }
+
+  /* 触摸目标加大，更易点按 */
+  .mode-pill,
+  .section-tab,
+  .action-row button {
+    min-height: 44px;
+  }
+
+  .mode-switch {
+    flex-wrap: wrap;
+  }
+
+  .mode-pill {
+    flex: 1 1 30%;
+  }
+
+  /* 操作按钮两列一排 */
+  .action-row {
+    gap: 8px;
+  }
+
+  .action-row > button {
+    flex: 1 1 calc(50% - 8px);
+  }
+
+  .action-row.compact > button {
+    flex: 1 1 calc(33.333% - 8px);
+  }
+
+  /* 图片对比网格自适应列数，避免手机上硬塞 4 列 */
+  .image-compare-grid {
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  }
+
+  /* 差异对比取消最小宽度，避免横向滚动 */
+  .diff-viewer-head,
+  .diff-row {
+    min-width: 0;
+  }
+
+  .diff-cell {
+    min-height: 48px;
+  }
+
+  /* 输入框/文本域字体放大到 16px，避免 iOS 聚焦时自动缩放 */
+  textarea,
+  input[type="text"],
+  input[type="number"],
+  .field-grid input,
+  .field-grid select,
+  .card > label:not(.upload-box):not(.range-label) input,
+  .card > label:not(.upload-box):not(.range-label) select,
+  select {
+    font-size: 16px;
+  }
+}
+
+@media (max-width: 600px) {
+  .section-banner h3 {
+    font-size: 16px;
+  }
+
+  .workspace-subtitle {
+    white-space: normal;
+  }
+
+  /* 提示框全宽显示在底部，避免被小屏裁切 */
+  .toast {
+    left: 16px;
+    right: 16px;
+    text-align: center;
+    bottom: 16px;
+  }
+
+  /* 极窄屏操作按钮单列铺满 */
+  .action-row > button {
+    flex: 1 1 100%;
+  }
+}
+
+@media (max-width: 380px) {
+  .action-row.compact > button {
+    flex: 1 1 calc(50% - 8px);
   }
 }
