@@ -195,8 +195,8 @@
               </div>
               <div class="compare-stats">
                 <div class="compare-stat">
-                  <span>当前方式</span>
-                  <strong id="encodingModeName">URL 编码 / 解码</strong>
+                  <span>原 → 后字符数</span>
+                  <strong id="encodingCharDelta">0 → 0</strong>
                 </div>
                 <div class="compare-stat">
                   <span>输出方向</span>
@@ -207,7 +207,7 @@
                   <strong id="encodingOutputLength">0</strong>
                 </div>
               </div>
-              <textarea id="encodingOutput" class="output wide-output" placeholder="转换结果会显示在这里"></textarea>
+              <textarea id="encodingOutput" class="output wide-output" readonly placeholder="转换结果会显示在这里"></textarea>
               <p class="helper-text">左侧先选一种编码方式，再执行编码或解码；右侧结果可直接复制或回填继续处理。</p>
             </article>
           </div>
@@ -237,8 +237,8 @@
 
           <div class="subpanel-stack">
             <div class="subpanel active" id="jsonTransformPane">
-              <div class="grid two">
-                <article class="card tall">
+              <div class="split-workbench">
+                <article class="card tall workspace-pane">
                   <div class="card-header">
                     <h3>JSON 输入</h3>
                     <button class="copy-btn" data-copy-target="jsonInput" type="button">复制输入</button>
@@ -252,7 +252,7 @@
                   </div>
                 </article>
 
-                <article class="card tall">
+                <article class="card tall workspace-pane">
                   <div class="card-header">
                     <h3>JSON 结果</h3>
                     <button class="copy-btn" data-copy-target="jsonOutput" type="button">复制结果</button>
@@ -368,14 +368,22 @@
                     <strong id="jsonDiffChanged">0</strong>
                   </div>
                 </div>
-                <div class="diff-viewer-shell">
-                  <div class="diff-viewer-titlebar">
-                    <span>结构化对比视图</span>
-                    <span class="info-badge">Side by Side</span>
-                  </div>
-                  <div id="jsonDiffViewer" class="diff-viewer empty-state">输入两份合法 JSON 后可查看结构化差异</div>
+                <div class="section-tabs diff-view-tabs">
+                  <button class="section-tab active" data-diff-view="viewer" type="button">结构化视图</button>
+                  <button class="section-tab" data-diff-view="summary" type="button">文本摘要</button>
                 </div>
-                <pre id="jsonDiffOutput" class="diff-output empty-state">输入两份合法 JSON 后可查看差异摘要</pre>
+                <div id="jsonDiffViewerWrap">
+                  <div class="diff-viewer-shell">
+                    <div class="diff-viewer-titlebar">
+                      <span>结构化对比视图</span>
+                      <span class="info-badge">Side by Side</span>
+                    </div>
+                    <div id="jsonDiffViewer" class="diff-viewer empty-state">输入两份合法 JSON 后可查看结构化差异</div>
+                  </div>
+                </div>
+                <div id="jsonDiffSummaryWrap" hidden>
+                  <pre id="jsonDiffOutput" class="diff-output empty-state">输入两份合法 JSON 后可查看差异摘要</pre>
+                </div>
               </article>
             </div>
           </div>
@@ -462,39 +470,42 @@
                       <input id="sqlJavaPackage" type="text" placeholder="如 com.example.entity" />
                     </label>
                   </div>
-                  <div class="field-grid">
-                    <label>
-                      <span>字段命名</span>
-                      <select id="sqlJavaFieldStyle">
-                        <option value="camel" selected>转驼峰</option>
-                        <option value="original">保持原样</option>
-                      </select>
-                    </label>
-                    <label>
-                      <span>类型策略</span>
-                      <select id="sqlJavaTypeStrategy">
-                        <option value="wrapper" selected>包装类</option>
-                        <option value="primitive">基本类型</option>
-                      </select>
-                    </label>
-                  </div>
-                  <div class="field-grid">
-                    <label>
-                      <span>日期类型</span>
-                      <select id="sqlJavaDateType">
-                        <option value="local">java.time</option>
-                        <option value="sql" selected>java.util / sql</option>
-                      </select>
-                    </label>
-                    <label>
-                      <span>生成风格</span>
-                      <select id="sqlJavaStyle">
-                        <option value="lombok" selected>Lombok @Data</option>
-                        <option value="getterSetter">Getter/Setter</option>
-                        <option value="fields">仅字段</option>
-                      </select>
-                    </label>
-                  </div>
+                  <details class="config-details">
+                    <summary>更多生成选项</summary>
+                    <div class="field-grid">
+                      <label>
+                        <span>字段命名</span>
+                        <select id="sqlJavaFieldStyle">
+                          <option value="camel" selected>转驼峰</option>
+                          <option value="original">保持原样</option>
+                        </select>
+                      </label>
+                      <label>
+                        <span>类型策略</span>
+                        <select id="sqlJavaTypeStrategy">
+                          <option value="wrapper" selected>包装类</option>
+                          <option value="primitive">基本类型</option>
+                        </select>
+                      </label>
+                    </div>
+                    <div class="field-grid">
+                      <label>
+                        <span>日期类型</span>
+                        <select id="sqlJavaDateType">
+                          <option value="local">java.time</option>
+                          <option value="sql" selected>java.util / sql</option>
+                        </select>
+                      </label>
+                      <label>
+                        <span>生成风格</span>
+                        <select id="sqlJavaStyle">
+                          <option value="lombok" selected>Lombok @Data</option>
+                          <option value="getterSetter">Getter/Setter</option>
+                          <option value="fields">仅字段</option>
+                        </select>
+                      </label>
+                    </div>
+                  </details>
                   <div class="action-row wrap">
                     <button data-action="generateJavaFromSql" type="button">生成 Java 对象</button>
                     <button class="secondary" data-action="fillSqlExampleJava" type="button">示例</button>
@@ -554,14 +565,17 @@
                 <div class="stat-item">
                   <span>本地时间</span>
                   <strong id="nowDisplay">-</strong>
+                  <button class="copy-btn mini" data-copy-target="nowDisplay" type="button">复制</button>
                 </div>
                 <div class="stat-item">
                   <span>秒级时间戳</span>
                   <strong id="nowSeconds">-</strong>
+                  <button class="copy-btn mini" data-copy-target="nowSeconds" type="button">复制</button>
                 </div>
                 <div class="stat-item">
                   <span>毫秒级时间戳</span>
                   <strong id="nowMilliseconds">-</strong>
+                  <button class="copy-btn mini" data-copy-target="nowMilliseconds" type="button">复制</button>
                 </div>
               </div>
               <textarea id="timeSmartInput" class="workbench-input" placeholder="输入 10/13 位时间戳，或 2026-04-24 18:30:00"></textarea>
@@ -711,10 +725,8 @@
             </div>
           </div>
 
-          <article class="card">
-            <div class="card-header">
-              <h3>页面与图片设置</h3>
-            </div>
+          <details class="settings-details fapiao-settings" open>
+            <summary>页面与图片设置</summary>
             <p class="helper-text section-label">页面设置</p>
             <div class="field-grid fapiao-field-grid cols-3">
               <label>
@@ -753,7 +765,7 @@
                 <input id="fapiaoImgOffsetX" type="number" value="0" step="0.1" min="0" />
               </label>
             </div>
-          </article>
+          </details>
 
           <article class="card">
             <div class="card-header">
@@ -809,12 +821,13 @@
                     <option value="getUrl">GET URL（含查询参数）</option>
                   </select>
                 </label>
-                <label>
-                  <span>请求体格式</span>
+                <label id="httpBodyFormatGroup">
+                  <span id="httpBodyFormatLabelText">请求体格式</span>
                   <select id="httpBodyFormat">
                     <option value="form">Form 表单</option>
                     <option value="json">JSON</option>
                   </select>
+                  <span class="helper-text" id="httpBodyFormatHint" style="display:none;">GET 模式下，此选项决定 URL 中的参数值是否按 JSON 解析（例如数组、对象会保留为 JSON 字符串）。</span>
                 </label>
               </div>
               <label>
@@ -923,6 +936,15 @@
                 </select>
               </label>
               <textarea id="arrayInput" placeholder="粘贴数据，支持自动检测格式&#10;例如：&#10;26070713452925944&#10;26070713331025518&#10;26070713195124733"></textarea>
+              <label>
+                <span>输出格式</span>
+                <select id="arrayOutputFormat">
+                  <option value="newline">每行一个</option>
+                  <option value="comma">逗号分隔</option>
+                  <option value="jsonArray">JSON 数组</option>
+                  <option value="quotedComma" selected>双引号逗号</option>
+                </select>
+              </label>
               <div class="action-row">
                 <button data-action="convertArray" type="button">转换</button>
                 <button class="secondary" data-action="dedupArray" type="button">去重</button>
@@ -950,15 +972,6 @@
                   <strong id="arrayOutputFormatLabel">双引号逗号</strong>
                 </div>
               </div>
-              <label>
-                <span>输出格式</span>
-                <select id="arrayOutputFormat">
-                  <option value="newline">每行一个</option>
-                  <option value="comma">逗号分隔</option>
-                  <option value="jsonArray">JSON 数组</option>
-                  <option value="quotedComma" selected>双引号逗号</option>
-                </select>
-              </label>
               <div class="field-grid array-affix-grid">
                 <label>
                   <span>前缀（可选）</span>
@@ -1024,16 +1037,19 @@
                   <input id="esBaseUrl" type="text" value="http://localhost:9200" placeholder="例如 http://localhost:9200" />
                 </label>
               </div>
-              <div class="field-grid">
-                <label>
-                  <span>ID 字段名（可选）</span>
-                  <input id="esIdField" type="text" placeholder="当原始数据没有 _id 时可指定，例如 id" />
-                </label>
-                <label>
-                  <span>导出字段（可选）</span>
-                  <input id="esSourceFields" type="text" placeholder="逗号分隔，如 user.id,name,age" />
-                </label>
-              </div>
+              <details class="config-details">
+                <summary>高级字段筛选（可选）</summary>
+                <div class="field-grid">
+                  <label>
+                    <span>ID 字段名（可选）</span>
+                    <input id="esIdField" type="text" placeholder="当原始数据没有 _id 时可指定，例如 id" />
+                  </label>
+                  <label>
+                    <span>导出字段（可选）</span>
+                    <input id="esSourceFields" type="text" placeholder="逗号分隔，如 user.id,name,age" />
+                  </label>
+                </div>
+              </details>
               <div class="action-row">
                 <button data-action="convertEsData" type="button">生成 API 语句</button>
               </div>

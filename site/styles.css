@@ -21,6 +21,7 @@
   --danger-soft: rgba(239, 68, 68, 0.15);
   --shadow-md: 0 10px 20px rgba(0, 0, 0, 0.3);
   --shadow-lg: 0 20px 40px rgba(0, 0, 0, 0.4);
+  --shadow-xl: 0 30px 64px rgba(0, 0, 0, 0.52);
   --shadow-sm: 0 4px 10px rgba(0, 0, 0, 0.2);
   --radius-xl: 20px;
   --radius-lg: 14px;
@@ -65,6 +66,7 @@ html[data-theme="light"] {
   --danger: #dc2626;
   --danger-soft: rgba(220, 38, 38, 0.1);
   --shadow-lg: 0 20px 40px rgba(15, 23, 42, 0.06);
+  --shadow-xl: 0 30px 64px rgba(15, 23, 42, 0.12);
   --shadow-md: 0 10px 20px rgba(15, 23, 42, 0.04);
   --shadow-sm: 0 4px 10px rgba(15, 23, 42, 0.02);
   --scrollbar-thumb: #cbd5e1;
@@ -190,6 +192,62 @@ summary {
   0% { stroke-dashoffset: 100; }
   50% { stroke-dashoffset: 0; }
   100% { stroke-dashoffset: -100; }
+}
+
+/* —— 无障碍：尊重系统的动效 / 透明度 / 对比度偏好 (Apple Design §14) —— */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+  /* 关闭会“移动位置”的位移类反馈，避免眩晕 */
+  .side-rail,
+  .toast,
+  .panel-chip:hover,
+  .card:hover,
+  .upload-box:hover,
+  .excel-image-card:hover,
+  .upload-box:hover .upload-icon,
+  button:active,
+  .panel-chip:active,
+  .upload-box:active {
+    transform: none !important;
+  }
+}
+
+@media (prefers-reduced-transparency: reduce) {
+  .workspace-header,
+  .tool-panel,
+  .sidebar-overlay {
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+    background: var(--panel-strong);
+  }
+}
+
+@media (prefers-contrast: more) {
+  :root {
+    --border: rgba(255, 255, 255, 0.45);
+    --muted: #cbd5e1;
+  }
+  html[data-theme="light"] {
+    --border: rgba(15, 23, 42, 0.45);
+    --muted: #334155;
+  }
+  .card,
+  .workspace-header,
+  .tool-panel,
+  .panel-chip,
+  .fapiao-preview-item,
+  .excel-image-card,
+  .upload-box,
+  .range-label {
+    border-width: 1.5px;
+  }
 }
 
 .eyebrow,
@@ -491,9 +549,20 @@ html[data-theme="light"] .moon-icon {
   border: 1px solid var(--border);
   border-radius: var(--radius-xl);
   background: var(--panel-bg);
-  backdrop-filter: blur(16px);
   box-shadow: var(--shadow-lg);
   transition: all 0.3s ease;
+}
+
+/* 越大的表面读起来越“厚”：工具面板用更强模糊 + 更深阴影，头部次之 (Apple Design §12) */
+.workspace-header {
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+}
+
+.tool-panel {
+  backdrop-filter: blur(28px);
+  -webkit-backdrop-filter: blur(28px);
+  box-shadow: var(--shadow-xl);
 }
 
 .workspace-header {
@@ -579,6 +648,7 @@ html[data-theme="light"] .moon-icon {
 
 .section-tabs {
   display: flex;
+  flex-wrap: wrap;
   gap: 6px;
   background: var(--tab-bg);
   padding: 4px;
@@ -1020,6 +1090,56 @@ html[data-theme="light"] .helper-text {
   font-size: 11px;
 }
 
+/* 折叠高级配置（发票 / SQL / ES 等） */
+.settings-details,
+.config-details {
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  background: var(--card-bg);
+  padding: 16px 20px;
+  margin-bottom: 16px;
+  box-shadow: var(--shadow-md);
+}
+
+.settings-details > summary,
+.config-details > summary {
+  cursor: pointer;
+  list-style: none;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--text);
+  padding: 4px 0;
+}
+
+.settings-details > summary::-webkit-details-marker,
+.config-details > summary::-webkit-details-marker {
+  display: none;
+}
+
+.settings-details > summary::before,
+.config-details > summary::before {
+  content: "▸";
+  color: var(--accent-strong);
+  font-size: 12px;
+  transition: transform 0.15s ease;
+}
+
+.settings-details[open] > summary::before,
+.config-details[open] > summary::before {
+  transform: rotate(90deg);
+}
+
+/* 统计卡片内的小巧复制按钮（时间工具三项可复制） */
+.stat-item .copy-btn {
+  padding: 2px 8px;
+  font-size: 11px;
+  align-self: flex-start;
+  margin-top: 2px;
+}
+
 /* Buttons styling */
 button {
   display: inline-flex;
@@ -1032,6 +1152,23 @@ button {
   cursor: pointer;
   transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
   border: 1px solid transparent;
+}
+
+/* 按下即反馈：在 pointer-down 时立即回弹，而不是等松手 (Apple Design §1) */
+button:not(:disabled):active,
+.upload-box:active {
+  transform: scale(0.97);
+  transition: transform 100ms ease-out;
+}
+
+.panel-chip:not(:disabled):active {
+  transform: scale(0.99);
+  transition: transform 100ms ease-out;
+}
+
+.action-row button.accent-green:not(:disabled):active {
+  transform: scale(0.98);
+  transition: transform 100ms ease-out;
 }
 
 /* Primary actions */
@@ -1053,7 +1190,8 @@ button {
 .action-row button:not(.secondary):not(.accent-green):not(.copy-btn):active,
 #encodingEncodeBtn:active,
 #encodingDecodeBtn:active {
-  transform: translateY(0);
+  transform: translateY(0) scale(0.97);
+  transition: transform 100ms ease-out;
 }
 
 /* Secondary actions */
@@ -1736,6 +1874,36 @@ html[data-theme="light"] .fapiao-preview-list.empty-state {
   background: var(--danger-soft);
 }
 
+/* 指针拖拽排序：触屏需要 touch-action:none 才能收到连续 pointermove (Apple Design §2) */
+.fapiao-preview-list {
+  position: relative;
+}
+
+.fapiao-preview-item {
+  touch-action: none;
+}
+
+.fapiao-preview-item.dragging {
+  z-index: 20;
+  cursor: grabbing;
+  box-shadow: var(--shadow-lg);
+  border-color: var(--accent);
+  background: var(--panel-strong);
+  transition: none;
+  will-change: transform;
+}
+
+.fapiao-preview-item.dragging .thumb,
+.fapiao-preview-item.dragging .name,
+.fapiao-preview-item.dragging .size {
+  pointer-events: none;
+}
+
+body.is-dragging {
+  user-select: none;
+  cursor: grabbing;
+}
+
 .fapiao-progress {
   min-height: 20px;
   margin: 0 0 12px;
@@ -2405,9 +2573,9 @@ html[data-theme="light"] .fapiao-preview-list.empty-state {
     flex: 1 1 calc(33.333% - 8px);
   }
 
-  /* 图片对比网格自适应列数，避免手机上硬塞 4 列 */
+  /* 图片对比网格尊重用户在“对比列数”中选择的值（变量驱动），窄屏用 0 最小列宽避免溢出 */
   .image-compare-grid {
-    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    grid-template-columns: repeat(var(--image-columns, 2), minmax(0, 1fr));
   }
 
   /* 差异对比取消最小宽度，避免横向滚动 */

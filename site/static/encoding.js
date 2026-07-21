@@ -101,7 +101,6 @@ function updateEncodingUi() {
     button.classList.toggle("active", button.dataset.encodingType === state.encodingType);
   });
   setText("encodingActiveBadge", mode.badge);
-  setText("encodingModeName", mode.name);
   setText("encodingModeHint", mode.hint);
   $("encodingInput").placeholder = mode.placeholder;
   setText("encodingEncodeBtn", mode.encodeLabel);
@@ -112,6 +111,8 @@ function updateEncodingUi() {
 function updateEncodingOutputMeta(result, directionLabel) {
   setText("encodingLastAction", directionLabel);
   setText("encodingOutputLength", result.length);
+  const inLen = $("encodingInput").value.length;
+  setText("encodingCharDelta", `${inLen} → ${result.length}`);
 }
 
 

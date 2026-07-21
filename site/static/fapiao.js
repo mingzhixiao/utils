@@ -57,6 +57,82 @@ function showFapiaoProgress(message, type = "") {
 }
 
 
+function bindFapiaoItemDrag(item) {
+  const previewList = $("fapiaoPreviewList");
+  let startY = 0;
+  let grabOffset = 0;
+  let pointerId = null;
+  let pending = false;
+  let dragging = false;
+
+  item.addEventListener("pointerdown", (event) => {
+    if (event.target.closest(".del-btn")) return; // 删除按钮不触发拖拽
+    if (event.pointerType === "mouse" && event.button !== 0) return;
+    pending = true;
+    dragging = false;
+    startY = event.clientY;
+    pointerId = event.pointerId;
+    const rect = item.getBoundingClientRect();
+    grabOffset = event.clientY - rect.top; // 尊重抓取点，避免吸附到中心 (Apple Design §2)
+  });
+
+  item.addEventListener("pointermove", (event) => {
+    if (!pending && !dragging) return;
+    const dy = event.clientY - startY;
+    if (!dragging) {
+      if (Math.abs(dy) < 5) return; // 阈值，避免把点击误判为拖拽
+      dragging = true;
+      try {
+        item.setPointerCapture(pointerId);
+      } catch (_) {}
+      item.classList.add("dragging");
+      document.body.classList.add("is-dragging");
+    }
+    event.preventDefault();
+    // 找到手指应插入到哪个兄弟之前
+    const list = previewList;
+    const siblings = Array.from(list.children);
+    let ref = null;
+    for (const sib of siblings) {
+      if (sib === item) continue;
+      const r = sib.getBoundingClientRect();
+      if (event.clientY < r.top + r.height / 2) {
+        ref = sib;
+        break;
+      }
+    }
+    if (ref !== item) {
+      list.insertBefore(item, ref);
+    }
+    // 让元素保持在手指抓取点下，全程 1:1 跟手
+    const listRect = list.getBoundingClientRect();
+    const desiredTop = event.clientY - grabOffset - listRect.top;
+    const offset = desiredTop - item.offsetTop;
+    item.style.transform = `translateY(${offset}px)`;
+  });
+
+  const endDrag = () => {
+    if (!pending && !dragging) return;
+    pending = false;
+    if (!dragging) return; // 未越过阈值，视为普通点击
+    dragging = false;
+    try {
+      item.releasePointerCapture(pointerId);
+    } catch (_) {}
+    document.body.classList.remove("is-dragging");
+    item.classList.remove("dragging");
+    // 提交顺序到 state，再重渲染清理临时 transform
+    const order = Array.from(previewList.children).map((el) => Number(el.dataset.index));
+    const source = state.fapiaoImageFiles;
+    state.fapiaoImageFiles = order.map((i) => source[i]);
+    renderFapiaoPreview();
+  };
+
+  item.addEventListener("pointerup", endDrag);
+  item.addEventListener("pointercancel", endDrag);
+}
+
+
 function renderFapiaoPreview() {
   const previewList = $("fapiaoPreviewList");
   // 回收上一次渲染创建的缩略图 object URL，避免拖拽排序/删除反复重渲染造成泄漏
@@ -81,7 +157,6 @@ function renderFapiaoPreview() {
   files.forEach((file, index) => {
     const item = document.createElement("div");
     item.className = "fapiao-preview-item";
-    item.draggable = true;
     item.dataset.index = String(index);
 
     const thumb = document.createElement("img");
@@ -113,27 +188,7 @@ function renderFapiaoPreview() {
     item.appendChild(size);
     item.appendChild(delBtn);
 
-    item.addEventListener("dragstart", (event) => {
-      event.dataTransfer.setData("text/plain", String(index));
-      item.style.opacity = "0.4";
-    });
-    item.addEventListener("dragend", () => {
-      item.style.opacity = "1";
-    });
-    item.addEventListener("dragover", (event) => {
-      event.preventDefault();
-    });
-    item.addEventListener("drop", (event) => {
-      event.preventDefault();
-      const fromIdx = parseInt(event.dataTransfer.getData("text/plain"), 10);
-      const toIdx = index;
-      if (fromIdx !== toIdx) {
-        const [moved] = state.fapiaoImageFiles.splice(fromIdx, 1);
-        state.fapiaoImageFiles.splice(toIdx, 0, moved);
-        renderFapiaoPreview();
-      }
-    });
-
+    bindFapiaoItemDrag(item);
     previewList.appendChild(item);
   });
 }

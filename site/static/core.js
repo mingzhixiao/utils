@@ -170,19 +170,161 @@ function bindMobileSidebar() {
   if (!rail || !toggle) {
     return;
   }
+
   const isMobile = () => window.matchMedia("(max-width: 860px)").matches;
+  const railWidth = () => rail.offsetWidth || 280;
+  const prefersReducedMotion = () =>
+    window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const EDGE = 24; // 屏幕左缘热区，用于从边缘拖出抽屉
+
+  let isOpen = false;
+  let railX = -railWidth(); // 当前位移：0 = 完全展开，-railWidth = 收起
+  let dragging = false;
+  let pending = false;
+  let dragContext = "";
+  let startX = 0;
+  let startOffset = 0;
+  let lastX = 0;
+  let lastT = 0;
+  let velocity = 0; // px / 帧
+  let rafId = 0;
+
+  const setX = (value) => {
+    railX = value;
+    rail.style.transform = `translateX(${value}px)`;
+  };
+
+  const applyState = (open) => {
+    isOpen = open;
+    rail.classList.toggle("open", open);
+    if (overlay) overlay.classList.toggle("show", open);
+    document.body.style.overflow = open ? "hidden" : "";
+  };
+
+  // 弹簧动画：从当前呈现值出发、继承速度、随时可被打断 (Apple Design §3/§4)
+  const springTo = (target, fromVel = 0) => {
+    cancelAnimationFrame(rafId);
+    if (prefersReducedMotion()) {
+      setX(target);
+      return;
+    }
+    let x = railX;
+    let v = fromVel;
+    const stiffness = 0.16;
+    const damping = 0.76;
+    const tick = () => {
+      const force = (target - x) * stiffness;
+      v = (v + force) * damping;
+      x += v;
+      if (Math.abs(target - x) < 0.4 && Math.abs(v) < 0.4) {
+        setX(target);
+        return;
+      }
+      setX(x);
+      rafId = requestAnimationFrame(tick);
+    };
+    rafId = requestAnimationFrame(tick);
+  };
+
   const open = () => {
-    if (!isMobile()) return;
-    rail.classList.add("open");
-    if (overlay) overlay.classList.add("show");
-    document.body.style.overflow = "hidden";
+    applyState(true);
+    springTo(0);
   };
   const close = () => {
-    rail.classList.remove("open");
-    if (overlay) overlay.classList.remove("show");
-    document.body.style.overflow = "";
+    applyState(false);
+    springTo(-railWidth());
   };
-  toggle.addEventListener("click", open);
+
+  const beginDrag = (clientX, pointerId) => {
+    cancelAnimationFrame(rafId);
+    dragging = true;
+    pending = true;
+    startX = clientX;
+    startOffset = railX;
+    lastX = clientX;
+    lastT = performance.now();
+    velocity = 0;
+    rail.style.transition = "none";
+    document.body.classList.add("is-dragging");
+    try {
+      rail.setPointerCapture(pointerId);
+    } catch (_) {
+      // 边缘热区按下时指针未必在 rail 上，capture 可能失败，靠 window 监听兜底
+    }
+  };
+
+  const moveDrag = (clientX) => {
+    if (!dragging) return;
+    let next = startOffset + (clientX - startX);
+    const w = railWidth();
+    if (next > 0) {
+      next = next * 0.3; // 越过展开边界的橡皮筋
+    } else if (next < -w) {
+      next = -w + (next + w) * 0.3; // 越过收起边界的橡皮筋
+    }
+    const now = performance.now();
+    const dt = now - lastT || 16;
+    velocity = ((clientX - lastX) / dt) * 16;
+    lastX = clientX;
+    lastT = now;
+    setX(next);
+  };
+
+  const endDrag = () => {
+    if (!dragging) return;
+    dragging = false;
+    document.body.classList.remove("is-dragging");
+    if (!pending) return;
+    pending = false;
+    // 轻点未移动：遮罩关闭，其余保持原状
+    if (Math.abs(railX - startOffset) < 6 && Math.abs(velocity) < 1) {
+      if (dragContext === "overlay") close();
+      return;
+    }
+    const w = railWidth();
+    const past = w * 0.4;
+    const flickOpen = velocity > 3.5;
+    const flickClose = velocity < -3.5;
+    if (startOffset < 0) {
+      // 起始为收起状态
+      if (railX > past || flickOpen) open();
+      else close();
+    } else {
+      // 起始为展开状态
+      if (railX < -past || flickClose) close();
+      else open();
+    }
+  };
+
+  const onPointerDown = (event) => {
+    if (!isMobile()) return;
+    const target = event.target;
+    const onInteractive = target.closest && target.closest("button, a, input, select, textarea, label");
+    if (onInteractive) return; // 交给点击/原生控件，保留按钮等语义
+    const onRail = rail.contains(target);
+    const onOverlay = target.closest && target.closest(".sidebar-overlay");
+    const onEdge = !isOpen && event.clientX <= EDGE;
+    if (onRail) dragContext = "rail";
+    else if (onEdge) dragContext = "edge";
+    else if (onOverlay) dragContext = "overlay";
+    else return;
+    event.preventDefault();
+    beginDrag(event.clientX, event.pointerId);
+  };
+
+  document.addEventListener("pointerdown", onPointerDown);
+  // 拖拽全程挂在 window 上，保证指针离开 rail 也能持续跟手
+  window.addEventListener("pointermove", (event) => {
+    if (dragging) moveDrag(event.clientX);
+  });
+  window.addEventListener("pointerup", () => {
+    if (dragging) endDrag();
+  });
+  window.addEventListener("pointercancel", () => {
+    if (dragging) endDrag();
+  });
+
+  if (toggle) toggle.addEventListener("click", open);
   if (closeBtn) closeBtn.addEventListener("click", close);
   if (overlay) overlay.addEventListener("click", close);
   document.addEventListener("keydown", (event) => {
@@ -194,6 +336,22 @@ function bindMobileSidebar() {
       if (isMobile()) close();
     });
   });
+
+  // 回到桌面端时清理内联 transform，交还给 CSS 布局
+  window.addEventListener("resize", () => {
+    if (!isMobile()) {
+      cancelAnimationFrame(rafId);
+      rail.style.transition = "";
+      rail.style.transform = "";
+      applyState(false);
+    }
+  });
+
+  // 初始化：移动端把抽屉放到收起位置，桌面端交给 CSS
+  if (isMobile()) {
+    rail.style.transition = "none";
+    setX(-railWidth());
+  }
 }
 
 
@@ -281,7 +439,7 @@ function buildCurlRequest(method, url, body, contentType = "application/json") {
   return [
     `curl -X ${method} "${url}" \\`,
     `  -H "Content-Type: ${contentType}" \\`,
-    `  --data-binary '${bashSafeBody}'`,
+    `  --data '${bashSafeBody}'`,
   ].join("\n");
 }
 
@@ -295,7 +453,7 @@ function buildPowerShellCurlRequest(method, url, body, contentType = "applicatio
     body,
     `'@ | curl.exe -X ${method} "${url}" \``,
     `  -H "Content-Type: ${contentType}" \``,
-    "  --data-binary @-",
+    "  --data @-",
   ].join("\n");
 }
 

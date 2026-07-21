@@ -873,5 +873,18 @@ function bindJsonActions() {
     },
   };
   bindActions(actions);
+
+  // JSON 差异对比：结构化视图 / 文本摘要 切换（去掉两处重复输出）
+  const diffViewTabs = document.querySelectorAll(".diff-view-tabs .section-tab");
+  if (diffViewTabs.length) {
+    diffViewTabs.forEach((tab) => {
+      tab.addEventListener("click", () => {
+        diffViewTabs.forEach((t) => t.classList.toggle("active", t === tab));
+        const view = tab.dataset.diffView;
+        $("jsonDiffViewerWrap").hidden = view !== "viewer";
+        $("jsonDiffSummaryWrap").hidden = view !== "summary";
+      });
+    });
+  }
 }
 

@@ -282,6 +282,8 @@ function syncHttpInputModeUi() {
   $("httpFormUrl").placeholder = isGetUrlMode
     ? "https://example.com/api/search?cityid=2102&key=明都"
     : "https://example.com/api/submit";
+  setText("httpBodyFormatLabelText", isGetUrlMode ? "参数值解析" : "请求体格式");
+  $("httpBodyFormatHint").style.display = isGetUrlMode ? "" : "none";
 
   const hint = $("httpInputModeHint");
   if (isGetUrlMode && isGetOutput) {
