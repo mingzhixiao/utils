@@ -19,6 +19,9 @@ const state = {
   wordPdfFile: null,
   wordPdfBlob: null,
   wordPdfProgressTimer: null,
+  pdfImageFile: null,
+  pdfImages: [],
+  pdfImageProgressTimer: null,
   toastTimer: null,
 };
 
@@ -134,12 +137,15 @@ function bindNavigation() {
 
 
 function activateSubtab(button) {
+  const targetId = button.dataset.subtabTarget;
+  if (!targetId) {
+    return;
+  }
   const tabs = button.closest(".section-tabs");
   const panel = button.closest(".tool-panel");
   if (!tabs || !panel) {
     return;
   }
-  const targetId = button.dataset.subtabTarget;
   tabs.querySelectorAll(".section-tab").forEach((tab) => {
     tab.classList.toggle("active", tab === button);
   });
@@ -150,7 +156,7 @@ function activateSubtab(button) {
 
 
 function bindSubtabs() {
-  document.querySelectorAll(".section-tabs").forEach((tabs) => {
+  document.querySelectorAll(".section-tabs:not(.diff-view-tabs)").forEach((tabs) => {
     tabs.querySelectorAll(".section-tab").forEach((button) => {
       button.addEventListener("click", () => activateSubtab(button));
     });
@@ -503,6 +509,7 @@ function init() {
   bindEsActions();
   bindExcelActions();
   bindWordPdfActions();
+  bindPdfToImageActions();
 }
 
 document.addEventListener("DOMContentLoaded", init);

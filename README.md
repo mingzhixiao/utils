@@ -19,7 +19,7 @@ The shared page lives under `site/`, so the extension and the website always use
 - Array tools: newline / comma / JSON array / quoted-comma conversions with dedup & sort
 - Elasticsearch tools: Console output, bash cURL, PowerShell cURL, and bulk helpers
 - Office tools: extract embedded images from Excel / Word, download individually or as ZIP
-- Word to PDF: convert `.docx` to PDF locally and download
+- Document conversion: convert `.docx` / `.docm` to PDF locally and download; convert PDF pages to PNG / JPEG images (single page download or ZIP, multiple clarity options)
 
 ## Project Structure
 
@@ -44,6 +44,7 @@ The shared page lives under `site/`, so the extension and the website always use
 │  │  ├─ array.js         # array format conversion
 │  │  ├─ excel.js         # Office image extraction
 │  │  ├─ word-pdf.js      # Word to PDF
+│  │  ├─ pdf-to-image.js  # PDF to PNG / JPEG images
 │  │  └─ theme-init.js    # early theme setup (no flash)
 │  ├─ styles.css
 │  ├─ vendor/             # third-party libs, loaded on demand (jspdf, jszip, mammoth, html2canvas, pdf(.worker).min.js, marked, highlight.min.js)

@@ -296,25 +296,25 @@ summary {
   border-radius: var(--radius-md);
   background: rgba(255, 255, 255, 0.02);
   border: 1px solid rgba(255, 255, 255, 0.03);
+  border-left: 3px solid transparent;
   color: rgba(255, 255, 255, 0.75);
   text-align: left;
   cursor: pointer;
-  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: background 0.2s, border-color 0.2s, color 0.2s, box-shadow 0.2s;
 }
 
 .panel-chip:hover {
   background: rgba(255, 255, 255, 0.06);
   border-color: rgba(255, 255, 255, 0.08);
   color: #fff;
-  transform: translateX(2px);
 }
 
 .panel-chip.active {
   background: linear-gradient(135deg, rgba(99, 102, 241, 0.15) 0%, rgba(59, 130, 246, 0.05) 100%);
   border-color: rgba(99, 102, 241, 0.4);
+  border-left-color: var(--accent-strong);
   color: #a5b4fc;
   box-shadow: 0 4px 12px rgba(99, 102, 241, 0.1);
-  transform: translateX(4px);
 }
 
 .chip-lead {
@@ -374,6 +374,17 @@ summary {
 .panel-link:hover {
   background: linear-gradient(135deg, rgba(16, 185, 129, 0.1) 0%, rgba(5, 150, 105, 0.03) 100%);
   border-color: rgba(16, 185, 129, 0.3);
+}
+
+.panel-chip:focus-visible,
+.section-tab:focus-visible,
+.mode-pill:focus-visible,
+.panel-link:focus-visible,
+.theme-toggle-btn:focus-visible,
+.menu-toggle-btn:focus-visible,
+.sidebar-close-btn:focus-visible {
+  outline: 2px solid var(--accent-strong);
+  outline-offset: 2px;
 }
 
 /* Sidebar Footer & Theme switch */
@@ -2469,6 +2480,122 @@ body.is-dragging {
   .word-pdf-content {
     padding: 20px 18px;
     font-size: 14px;
+  }
+}
+
+/* PDF 转图片 工具 */
+.pdf-image-drop-zone.active {
+  border-color: var(--accent);
+  background: var(--accent-soft);
+  color: var(--text);
+  box-shadow: 0 0 0 4px var(--accent-soft);
+}
+
+.pdf-image-options {
+  margin: 14px 0 4px;
+}
+
+.pdf-image-progress {
+  min-height: 20px;
+  margin: 0 0 12px;
+  text-align: center;
+  font-size: 13px;
+  color: var(--muted);
+}
+
+.pdf-image-progress.success {
+  color: var(--teal);
+}
+
+.pdf-image-progress.error {
+  color: var(--danger);
+}
+
+.pdf-image-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: 14px;
+  margin-top: 12px;
+  max-height: 560px;
+  overflow: auto;
+  padding: 4px;
+}
+
+.pdf-image-grid.empty-state {
+  min-height: 120px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px dashed var(--border);
+  border-radius: var(--radius-lg);
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.pdf-image-card {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 10px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border);
+  background: var(--card-bg);
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.pdf-image-card:hover {
+  border-color: var(--accent);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-sm);
+}
+
+.pdf-image-card img {
+  width: 100%;
+  height: 160px;
+  object-fit: contain;
+  border-radius: var(--radius-sm);
+  background: rgba(0, 0, 0, 0.2);
+  border: 1px solid var(--border);
+}
+
+.pdf-image-card .meta {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.pdf-image-card .name {
+  font-size: 12px;
+  font-weight: 600;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.pdf-image-card .size {
+  font-size: 11px;
+  color: var(--muted);
+}
+
+.pdf-image-download-btn {
+  margin-top: 2px;
+  padding: 6px 10px;
+  font-size: 12px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border);
+  background: var(--accent);
+  color: #fff;
+  cursor: pointer;
+  transition: filter 0.15s ease;
+}
+
+.pdf-image-download-btn:hover {
+  filter: brightness(1.05);
+}
+
+@media (max-width: 600px) {
+  .pdf-image-grid {
+    grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
   }
 }
 
