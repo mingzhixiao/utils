@@ -1,0 +1,1356 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0" />
+<title>Linux 常用命令与运维指南 · 从入门到进阶速查备忘单</title>
+<link rel="icon" href="favicon.svg" type="image/svg+xml" />
+<style>
+  :root {
+    --bg-color: #0b0f19;
+    --bg-radial-1: rgba(99, 102, 241, 0.15);
+    --bg-radial-2: rgba(16, 185, 129, 0.12);
+    --panel-bg: rgba(255, 255, 255, 0.035);
+    --panel-bg-hover: rgba(255, 255, 255, 0.06);
+    --panel-bg-subtle: rgba(255, 255, 255, 0.02);
+    --border-color: rgba(255, 255, 255, 0.09);
+    --border-hover: rgba(99, 102, 241, 0.35);
+    --text-color: #f1f5f9;
+    --text-light: #94a3b8;
+    --text-muted: #64748b;
+    --accent-color: #10b981;
+    --accent-gradient: linear-gradient(135deg, #10b981 0%, #06b6d4 50%, #6366f1 100%);
+    --accent-hover: #34d399;
+    --accent-light: rgba(16, 185, 129, 0.15);
+    --code-bg: #070a12;
+    --code-header-bg: rgba(255, 255, 255, 0.025);
+    --success: #10b981;
+    --warning: #f59e0b;
+    --danger: #ef4444;
+    --info: #06b6d4;
+    --radius: 14px;
+    --shadow: 0 12px 32px -10px rgba(0, 0, 0, 0.6);
+    --font-main: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang SC", "Microsoft YaHei", sans-serif;
+    --font-mono: "JetBrains Mono", "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+    --sidebar-width: 240px;
+  }
+
+  html[data-theme="light"] {
+    --bg-color: #f8fafc;
+    --bg-radial-1: rgba(16, 185, 129, 0.08);
+    --bg-radial-2: rgba(99, 102, 241, 0.06);
+    --panel-bg: #ffffff;
+    --panel-bg-hover: #f1f5f9;
+    --panel-bg-subtle: #f8fafc;
+    --border-color: rgba(15, 23, 42, 0.08);
+    --border-hover: rgba(16, 185, 129, 0.4);
+    --text-color: #0f172a;
+    --text-light: #475569;
+    --text-muted: #94a3b8;
+    --accent-light: rgba(16, 185, 129, 0.1);
+    --code-bg: #1e293b;
+    --code-header-bg: rgba(15, 23, 42, 0.04);
+    --shadow: 0 10px 25px -12px rgba(15, 23, 42, 0.12);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  
+  html { scroll-behavior: smooth; scroll-padding-top: 80px; }
+
+  body {
+    min-height: 100vh;
+    font-family: var(--font-main);
+    background: var(--bg-color);
+    color: var(--text-color);
+    line-height: 1.6;
+    transition: background 0.3s ease, color 0.3s ease;
+    background-image:
+      radial-gradient(1200px 600px at 10% -10%, var(--bg-radial-1), transparent 60%),
+      radial-gradient(900px 500px at 90% 10%, var(--bg-radial-2), transparent 55%);
+    background-attachment: fixed;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  code { font-family: var(--font-mono); }
+  a { color: var(--accent-hover); text-decoration: none; }
+
+  /* 顶部导航栏 */
+  .topbar {
+    position: sticky; top: 0; z-index: 50;
+    display: flex; align-items: center; gap: 16px;
+    padding: 12px 24px;
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    background: color-mix(in srgb, var(--bg-color) 85%, transparent);
+    border-bottom: 1px solid var(--border-color);
+  }
+
+  .brand-group {
+    display: flex; align-items: center; gap: 12px;
+  }
+
+  .logo {
+    width: 36px; height: 36px; border-radius: 10px;
+    background: linear-gradient(135deg, #10b981 0%, #06b6d4 50%, #6366f1 100%);
+    display: grid; place-items: center; color: #fff; font-weight: 800; font-size: 16px;
+    box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+    flex-shrink: 0;
+  }
+
+  .brand-title {
+    font-size: 16px; font-weight: 700; display: flex; align-items: center; gap: 8px;
+    white-space: nowrap;
+  }
+  .brand-title .badge-version {
+    font-size: 11px; font-weight: 600; padding: 2px 7px; border-radius: 20px;
+    background: var(--accent-light); color: var(--accent-hover);
+    border: 1px solid rgba(16, 185, 129, 0.25);
+  }
+
+  .spacer { flex: 1; }
+
+  .search-wrapper {
+    position: relative;
+    width: min(380px, 35vw);
+  }
+  .search-input {
+    width: 100%;
+    padding: 8px 38px 8px 36px; border-radius: 10px;
+    border: 1px solid var(--border-color);
+    background: var(--panel-bg); color: var(--text-color);
+    font-size: 13.5px; outline: none; transition: all .2s ease;
+  }
+  .search-input:focus {
+    border-color: var(--accent-hover);
+    box-shadow: 0 0 0 3px var(--accent-light);
+    background: var(--panel-bg-hover);
+  }
+  .search-icon {
+    position: absolute; left: 12px; top: 50%; transform: translateY(-50%);
+    font-size: 14px; color: var(--text-muted); pointer-events: none;
+  }
+  .search-clear {
+    position: absolute; right: 34px; top: 50%; transform: translateY(-50%);
+    background: none; border: none; color: var(--text-muted); cursor: pointer;
+    font-size: 14px; padding: 2px 6px; display: none; border-radius: 4px;
+  }
+  .search-clear:hover { color: var(--text-color); }
+  .search-shortcut {
+    position: absolute; right: 10px; top: 50%; transform: translateY(-50%);
+    font-size: 10px; font-weight: 600; color: var(--text-muted);
+    background: var(--panel-bg-subtle); border: 1px solid var(--border-color);
+    padding: 2px 5px; border-radius: 4px; pointer-events: none;
+  }
+
+  .actions-group { display: flex; align-items: center; gap: 8px; }
+
+  .icon-btn {
+    width: 38px; height: 38px; border-radius: 10px; cursor: pointer;
+    border: 1px solid var(--border-color); background: var(--panel-bg);
+    color: var(--text-color); font-size: 16px; display: grid; place-items: center;
+    transition: all .2s ease; flex-shrink: 0;
+  }
+  .icon-btn:hover {
+    border-color: var(--accent-hover);
+    background: var(--panel-bg-hover);
+    color: var(--accent-hover);
+  }
+
+  .home-link {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 7px 12px; border-radius: 10px;
+    border: 1px solid var(--border-color); background: var(--panel-bg);
+    color: var(--text-color); font-size: 13px; font-weight: 600;
+    transition: all .2s ease; text-decoration: none;
+  }
+  .home-link:hover {
+    border-color: var(--accent-hover); color: var(--accent-hover); background: var(--panel-bg-hover);
+  }
+
+  /* 移动端菜单按钮 */
+  .mobile-menu-btn { display: none; }
+
+  /* 移动端分类横向滚动条 (Pill Bar) */
+  .mobile-tabs {
+    display: none;
+    overflow-x: auto;
+    white-space: nowrap;
+    padding: 8px 16px;
+    gap: 8px;
+    background: color-mix(in srgb, var(--bg-color) 92%, transparent);
+    border-bottom: 1px solid var(--border-color);
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+  .mobile-tabs::-webkit-scrollbar { display: none; }
+  .mobile-tab-item {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 6px 14px; border-radius: 20px;
+    font-size: 13px; font-weight: 500; color: var(--text-light);
+    background: var(--panel-bg); border: 1px solid var(--border-color);
+    transition: all .2s; text-decoration: none;
+  }
+  .mobile-tab-item.active, .mobile-tab-item:hover {
+    background: var(--accent-color); color: #fff; border-color: var(--accent-color);
+  }
+  .mobile-tab-item .tag {
+    font-size: 11px; opacity: 0.85; padding: 1px 6px; border-radius: 10px;
+    background: rgba(255,255,255,0.2);
+  }
+
+  /* 主布局 */
+  .layout {
+    display: flex; align-items: flex-start; gap: 28px;
+    max-width: 1420px; margin: 0 auto; padding: 24px;
+  }
+
+  /* 侧边栏 */
+  .sidebar {
+    position: sticky; top: 80px;
+    width: var(--sidebar-width); flex: none;
+    display: flex; flex-direction: column; gap: 4px;
+    max-height: calc(100vh - 100px); overflow-y: auto;
+    padding-right: 4px;
+  }
+  .sidebar-title {
+    font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 1.2px;
+    color: var(--text-muted); padding: 8px 12px 4px;
+  }
+  .sidebar a {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 9px 14px; border-radius: 10px; color: var(--text-light);
+    font-size: 13.5px; font-weight: 500; transition: all .2s ease;
+    border: 1px solid transparent;
+  }
+  .sidebar a:hover {
+    background: var(--panel-bg); color: var(--text-color);
+    border-color: var(--border-color);
+  }
+  .sidebar a.active {
+    background: var(--accent-light);
+    color: var(--accent-hover);
+    border-color: rgba(16, 185, 129, 0.35);
+    font-weight: 600;
+  }
+  .sidebar a .tag {
+    font-size: 11px; color: var(--text-muted);
+    background: var(--panel-bg-subtle); border: 1px solid var(--border-color);
+    border-radius: 12px; padding: 1px 8px; font-weight: 600;
+  }
+  .sidebar a.active .tag {
+    background: var(--accent-hover); color: #0f172a; border-color: transparent;
+  }
+
+  .content { flex: 1; min-width: 0; }
+
+  /* Hero 顶部 Banner */
+  .hero {
+    margin-bottom: 28px;
+    background: var(--panel-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 18px;
+    padding: 24px 28px;
+    box-shadow: var(--shadow);
+    position: relative; overflow: hidden;
+  }
+  .hero::before {
+    content: ''; position: absolute; top: -50px; right: -50px;
+    width: 220px; height: 220px; border-radius: 50%;
+    background: radial-gradient(circle, var(--accent-light) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .hero .eyebrow {
+    color: var(--accent-hover); font-weight: 700; font-size: 12px;
+    text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 4px;
+    display: inline-flex; align-items: center; gap: 6px;
+  }
+  .hero h2 { font-size: 26px; font-weight: 800; margin-bottom: 8px; letter-spacing: -0.5px; }
+  .hero p { color: var(--text-light); max-width: 860px; font-size: 14px; line-height: 1.7; }
+  .hero code { background: var(--panel-bg-subtle); border: 1px solid var(--border-color); padding: 2px 7px; border-radius: 6px; font-size: 13px; color: var(--accent-hover); }
+
+  /* 动态参数控制与替换器 */
+  .param-control {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 14px;
+    margin-top: 20px; padding: 16px 20px;
+    background: var(--panel-bg-subtle); border: 1px solid var(--border-color);
+    border-radius: 14px;
+  }
+  .param-box { display: flex; flex-direction: column; gap: 6px; }
+  .param-label {
+    font-size: 12.5px; font-weight: 600; color: var(--text-color);
+    display: flex; align-items: center; gap: 8px;
+  }
+  .param-dot {
+    width: 8px; height: 8px; border-radius: 50%;
+    background: var(--success); box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.2);
+    transition: all .3s;
+  }
+  .param-input-wrap { display: flex; align-items: center; gap: 8px; }
+  .param-input-wrap input {
+    flex: 1; min-width: 0;
+    padding: 8px 12px; border-radius: 8px;
+    border: 1px solid var(--border-color);
+    background: var(--code-bg); color: var(--accent-hover);
+    font-family: var(--font-mono); font-size: 13px; outline: none; transition: all .2s;
+  }
+  .param-input-wrap input:focus { border-color: var(--accent-hover); box-shadow: 0 0 0 3px var(--accent-light); }
+  
+  .preset-chips { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; margin-top: 2px; }
+  .chip-btn {
+    font-size: 11px; font-weight: 600; padding: 3px 8px; border-radius: 6px;
+    border: 1px solid var(--border-color); background: var(--panel-bg);
+    color: var(--text-light); cursor: pointer; transition: all .2s;
+    font-family: var(--font-mono);
+  }
+  .chip-btn:hover { border-color: var(--accent-hover); color: var(--accent-hover); background: var(--accent-light); }
+
+  .reset-btn {
+    border: 1px solid var(--border-color); background: var(--panel-bg);
+    color: var(--text-light); font-size: 12px; font-weight: 600;
+    padding: 7px 12px; border-radius: 8px; cursor: pointer; transition: all .2s;
+    white-space: nowrap; height: 35px; align-self: flex-end;
+  }
+  .reset-btn:hover { color: var(--accent-hover); border-color: var(--accent-hover); background: var(--panel-bg-hover); }
+
+  .param-tip { color: var(--text-muted); font-size: 12px; grid-column: 1 / -1; margin-top: 2px; }
+
+  /* Section 结构 */
+  .section { margin-bottom: 44px; scroll-margin-top: 90px; }
+  .section.hidden, .card.hidden { display: none !important; }
+  
+  .section-head {
+    display: flex; align-items: center; gap: 12px; margin-bottom: 18px;
+    padding-bottom: 10px; border-bottom: 1px solid var(--border-color);
+  }
+  .section-head .badge {
+    width: 38px; height: 38px; border-radius: 10px; display: grid; place-items: center;
+    font-weight: 800; font-size: 14px; color: #fff; flex-shrink: 0;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.25); letter-spacing: 0.5px;
+  }
+  .badge.basic { background: linear-gradient(135deg, #10b981, #059669); }
+  .badge.text  { background: linear-gradient(135deg, #06b6d4, #0891b2); }
+  .badge.sys   { background: linear-gradient(135deg, #6366f1, #4f46e5); }
+  .badge.net   { background: linear-gradient(135deg, #8b5cf6, #7c3aed); }
+  .badge.perm  { background: linear-gradient(135deg, #f59e0b, #d97706); }
+  .badge.adv   { background: linear-gradient(135deg, #ec4899, #db2777); }
+
+  .section-head h3 { font-size: 20px; font-weight: 700; letter-spacing: -0.3px; }
+  .section-head .count { font-size: 12px; font-weight: 600; color: var(--text-muted); background: var(--panel-bg-subtle); padding: 2px 8px; border-radius: 12px; border: 1px solid var(--border-color); }
+
+  /* 卡片列表 */
+  .card-grid { display: grid; grid-template-columns: 1fr; gap: 18px; }
+
+  .card {
+    background: var(--panel-bg);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    overflow: hidden;
+    transition: transform .2s ease, border-color .2s ease, box-shadow .2s ease;
+  }
+  .card:hover {
+    border-color: var(--border-hover);
+    transform: translateY(-2px);
+    box-shadow: 0 16px 36px -12px rgba(0,0,0,0.5);
+  }
+
+  .card-head {
+    display: flex; align-items: center; gap: 10px;
+    padding: 12px 18px; border-bottom: 1px solid var(--border-color);
+    background: var(--panel-bg-subtle); flex-wrap: wrap;
+  }
+  .card-head .cmd-tag {
+    font-size: 11px; font-weight: 800; letter-spacing: 0.8px;
+    padding: 3px 9px; border-radius: 6px; color: #fff;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.2); flex-shrink: 0;
+    font-family: var(--font-mono);
+  }
+  .tag-basic { background: #059669; }
+  .tag-text  { background: #0891b2; }
+  .tag-sys   { background: #4f46e5; }
+  .tag-net   { background: #7c3aed; }
+  .tag-perm  { background: #d97706; }
+  .tag-adv   { background: #db2777; }
+
+  .card-head .title { font-weight: 700; font-size: 15px; color: var(--text-color); }
+  .card-head .desc { color: var(--text-light); font-size: 13px; margin-left: auto; font-weight: 400; }
+
+  /* 代码展示区 */
+  .card-body { position: relative; }
+  pre {
+    margin: 0; background: var(--code-bg); color: #e2e8f0;
+    padding: 16px 20px; overflow-x: auto; font-size: 13.5px; line-height: 1.65;
+    font-family: var(--font-mono);
+    -webkit-overflow-scrolling: touch;
+  }
+  /* 语法高亮定义 */
+  pre .c { color: #64748b; font-style: italic; } /* 注释 */
+  pre .k { color: #34d399; font-weight: 600; } /* 命令关键字 */
+  pre .o { color: #f43f5e; } /* 参数选项 -x --flag */
+  pre .s { color: #38bdf8; } /* 字符串/路径/URL */
+  pre .v { color: #fbbf24; font-weight: 600; } /* 变量或占位符 */
+
+  .card-foot {
+    display: flex; align-items: center; justify-content: space-between; gap: 12px;
+    padding: 10px 18px; border-top: 1px solid var(--border-color);
+    background: var(--panel-bg-subtle); flex-wrap: wrap;
+  }
+  .card-foot .hint { color: var(--text-muted); font-size: 12.5px; display: flex; align-items: center; gap: 6px; flex: 1; min-width: 220px; }
+  .card-foot .hint::before { content: '💡'; font-size: 12px; }
+
+  .copy-btn {
+    border: 1px solid var(--border-color); background: var(--panel-bg);
+    color: var(--text-color); font-size: 12.5px; font-weight: 600;
+    padding: 6px 14px; border-radius: 8px; cursor: pointer;
+    display: inline-flex; align-items: center; gap: 6px; transition: all .2s ease;
+    flex-shrink: 0;
+  }
+  .copy-btn:hover {
+    border-color: var(--accent-hover); color: var(--accent-hover);
+    background: var(--accent-light);
+  }
+  .copy-btn.copied {
+    background: var(--success); border-color: var(--success); color: #fff;
+  }
+
+  /* 空搜索提示 */
+  .empty {
+    text-align: center; color: var(--text-muted); padding: 80px 20px;
+    background: var(--panel-bg); border: 1px dashed var(--border-color);
+    border-radius: var(--radius); margin-top: 20px;
+  }
+  .empty-icon { font-size: 40px; margin-bottom: 12px; opacity: 0.7; }
+  .empty.hidden { display: none; }
+
+  /* 回到顶部按钮 */
+  .back-top {
+    position: fixed; bottom: 24px; right: 24px; z-index: 40;
+    width: 44px; height: 44px; border-radius: 50%;
+    background: var(--accent-color); color: #fff;
+    border: none; box-shadow: 0 8px 24px rgba(16, 185, 129, 0.4);
+    cursor: pointer; display: grid; place-items: center; font-size: 18px;
+    opacity: 0; pointer-events: none; transform: translateY(10px);
+    transition: all .3s ease;
+  }
+  .back-top.show { opacity: 1; pointer-events: auto; transform: translateY(0); }
+  .back-top:hover { background: var(--accent-hover); color: #0f172a; transform: translateY(-2px); }
+
+  /* Toast Notification */
+  .toast {
+    position: fixed; bottom: 32px; left: 50%; transform: translateX(-50%) translateY(20px);
+    background: #0f172a; color: #fff; padding: 10px 22px; border-radius: 12px;
+    font-size: 13.5px; font-weight: 600; opacity: 0; pointer-events: none;
+    transition: all .3s cubic-bezier(0.16, 1, 0.3, 1);
+    box-shadow: 0 16px 36px -8px rgba(0,0,0,.7); z-index: 100;
+    border: 1px solid rgba(255,255,255,.12);
+    display: flex; align-items: center; gap: 8px;
+  }
+  .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+  .toast.toast-error { background: #991b1b; border-color: rgba(255,255,255,0.2); }
+
+  /* Mobile Drawer Overlay */
+  .drawer-overlay {
+    position: fixed; inset: 0; background: rgba(0,0,0,0.6);
+    backdrop-filter: blur(4px); z-index: 90; opacity: 0; pointer-events: none;
+    transition: opacity .3s ease;
+  }
+  .drawer-overlay.open { opacity: 1; pointer-events: auto; }
+  .mobile-drawer {
+    position: fixed; top: 0; left: -280px; width: 280px; height: 100%;
+    background: var(--bg-color); z-index: 100; padding: 24px;
+    box-shadow: 10px 0 30px rgba(0,0,0,0.5);
+    transition: left .3s ease; display: flex; flex-direction: column; gap: 16px;
+    border-right: 1px solid var(--border-color);
+  }
+  .mobile-drawer.open { left: 0; }
+  .drawer-head { display: flex; align-items: center; justify-content: space-between; }
+  .drawer-title { font-size: 16px; font-weight: 700; }
+  .drawer-close { background: none; border: none; font-size: 20px; color: var(--text-muted); cursor: pointer; }
+
+  /* 响应式调整 (Mobile & Tablet) */
+  @media (max-width: 960px) {
+    .layout { flex-direction: column; gap: 20px; padding: 16px; }
+    .sidebar { display: none; }
+    .mobile-tabs { display: flex; }
+    .mobile-menu-btn { display: grid; }
+    .search-wrapper { width: 100%; }
+    .hero { padding: 18px 20px; margin-bottom: 20px; }
+    .hero h2 { font-size: 22px; }
+    .card-head { flex-direction: column; align-items: flex-start; gap: 6px; }
+    .card-head .desc { margin-left: 0; opacity: 0.85; }
+    .card-foot { flex-direction: column; align-items: stretch; gap: 10px; }
+    .card-foot .hint { min-width: auto; }
+    .copy-btn { width: 100%; justify-content: center; padding: 8px; }
+  }
+
+  @media (max-width: 540px) {
+    .topbar { padding: 10px 14px; gap: 10px; }
+    .brand-title span { display: none; }
+    .hero p { font-size: 13px; }
+    pre { font-size: 12.5px; padding: 12px 14px; }
+  }
+</style>
+</head>
+<body>
+
+  <!-- 顶部导航栏 -->
+  <header class="topbar">
+    <button class="icon-btn mobile-menu-btn" id="drawerToggle" title="打开导航菜单">☰</button>
+
+    <div class="brand-group">
+      <div class="logo">🐧</div>
+      <div class="brand-title">
+        Linux 常用命令
+        <span>速查备忘单</span>
+        <span class="badge-version">POSIX / Kernel 6.x</span>
+      </div>
+    </div>
+    
+    <div class="spacer"></div>
+
+    <!-- 搜索框 -->
+    <div class="search-wrapper">
+      <span class="search-icon">🔍</span>
+      <input id="search" class="search-input" type="text" placeholder="搜索 Linux 命令，如 grep, awk, systemctl, chmod..." autocomplete="off" spellcheck="false" />
+      <button class="search-clear" id="searchClear" title="清空搜索">✕</button>
+      <span class="search-shortcut">/</span>
+    </div>
+
+    <div class="actions-group">
+      <a href="es-cheatsheet.html" class="home-link" title="ES 常见用法速查">⚡ ES 速查</a>
+      <a href="index.html" class="home-link" title="返回工具盒子">🏠 返回主页</a>
+      <button class="icon-btn" id="themeToggle" title="切换暗黑/明亮主题">🌙</button>
+    </div>
+  </header>
+
+  <!-- 移动端横向滚动分类条 -->
+  <nav class="mobile-tabs" id="mobileTabs">
+    <a href="#sec-basic" class="mobile-tab-item active">📁 基础入门 <span class="tag">5</span></a>
+    <a href="#sec-text" class="mobile-tab-item">📝 文本处理 <span class="tag">5</span></a>
+    <a href="#sec-sys" class="mobile-tab-item">📊 系统监控 <span class="tag">5</span></a>
+    <a href="#sec-net" class="mobile-tab-item">🌐 网络运维 <span class="tag">5</span></a>
+    <a href="#sec-perm" class="mobile-tab-item">🔒 权限解压 <span class="tag">3</span></a>
+    <a href="#sec-adv" class="mobile-tab-item">🔥 进阶 Shell <span class="tag">5</span></a>
+  </nav>
+
+  <!-- 移动端 Drawer 抽屉 -->
+  <div class="drawer-overlay" id="drawerOverlay"></div>
+  <aside class="mobile-drawer" id="mobileDrawer">
+    <div class="drawer-head">
+      <span class="drawer-title">🚀 目录导航</span>
+      <button class="drawer-close" id="drawerClose">✕</button>
+    </div>
+    <nav class="sidebar" style="display: flex; position: static; width: 100%; max-height: none;">
+      <a href="#sec-basic" class="drawer-link">📁 1. 基础入门文件操作 <span class="tag">5</span></a>
+      <a href="#sec-text" class="drawer-link">📝 2. 文本查看与流处理 <span class="tag">5</span></a>
+      <a href="#sec-sys" class="drawer-link">📊 3. 系统监控与进程管理 <span class="tag">5</span></a>
+      <a href="#sec-net" class="drawer-link">🌐 4. 网络通信与远程运维 <span class="tag">5</span></a>
+      <a href="#sec-perm" class="drawer-link">🔒 5. 用户权限与归档解压 <span class="tag">3</span></a>
+      <a href="#sec-adv" class="drawer-link">🔥 6. 进阶运维与 Shell 调试 <span class="tag">5</span></a>
+    </nav>
+  </aside>
+
+  <!-- 主布局区 -->
+  <div class="layout">
+    <!-- 桌面侧边栏 -->
+    <nav class="sidebar" id="sidebar">
+      <div class="sidebar-title">全景目录 (入门→进阶)</div>
+      <a href="#sec-basic" class="nav-link active">📁 1. 基础入门文件操作 <span class="tag">5</span></a>
+      <a href="#sec-text" class="nav-link">📝 2. 文本查看与流处理 <span class="tag">5</span></a>
+      <a href="#sec-sys" class="nav-link">📊 3. 系统监控与进程管理 <span class="tag">5</span></a>
+      <a href="#sec-net" class="nav-link">🌐 4. 网络通信与远程运维 <span class="tag">5</span></a>
+      <a href="#sec-perm" class="nav-link">🔒 5. 用户权限与归档解压 <span class="tag">3</span></a>
+      <a href="#sec-adv" class="nav-link">🔥 6. 进阶运维与 Shell 调试 <span class="tag">5</span></a>
+    </nav>
+
+    <!-- 主内容区 -->
+    <main class="content">
+      <div class="hero">
+        <div class="eyebrow">⚡ Linux Command Cheat Sheet</div>
+        <h2>Linux 核心命令与实战运维指南</h2>
+        <p>系统化收录从基础目录跳转、文本流匹配（grep/sed/awk），到进程控制、网络排查及 Shell 进阶脚本的全部核心用例。右下角一键复制指令，支持动态替换主机与目标路径。</p>
+        
+        <!-- 动态参数替换控制器 -->
+        <div class="param-control">
+          <div class="param-box">
+            <div class="param-label"><span class="param-dot" id="dotHost"></span>远程主机 / 用户 (Host)</div>
+            <div class="param-input-wrap">
+              <input id="serverHost" type="text" value="root@192.168.1.100" placeholder="root@192.168.1.100" spellcheck="false" autocomplete="off" />
+            </div>
+            <div class="preset-chips">
+              <span style="font-size:11px; color:var(--text-muted);">快捷设置:</span>
+              <button class="chip-btn" data-target="host" data-val="root@192.168.1.100">root@192.168.1.100</button>
+              <button class="chip-btn" data-target="host" data-val="deploy@10.0.0.1">deploy@10.0.0.1</button>
+              <button class="chip-btn" data-target="host" data-val="admin@server">admin@server</button>
+            </div>
+          </div>
+
+          <div class="param-box">
+            <div class="param-label"><span class="param-dot" id="dotPath"></span>目标日志 / 路径 (Path)</div>
+            <div class="param-input-wrap">
+              <input id="targetPath" type="text" value="/var/log/nginx/access.log" placeholder="/var/log/nginx/access.log" spellcheck="false" autocomplete="off" />
+            </div>
+            <div class="preset-chips">
+              <span style="font-size:11px; color:var(--text-muted);">快捷设置:</span>
+              <button class="chip-btn" data-target="path" data-val="/var/log/nginx/access.log">/var/log/nginx/access.log</button>
+              <button class="chip-btn" data-target="path" data-val="/var/log/syslog">/var/log/syslog</button>
+              <button class="chip-btn" data-target="path" data-val="/opt/app/app.log">/opt/app/app.log</button>
+            </div>
+          </div>
+
+          <button class="reset-btn" id="paramReset" type="button">重置参数</button>
+          <span class="param-tip">修改输入框后，下方全部代码样例中的主机名与路径将实时同步替换。</span>
+        </div>
+      </div>
+
+      <!-- ============ SECTION 1: 基础入门文件操作 ============ -->
+      <section class="section" id="sec-basic">
+        <div class="section-head">
+          <span class="badge basic">01</span>
+          <h3>📁 基础入门：文件与目录操作 (Basic Navigation & File Ops)</h3>
+          <span class="count">5 个常用场景</span>
+        </div>
+        <div class="card-grid">
+
+          <div class="card">
+            <div class="card-head"><span class="cmd-tag tag-basic">BASIC</span><span class="title">目录查看与快速切换</span><span class="desc">pwd, cd, ls 高频选项</span></div>
+            <div class="card-body"><pre><code><span class="c"># 查看当前工作目录物理真实路径</span>
+<span class="k">pwd</span> <span class="o">-P</span>
+
+<span class="c"># 快速返回上一次所在目录</span>
+<span class="k">cd</span> <span class="s">-</span>
+
+<span class="c"># 列表详细查看：包含隐藏文件、人类可读文件大小、长 ISO 时间格式</span>
+<span class="k">ls</span> <span class="o">-lha</span> <span class="o">--color=auto</span> <span class="o">--time-style=long-iso</span> /opt/app</code></pre></div>
+            <div class="card-foot"><span class="hint"><code>cd -</code> 是终端频繁在两路径切换时最出色的效率黑科技</span><button class="copy-btn">📋 复制</button></div>
+          </div>
+
+          <div class="card">
+            <div class="card-head"><span class="cmd-tag tag-basic">BASIC</span><span class="title">创建与删除目录/文件</span><span class="desc">mkdir, touch, rm 规范用法</span></div>
+            <div class="card-body"><pre><code><span class="c"># 递归创建多级目录结构（如父级目录不存在会自动创建）</span>
+<span class="k">mkdir</span> <span class="o">-p</span> /opt/app/logs/2026
+
+<span class="c"># 创建空文件或更新已存在文件的修改时间戳</span>
+<span class="k">touch</span> /opt/app/logs/2026/app.log
+
+<span class="c"># 递归强制删除目录（请务必核对路径，避免 rm -rf /）</span>
+<span class="k">rm</span> <span class="o">-rf</span> /tmp/old_build_dir
+
+<span class="c"># 交互式删除（每删一个文件弹窗确认，适合敏感文件）</span>
+<span class="k">rm</span> <span class="o">-i</span> /opt/app/config.json</code></pre></div>
+            <div class="card-foot"><span class="hint"><code>mkdir -p</code> 保证脚本在初始化深度文件夹路径时绝不会报错报错退出</span><button class="copy-btn">📋 复制</button></div>
+          </div>
+
+          <div class="card">
+            <div class="card-head"><span class="cmd-tag tag-basic">BASIC</span><span class="title">复制、移动与重命名</span><span class="desc">cp, mv 归档与覆盖策略</span></div>
+            <div class="card-body"><pre><code><span class="c"># 归档模式复制目录：保留属主、权限、时间戳及软链接属性</span>
+<span class="k">cp</span> <span class="o">-ra</span> /var/www/html/ /var/www/html_backup/
+
+<span class="c"># 仅当源文件更新或者目标文件不存在时才执行复制 (Update 模式)</span>
+<span class="k">cp</span> <span class="o">-u</span> config.prod.json /opt/app/config.json
+
+<span class="c"># 移动或重命名文件/目录，并打屏显示过程</span>
+<span class="k">mv</span> <span class="o">-v</span> /opt/app/app.log.old /opt/app/app.log.bak</code></pre></div>
+            <div class="card-foot"><span class="hint">备份目录推荐使用 <code>cp -ra</code>，完美避免文件修改时间与属主信息丢失</span><button class="copy-btn">📋 复制</button></div>
+          </div>
+
+          <div class="card">
+            <div class="card-head"><span class="cmd-tag tag-basic">BASIC</span><span class="title">精准查找文件与程序定位</span><span class="desc">find, whereis, which</span></div>
+            <div class="card-body"><pre><code><span class="c"># 按文件名通配、最近 7 天内修改、且文件大于 100M 查找日志</span>
+<span class="k">find</span> /var/log/nginx/access.log <span class="o">-name</span> <span class="s">"*.log"</span> <span class="o">-mtime</span> <span class="s">-7</span> <span class="o">-size</span> <span class="s">+100M</span>
+
+<span class="c"># 查找当前目录下所有 .sh 脚本并批量修改为 755 权限</span>
+<span class="k">find</span> . <span class="o">-type</span> f <span class="o">-name</span> <span class="s">"*.sh"</span> <span class="o">-exec</span> <span class="k">chmod</span> 755 {} +
+
+<span class="c"># 查找某个可执行命令的绝对路径与帮助文档路径</span>
+<span class="k">which</span> nginx
+<span class="k">whereis</span> nginx</code></pre></div>
+            <div class="card-foot"><span class="hint"><code>find ... -exec ... {} +</code> 批量处理效率远比 <code>xargs</code> 更安全高效</span><button class="copy-btn">📋 复制</button></div>
+          </div>
+
+          <div class="card">
+            <div class="card-head"><span class="cmd-tag tag-basic">BASIC</span><span class="title">软链接与硬链接创建</span><span class="desc">ln -s 快捷方式管理</span></div>
+            <div class="card-body"><pre><code><span class="c"># 创建符号软链接（快捷方式，推荐使用绝对路径）</span>
+<span class="k">ln</span> <span class="o">-s</span> /var/log/nginx/access.log /tmp/current_access.log
+
+<span class="c"># 查看软链接指向的目标实际路径</span>
+<span class="k">ls</span> <span class="o">-l</span> /tmp/current_access.log
+
+<span class="c"># 强制覆盖替换已存在的软链接</span>
+<span class="k">ln</span> <span class="o">-snf</span> /var/log/nginx/access_2026.log /tmp/current_access.log</code></pre></div>
+            <div class="card-foot"><span class="hint">修改更新软链接时务必使用 <code>ln -snf</code> 避免误将链接创建到目标目录内部</span><button class="copy-btn">📋 复制</button></div>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- ============ SECTION 2: 文本查看与流处理 ============ -->
+      <section class="section" id="sec-text">
+        <div class="section-head">
+          <span class="badge text">02</span>
+          <h3>📝 文本查看与流式处理 (Text Processing & Inspection)</h3>
+          <span class="count">5 个常用场景</span>
+        </div>
+        <div class="card-grid">
+
+          <div class="card">
+            <div class="card-head"><span class="cmd-tag tag-text">TEXT</span><span class="title">高效查看与实时日志追踪</span><span class="desc">cat, less, tail, head</span></div>
+            <div class="card-body"><pre><code><span class="c"># 实时动态追踪日志文件最新的 200 行</span>
+<span class="k">tail</span> <span class="o">-fn</span> 200 /var/log/nginx/access.log
+
+<span class="c"># 交互式查看长日志：显示行号、自动定位至文件底部 (按 q 退出)</span>
+<span class="k">less</span> <span class="o">-N</span> <span class="o">+G</span> /var/log/nginx/access.log
+
+<span class="c"># 查看文件前 30 行内容</span>
+<span class="k">head</span> <span class="o">-n</span> 30 /var/log/nginx/access.log</code></pre></div>
+            <div class="card-foot"><span class="hint"><code>less -N +G</code> 打开大型几GB文件极快且不会内存溢出</span><button class="copy-btn">📋 复制</button></div>
+          </div>
+
+          <div class="card">
+            <div class="card-head"><span class="cmd-tag tag-text">TEXT</span><span class="title">正则匹配与强大过滤</span><span class="desc">grep 常用参数组合</span></div>
+            <div class="card-body"><pre><code><span class="c"># 递归、忽略二进制、显示行号高亮搜索 "ERROR" 关键字</span>
+<span class="k">grep</span> <span class="o">-rnI</span> <span class="o">--color=auto</span> <span class="s">"ERROR"</span> /var/log/nginx/access.log
+
+<span class="c"># 过滤配置文件：排除以 # 开头的注释行以及空白空行</span>
+<span class="k">grep</span> <span class="o">-v</span> <span class="s">"^#"</span> /etc/nginx/nginx.conf | <span class="k">grep</span> <span class="o">-v</span> <span class="s">"^$"</span>
+
+<span class="c"># 扩展正则表达式：同时匹配 500/502/504 错误状态码</span>
+<span class="k">grep</span> <span class="o">-E</span> <span class="s">" 500 | 502 | 504 "</span> /var/log/nginx/access.log</code></pre></div>
+            <div class="card-foot"><span class="hint"><code>grep -v "^#" | grep -v "^$"</code> 是阅读干净纯粹配置文件的利器</span><button class="copy-btn">📋 复制</button></div>
+          </div>
+
+          <div class="card">
+            <div class="card-head"><span class="cmd-tag tag-text">TEXT</span><span class="title">流编辑器文本替换与截取</span><span class="desc">sed 原地修改与指定行打印</span></div>
+            <div class="card-body"><pre><code><span class="c"># 在原文件直接全局替换 IP 地址（配合 .bak 自动产生备份）</span>
+<span class="k">sed</span> <span class="o">-i.bak</span> <span class="s">'s/127.0.0.1/192.168.1.100/g'</span> /etc/nginx/nginx.conf
+
+<span class="c"># 快速截取并打印文件的第 100 行至第 150 行</span>
+<span class="k">sed</span> <span class="o">-n</span> <span class="s">'100,150p'</span> /var/log/nginx/access.log
+
+<span class="c"># 直接在原文件中删除包含 "DEBUG" 的所有调试日志行</span>
+<span class="k">sed</span> <span class="o">-i</span> <span class="s">'/DEBUG/d'</span> /var/log/nginx/access.log</code></pre></div>
+            <div class="card-foot"><span class="hint"><code>sed -i.bak</code> 在做配置修改前能自动备份原文件，运维更安全</span><button class="copy-btn">📋 复制</button></div>
+          </div>
+
+          <div class="card">
+            <div class="card-head"><span class="cmd-tag tag-text">TEXT</span><span class="title">日志分析与字段数据处理</span><span class="desc">awk 提取、统计与计算</span></div>
+            <div class="card-body"><pre><code><span class="c"># 分析 Nginx 访问日志，统计请求频次最高的 Top 10 IP 地址</span>
+<span class="k">awk</span> <span class="s">'{print $1}'</span> /var/log/nginx/access.log | <span class="k">sort</span> | <span class="k">uniq</span> <span class="o">-c</span> | <span class="k">sort</span> <span class="o">-rn</span> | <span class="k">head</span> <span class="o">-n</span> 10
+
+<span class="c"># 以冒号分割，提取 UID 大于等于 1000 的普通用户账号和主目录</span>
+<span class="k">awk</span> <span class="o">-F</span><span class="s">':'</span> <span class="s">'$3 >= 1000 {print $1, $3, $6}'</span> /etc/passwd
+
+<span class="c"># 累加日志第 10 列传输字节数并计算 MB 总量</span>
+<span class="k">awk</span> <span class="s">'{sum += $10} END {print "Total Transfer:", sum/1024/1024, "MB"}'</span> /var/log/nginx/access.log</code></pre></div>
+            <div class="card-foot"><span class="hint"><code>awk '{print $1}' | sort | uniq -c | sort -rn</code> 为最经典的日志分析管道套路</span><button class="copy-btn">📋 复制</button></div>
+          </div>
+
+          <div class="card">
+            <div class="card-head"><span class="cmd-tag tag-text">TEXT</span><span class="title">列切割、排序去重与差异比对</span><span class="desc">cut, sort, uniq, diff</span></div>
+            <div class="card-body"><pre><code><span class="c"># 按逗号切割，提取 CSV 文件的第 1 列和第 3 列</span>
+<span class="k">cut</span> <span class="o">-d</span><span class="s">','</span> <span class="o">-f</span>1,3 data.csv
+
+<span class="c"># 快速统计日志文件总行数、词数与字节数</span>
+<span class="k">wc</span> <span class="o">-l</span> /var/log/nginx/access.log
+
+<span class="c"># 统一上下文比对两个配置文件的差异 (Unified diff)</span>
+<span class="k">diff</span> <span class="o">-u</span> /etc/nginx/nginx.conf /etc/nginx/nginx.conf.bak</code></pre></div>
+            <div class="card-foot"><span class="hint"><code>diff -u</code> 输出格式符合 Git 提交标准，对比配置一目了然</span><button class="copy-btn">📋 复制</button></div>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- ============ SECTION 3: 系统监控与进程管理 ============ -->
+      <section class="section" id="sec-sys">
+        <div class="section-head">
+          <span class="badge sys">03</span>
+          <h3>📊 系统监控与进程管理 (System Health & Process Control)</h3>
+          <span class="count">5 个常用场景</span>
+        </div>
+        <div class="card-grid">
+
+          <div class="card">
+            <div class="card-head"><span class="cmd-tag tag-sys">SYS</span><span class="title">进程排查与层级拓扑树</span><span class="desc">ps, top, htop 监控</span></div>
+            <div class="card-body"><pre><code><span class="c"># 查看全量进程列表并筛选 Nginx 相关进程</span>
+<span class="k">ps</span> <span class="o">aux</span> | <span class="k">grep</span> nginx
+
+<span class="c"># 以树状结构展现所有父子进程关系</span>
+<span class="k">ps</span> <span class="o">-ef</span> <span class="o">--forest</span>
+
+<span class="c"># 批处理模式单次快照查看资源占用前 15 位的进程</span>
+<span class="k">top</span> <span class="o">-b</span> <span class="o">-n</span> 1 | <span class="k">head</span> <span class="o">-n</span> 22</code></pre></div>
+            <div class="card-foot"><span class="hint"><code>ps -ef --forest</code> 能够极其清晰地分辨出子进程是由哪个主进程 Fork 出来的</span><button class="copy-btn">📋 复制</button></div>
+          </div>
+
+          <div class="card">
+            <div class="card-head"><span class="cmd-tag tag-sys">SYS</span><span class="title">进程终止与信号发送</span><span class="desc">kill, pkill, killall 安全清理</span></div>
+            <div class="card-body"><pre><code><span class="c"># 优雅终止进程（发送 SIGTERM 15 信号，允许进程保存清理数据）</span>
+<span class="k">kill</span> <span class="o">-15</span> 12345
+
+<span class="c"># 强制杀死死锁或未响应进程（SIGKILL 9 信号）</span>
+<span class="k">kill</span> <span class="o">-9</span> 12345
+
+<span class="c"># 根据进程完整命令行搜索并批量终止程序</span>
+<span class="k">pkill</span> <span class="o">-f</span> <span class="s">"python3 app.py"</span></code></pre></div>
+            <div class="card-foot"><span class="hint">生产环境切勿直接无脑 <code>kill -9</code>，应优先尝试 <code>kill -15</code></span><button class="copy-btn">📋 复制</button></div>
+          </div>
+
+          <div class="card">
+            <div class="card-head"><span class="cmd-tag tag-sys">SYS</span><span class="title">Systemd 服务管理与日志诊断</span><span class="desc">systemctl, journalctl</span></div>
+            <div class="card-body"><pre><code><span class="c"># 查看服务运行状态、开机自启状态与最新日志片段</span>
+<span class="k">systemctl</span> status nginx
+
+<span class="c"># 设置开机自启并立即启动服务</span>
+<span class="k">systemctl</span> enable <span class="o">--now</span> nginx
+
+<span class="c"># 实时追踪系统服务底层日志（无分页直接刷屏）</span>
+<span class="k">journalctl</span> <span class="o">-u</span> nginx <span class="o">-n</span> 100 <span class="o">-f</span> <span class="o">--no-pager</span></code></pre></div>
+            <div class="card-foot"><span class="hint"><code>systemctl enable --now</code> 可一条命令完成开机自启 + 立即启动</span><button class="copy-btn">📋 复制</button></div>
+          </div>
+
+          <div class="card">
+            <div class="card-head"><span class="cmd-tag tag-sys">SYS</span><span class="title">内存、CPU 负载与核心硬件</span><span class="desc">free, uptime, lscpu</span></div>
+            <div class="card-body"><pre><code><span class="c"># 查看物理内存、Swap 分区及 Buffer/Cache 占用（G/M 人类可读单位）</span>
+<span class="k">free</span> <span class="o">-h</span> <span class="o">-t</span>
+
+<span class="c"># 查看系统运行时长以及 1m/5m/15m 平均负载 Load Average</span>
+<span class="k">uptime</span>
+
+<span class="c"># 查看物理 CPU 核心数、线程数、架构与 CPU 频率</span>
+<span class="k">lscpu</span></code></pre></div>
+            <div class="card-foot"><span class="hint">当 Load Average 数值持续高于 CPU 总逻辑核心数时说明系统过载</span><button class="copy-btn">📋 复制</button></div>
+          </div>
+
+          <div class="card">
+            <div class="card-head"><span class="cmd-tag tag-sys">SYS</span><span class="title">磁盘空间挂载与大文件排查</span><span class="desc">df, du, lsblk</span></div>
+            <div class="card-body"><pre><code><span class="c"># 查看磁盘各挂载点空间、文件系统类型及 inode 使用率</span>
+<span class="k">df</span> <span class="o">-hT</span> <span class="o">-i</span>
+
+<span class="c"># 递归查找根目录下占用空间最大的前 10 个顶级文件夹（排除报错）</span>
+<span class="k">du</span> <span class="o">-sh</span> /* 2>/dev/null | <span class="k">sort</span> <span class="o">-rh</span> | <span class="k">head</span> <span class="o">-n</span> 10
+
+<span class="c"># 查看系统全量块设备、UUID 与挂载对应关系</span>
+<span class="k">lsblk</span> <span class="o">-f</span></code></pre></div>
+            <div class="card-foot"><span class="hint"><code>df -i</code> 排查 inode 耗尽（磁盘虽有剩余容量却无法新建文件）极管用</span><button class="copy-btn">📋 复制</button></div>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- ============ SECTION 4: 网络通信与远程运维 ============ -->
+      <section class="section" id="sec-net">
+        <div class="section-head">
+          <span class="badge net">04</span>
+          <h3>🌐 网络通信与远程运维 (Networking, Ports & Remote Ops)</h3>
+          <span class="count">5 个常用场景</span>
+        </div>
+        <div class="card-grid">
+
+          <div class="card">
+            <div class="card-head"><span class="cmd-tag tag-net">NET</span><span class="title">端口监听与连接句柄查询</span><span class="desc">ss, netstat, lsof, nc</span></div>
+            <div class="card-body"><pre><code><span class="c"># 查看本地监听的 TCP/UDP 端口及所对应的程序 PID</span>
+<span class="k">ss</span> <span class="o">-tulpn</span> | <span class="k">grep</span> :80
+
+<span class="c"># 精准反查占用 8080 端口的进程详细信息</span>
+<span class="k">lsof</span> <span class="o">-i</span> :8080
+
+<span class="c"># 测试远程目标服务器的指定 TCP 端口连通性</span>
+<span class="k">nc</span> <span class="o">-zv</span> 192.168.1.100 80</code></pre></div>
+            <div class="card-foot"><span class="hint"><code>ss</code> 比传统的 <code>netstat</code> 在连接数极大时性能高出百倍</span><button class="copy-btn">📋 复制</button></div>
+          </div>
+
+          <div class="card">
+            <div class="card-head"><span class="cmd-tag tag-net">NET</span><span class="title">网络抓包与 DNS 诊断</span><span class="desc">tcpdump, ping, dig</span></div>
+            <div class="card-body"><pre><code><span class="c"># 在 eth0 网卡抓取 80 端口的 HTTP 数据包并保存为文件</span>
+<span class="k">tcpdump</span> <span class="o">-i</span> eth0 <span class="o">-n</span> port 80 <span class="o">-w</span> capture.pcap
+
+<span class="c"># 快速测试 ICMP 网络连通（仅发送 4 个数据包）</span>
+<span class="k">ping</span> <span class="o">-c</span> 4 192.168.1.100
+
+<span class="c"># 深入解析域名的 A 记录解析过程与 DNS 响应</span>
+<span class="k">dig</span> +short A www.baidu.com</code></pre></div>
+            <div class="card-foot"><span class="hint">抓取的 `.pcap` 文件可直接用 Wireshark 导入可视化图形分析</span><button class="copy-btn">📋 复制</button></div>
+          </div>
+
+          <div class="card">
+            <div class="card-head"><span class="cmd-tag tag-net">NET</span><span class="title">HTTP 请求测试与文件下载</span><span class="desc">curl, wget 常用调试</span></div>
+            <div class="card-body"><pre><code><span class="c"># 发送带 Header 与 JSON 数据的 POST 请求（显示请求与响应头细节）</span>
+<span class="k">curl</span> <span class="o">-iv</span> <span class="o">-X</span> POST <span class="o">-H</span> <span class="s">"Content-Type: application/json"</span> <span class="o">-d</span> <span class="s">'{"status":"active"}'</span> http://192.168.1.100:8080/api
+
+<span class="c"># 静默测试 URL 连通性并输出 HTTP 状态码</span>
+<span class="k">curl</span> <span class="o">-sIL</span> http://192.168.1.100
+
+<span class="c"># 断点续传方式下载大文件并保存为新名称</span>
+<span class="k">wget</span> <span class="o">-c</span> <span class="o">-O</span> package.tar.gz http://example.com/file.tar.gz</code></pre></div>
+            <div class="card-foot"><span class="hint"><code>curl -sIL</code> 输出 301/302 重定向全链路信息，排查 CDN 非常方便</span><button class="copy-btn">📋 复制</button></div>
+          </div>
+
+          <div class="card">
+            <div class="card-head"><span class="cmd-tag tag-net">NET</span><span class="title">SSH 远程登录与密钥部署</span><span class="desc">ssh, ssh-copy-id, 隧道</span></div>
+            <div class="card-body"><pre><code><span class="c"># 指定密钥文件与非标准端口登录远程主机</span>
+<span class="k">ssh</span> <span class="o">-i</span> ~/.ssh/id_rsa <span class="o">-p</span> 22 root@192.168.1.100
+
+<span class="c"># 将本机公钥推送部署至远程服务器（实现后续免密登录）</span>
+<span class="k">ssh-copy-id</span> <span class="o">-i</span> ~/.ssh/id_rsa.pub root@192.168.1.100
+
+<span class="c"># 建立 SSH 端口转发隧道：将远端 80 端口映射到本地 8080</span>
+<span class="k">ssh</span> <span class="o">-N</span> <span class="o">-L</span> 8080:localhost:80 root@192.168.1.100</code></pre></div>
+            <div class="card-foot"><span class="hint"><code>ssh-copy-id</code> 自动设置 <code>~/.ssh/authorized_keys</code> 正确的 600 权限</span><button class="copy-btn">📋 复制</button></div>
+          </div>
+
+          <div class="card">
+            <div class="card-head"><span class="cmd-tag tag-net">NET</span><span class="title">远程文件传输与增量同步</span><span class="desc">scp, rsync 同步架构</span></div>
+            <div class="card-body"><pre><code><span class="c"># 通过加密通道将本地目录递归复制到远程服务器</span>
+<span class="k">scp</span> <span class="o">-r</span> <span class="o">-P</span> 22 ./dist root@192.168.1.100:/var/www/html/
+
+<span class="c"># 增量同步：带压缩、进度显示，且自动删除远程多余废弃文件</span>
+<span class="k">rsync</span> <span class="o">-avzP</span> <span class="o">--delete</span> ./dist/ root@192.168.1.100:/var/www/html/</code></pre></div>
+            <div class="card-foot"><span class="hint">部署静态网页项目强烈推荐 <code>rsync -avzP --delete</code>，速度远快于 scp</span><button class="copy-btn">📋 复制</button></div>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- ============ SECTION 5: 用户权限与归档解压 ============ -->
+      <section class="section" id="sec-perm">
+        <div class="section-head">
+          <span class="badge perm">05</span>
+          <h3>🔒 用户权限与归档解压 (Permissions, Users & Archives)</h3>
+          <span class="count">3 个常用场景</span>
+        </div>
+        <div class="card-grid">
+
+          <div class="card">
+            <div class="card-head"><span class="cmd-tag tag-perm">PERM</span><span class="title">文件权限与所有者变更</span><span class="desc">chmod, chown 赋权策略</span></div>
+            <div class="card-body"><pre><code><span class="c"># 递归变更目录及其子文件的所有者与属组</span>
+<span class="k">chown</span> <span class="o">-R</span> www-data:www-data /var/www/html/
+
+<span class="c"># 递归设置标准权限：目录 755 (rwxr-xr-x)</span>
+<span class="k">chmod</span> <span class="o">-R</span> 755 /var/www/html/
+
+<span class="c"># 紧固私钥文件安全权限（仅属主可读写，防止 SSH 报 Unprotected key 警告）</span>
+<span class="k">chmod</span> 600 ~/.ssh/id_rsa</code></pre></div>
+            <div class="card-foot"><span class="hint">SSH 私钥必须保持 600 权限，否则 SSH 客户端将拒绝使用该密钥</span><button class="copy-btn">📋 复制</button></div>
+          </div>
+
+          <div class="card">
+            <div class="card-head"><span class="cmd-tag tag-perm">PERM</span><span class="title">用户创建与 sudo 提权管理</span><span class="desc">useradd, usermod, visudo</span></div>
+            <div class="card-body"><pre><code><span class="c"># 创建新用户：自动创建主目录且指定默认 Bash Shell</span>
+<span class="k">sudo</span> <span class="k">useradd</span> <span class="o">-m</span> <span class="o">-s</span> /bin/bash deploy
+
+<span class="c"># 将已有用户追加到特定附加组（如 docker 组，无需重新登录）</span>
+<span class="k">sudo</span> <span class="k">usermod</span> <span class="o">-aG</span> docker deploy
+
+<span class="c"># 安全编辑 sudoers 配置文件（自动语法校验，避免编辑错误锁死系统）</span>
+<span class="k">sudo</span> visudo</code></pre></div>
+            <div class="card-foot"><span class="hint">切记编辑 sudoers 一律使用 <code>visudo</code> 命令，防止配置错误失去管理员权限</span><button class="copy-btn">📋 复制</button></div>
+          </div>
+
+          <div class="card">
+            <div class="card-head"><span class="cmd-tag tag-perm">PERM</span><span class="title">打包、压缩与解压缩</span><span class="desc">tar, gzip, zip 跨平台归档</span></div>
+            <div class="card-body"><pre><code><span class="c"># 打包并使用 Gzip 格式压缩指定文件目录</span>
+<span class="k">tar</span> <span class="o">-czvf</span> /opt/app_backup.tar.gz /var/log/nginx/access.log
+
+<span class="c"># 解压 .tar.gz 文件到目标文件夹</span>
+<span class="k">tar</span> <span class="o">-xzvf</span> /opt/app_backup.tar.gz <span class="o">-C</span> /tmp/extract/
+
+<span class="c"># zip 跨平台压缩与静默解压</span>
+<span class="k">zip</span> <span class="o">-r</span> archive.zip /opt/app/
+<span class="k">unzip</span> <span class="o">-q</span> archive.zip <span class="o">-d</span> /tmp/extract/</code></pre></div>
+            <div class="card-foot"><span class="hint">记忆口诀：打包压缩用 <code>-czvf</code>，解包解压用 <code>-xzvf</code></span><button class="copy-btn">📋 复制</button></div>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- ============ SECTION 6: 进阶运维与 Shell 调试 ============ -->
+      <section class="section" id="sec-adv">
+        <div class="section-head">
+          <span class="badge adv">06</span>
+          <h3>🔥 进阶运维与 Shell 调试黑科技 (Advanced Ops & Shell Debugging)</h3>
+          <span class="count">5 个常用场景</span>
+        </div>
+        <div class="card-grid">
+
+          <div class="card">
+            <div class="card-head"><span class="cmd-tag tag-adv">ADV</span><span class="title">重定向、管道与后台守护</span><span class="desc">nohup, tee, 2>&1 深入详解</span></div>
+            <div class="card-body"><pre><code><span class="c"># 后台守护运行程序：标准输出与标准错误全部合并重定向输出到日志文件</span>
+<span class="k">nohup</span> python3 app.py > /var/log/nginx/access.log <span class="o">2>&amp;1</span> &amp;
+
+<span class="c"># 管道追加写入文件，同时在控制台终端打屏输出</span>
+<span class="k">echo</span> <span class="s">"Deployment complete: 2026-07-21"</span> | <span class="k">tee</span> <span class="o">-a</span> /var/log/nginx/access.log</code></pre></div>
+            <div class="card-foot"><span class="hint"><code>2>&1</code> 含义为将标准错误（文件描述符 2）重定向复制到标准输出（文件描述符 1）</span><button class="copy-btn">📋 复制</button></div>
+          </div>
+
+          <div class="card">
+            <div class="card-head"><span class="cmd-tag tag-adv">ADV</span><span class="title">定时任务与终端会话保持</span><span class="desc">crontab, tmux, screen</span></div>
+            <div class="card-body"><pre><code><span class="c"># 编辑当前用户的定时任务 Cron 规则 (分 时 日 月 周)</span>
+<span class="k">crontab</span> <span class="o">-e</span>
+
+<span class="c"># 经典 Crontab 样例：每天凌晨 02:00 自动执行备份脚本</span>
+0 2 * * * /opt/backup.sh > /dev/null <span class="o">2>&amp;1</span>
+
+<span class="c"># Tmux 终端持久化会话：即使网络断开后台任务也不会中断</span>
+<span class="k">tmux</span> new <span class="o">-s</span> mysession     <span class="c"># 创建新会话</span>
+<span class="k">tmux</span> attach <span class="o">-t</span> mysession  <span class="c"># 重新连接已有会话</span></code></pre></div>
+            <div class="card-foot"><span class="hint">在 SSH 远程连接编译大型项目时，强烈建议开启 <code>tmux</code> 防止掉线挂断</span><button class="copy-btn">📋 复制</button></div>
+          </div>
+
+          <div class="card">
+            <div class="card-head"><span class="cmd-tag tag-adv">ADV</span><span class="title">环境变量与 Shell 快捷缩写</span><span class="desc">export, alias, source</span></div>
+            <div class="card-body"><pre><code><span class="c"># 导出追加环境变量 PATH</span>
+<span class="k">export</span> PATH=$PATH:/usr/local/go/bin
+
+<span class="c"># 设置常用命令缩写别名 (可写入 ~/.bashrc 永久生效)</span>
+<span class="k">alias</span> ll=<span class="s">'ls -alF --color=auto'</span>
+<span class="k">alias</span> ports=<span class="s">'ss -tulpn'</span>
+
+<span class="c"># 重新加载 Bash 配置文件，使其在当前窗口立即生效</span>
+<span class="k">source</span> ~/.bashrc</code></pre></div>
+            <div class="card-foot"><span class="hint">为高频长命令配置 <code>alias</code> 能够极大提升每日运维操作速度</span><button class="copy-btn">📋 复制</button></div>
+          </div>
+
+          <div class="card">
+            <div class="card-head"><span class="cmd-tag tag-adv">ADV</span><span class="title">磁盘 I/O、内存 Swap 与内核错误排查</span><span class="desc">iostat, vmstat, dmesg</span></div>
+            <div class="card-body"><pre><code><span class="c"># 查看磁盘读写 IOPS、MB/s 及 %util 饱和度 (每秒刷新一次，共 5 次)</span>
+<span class="k">iostat</span> <span class="o">-xz</span> 1 5
+
+<span class="c"># 监控系统上下文切换 cs、中断 in 及内存 Swap 进出情况</span>
+<span class="k">vmstat</span> 1 5
+
+<span class="c"># 带时间戳查看内核底层硬件及 OOM (Out of Memory) 内存溢出日志</span>
+<span class="k">dmesg</span> <span class="o">-T</span> <span class="o">--level=err,warn</span> | <span class="k">tail</span> <span class="o">-n</span> 30</code></pre></div>
+            <div class="card-foot"><span class="hint">当 <code>iostat</code> 中的 <code>%util</code> 接近 100% 时，说明磁盘 I/O 已经达到性能瓶颈上限</span><button class="copy-btn">📋 复制</button></div>
+          </div>
+
+          <div class="card">
+            <div class="card-head"><span class="cmd-tag tag-adv">ADV</span><span class="title">系统调用追踪与句柄文件诊断</span><span class="desc">strace, lsof 高级分析</span></div>
+            <div class="card-body"><pre><code><span class="c"># 实时跟踪某个 PID 进程的文件与网络系统调用及单次耗时</span>
+<span class="k">strace</span> <span class="o">-p</span> 12345 <span class="o">-e</span> trace=file,network <span class="o">-T</span> <span class="o">-tt</span>
+
+<span class="c"># 列出指定进程当前打开的所有文件描述符、Socket 句柄及磁盘文件</span>
+<span class="k">lsof</span> <span class="o">-p</span> 12345
+
+<span class="c"># 统计系统全量已打开的文件句柄总数</span>
+<span class="k">lsof</span> | <span class="k">wc</span> <span class="o">-l</span></code></pre></div>
+            <div class="card-foot"><span class="hint"><code>strace</code> 是排查程序卡死、无法读取配置文件等挂起问题的最终武器</span><button class="copy-btn">📋 复制</button></div>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- 搜索空状态 -->
+      <div id="emptyState" class="empty hidden">
+        <div class="empty-icon">🔍</div>
+        <h3>未找到匹配的 Linux 命令</h3>
+        <p>请尝试更改关键字，例如搜 <code>grep</code>, <code>awk</code>, <code>chmod</code>, <code>ssh</code>, <code>systemctl</code> 等。</p>
+      </div>
+
+    </main>
+  </div>
+
+  <!-- 回到顶部按钮 -->
+  <button class="back-top" id="backTop" title="回到顶部">↑</button>
+
+  <!-- Toast 消息组件 -->
+  <div class="toast" id="toast"></div>
+
+  <!-- JavaScript 交互逻辑 -->
+  <script>
+    (function () {
+      "use strict";
+
+      // 1. 主题切换与初始化
+      const THEME_KEY = "toolbox-theme";
+      const themeBtn = document.getElementById("themeToggle");
+
+      const initTheme = () => {
+        const saved = localStorage.getItem(THEME_KEY);
+        if (saved) {
+          document.documentElement.setAttribute("data-theme", saved);
+        } else {
+          const isDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+          document.documentElement.setAttribute("data-theme", isDark ? "dark" : "light");
+        }
+      };
+      initTheme();
+
+      const updateThemeIcon = () => {
+        const isDark = document.documentElement.getAttribute("data-theme") === "dark";
+        themeBtn.textContent = isDark ? "🌙" : "☀️";
+      };
+      updateThemeIcon();
+
+      themeBtn.addEventListener("click", () => {
+        const current = document.documentElement.getAttribute("data-theme");
+        const next = current === "dark" ? "light" : "dark";
+        document.documentElement.setAttribute("data-theme", next);
+        localStorage.setItem(THEME_KEY, next);
+        updateThemeIcon();
+      });
+
+      // 2. Toast 提示
+      let toastTimer;
+      function showToast(msg, isError) {
+        const t = document.getElementById("toast");
+        t.innerHTML = (isError ? "❌ " : "✅ ") + msg;
+        t.classList.toggle("toast-error", !!isError);
+        t.classList.add("show");
+        clearTimeout(toastTimer);
+        toastTimer = setTimeout(() => t.classList.remove("show"), 2000);
+      }
+
+      // 3. 一键复制功能
+      function copyText(text) {
+        if (navigator.clipboard && window.isSecureContext) {
+          return navigator.clipboard.writeText(text);
+        }
+        return new Promise((resolve, reject) => {
+          const ta = document.createElement("textarea");
+          ta.value = text;
+          ta.style.position = "fixed";
+          ta.style.opacity = "0";
+          document.body.appendChild(ta);
+          ta.select();
+          try { document.execCommand("copy"); resolve(); }
+          catch (e) { reject(e); }
+          finally { document.body.removeChild(ta); }
+        });
+      }
+
+      document.querySelectorAll(".copy-btn").forEach((btn) => {
+        btn.addEventListener("click", async () => {
+          const card = btn.closest(".card");
+          const pre = card && card.querySelector("pre");
+          if (!pre) return;
+          const text = pre.textContent;
+          try {
+            await copyText(text);
+            showToast("已成功复制指令至剪贴板");
+            btn.classList.add("copied");
+            const oldText = btn.textContent;
+            btn.textContent = "✅ 已复制";
+            setTimeout(() => {
+              btn.classList.remove("copied");
+              btn.textContent = oldText;
+            }, 1500);
+          } catch (e) {
+            showToast("复制失败，请手动选择复制", true);
+          }
+        });
+      });
+
+      // 4. 动态参数实时替换 (Host 与 Path)
+      const BASE_HOST = "root@192.168.1.100";
+      const BASE_PATH = "/var/log/nginx/access.log";
+
+      const HOST_STORE_KEY = "linux-cheatsheet-host";
+      const PATH_STORE_KEY = "linux-cheatsheet-path";
+
+      const hostTextNodes = [];
+      const pathTextNodes = [];
+
+      document.querySelectorAll(".card pre").forEach((pre) => {
+        const walker = document.createTreeWalker(pre, NodeFilter.SHOW_TEXT, null);
+        let node;
+        while ((node = walker.nextNode())) {
+          let modified = false;
+          let val = node.nodeValue;
+
+          if (val.includes(BASE_HOST)) {
+            node._origHost = val;
+            hostTextNodes.push(node);
+            modified = true;
+          }
+          if (val.includes(BASE_PATH)) {
+            node._origPath = modified ? node._origHost : val;
+            pathTextNodes.push(node);
+          }
+        }
+      });
+
+      const serverHostInput = document.getElementById("serverHost");
+      const targetPathInput = document.getElementById("targetPath");
+      const paramReset = document.getElementById("paramReset");
+
+      function applyParams() {
+        const currentHost = (serverHostInput.value || "").trim() || BASE_HOST;
+        const currentPath = (targetPathInput.value || "").trim() || BASE_PATH;
+
+        // 替换 Host
+        hostTextNodes.forEach((node) => {
+          const base = node._origHost || node.nodeValue;
+          node.nodeValue = base.split(BASE_HOST).join(currentHost);
+        });
+
+        // 替换 Path
+        pathTextNodes.forEach((node) => {
+          const base = node._origPath || node.nodeValue;
+          // 注意如果同时含有 host 和 path 的节点
+          let res = base.split(BASE_HOST).join(currentHost);
+          res = res.split(BASE_PATH).join(currentPath);
+          node.nodeValue = res;
+        });
+      }
+
+      serverHostInput.addEventListener("input", () => {
+        applyParams();
+        localStorage.setItem(HOST_STORE_KEY, serverHostInput.value.trim());
+      });
+
+      targetPathInput.addEventListener("input", () => {
+        applyParams();
+        localStorage.setItem(PATH_STORE_KEY, targetPathInput.value.trim());
+      });
+
+      paramReset.addEventListener("click", () => {
+        serverHostInput.value = BASE_HOST;
+        targetPathInput.value = BASE_PATH;
+        localStorage.removeItem(HOST_STORE_KEY);
+        localStorage.removeItem(PATH_STORE_KEY);
+        applyParams();
+        showToast("已重置的主机与目标路径为默认值");
+      });
+
+      // 快捷 Chip 按钮
+      document.querySelectorAll(".chip-btn").forEach((chip) => {
+        chip.addEventListener("click", () => {
+          const target = chip.getAttribute("data-target");
+          const val = chip.getAttribute("data-val");
+
+          if (target === "host") {
+            serverHostInput.value = val;
+            localStorage.setItem(HOST_STORE_KEY, val);
+          } else if (target === "path") {
+            targetPathInput.value = val;
+            localStorage.setItem(PATH_STORE_KEY, val);
+          }
+          applyParams();
+          showToast(`已更新参数: ${val}`);
+        });
+      });
+
+      // 恢复上次保存的参数
+      (function restoreParams() {
+        const savedHost = localStorage.getItem(HOST_STORE_KEY);
+        const savedPath = localStorage.getItem(PATH_STORE_KEY);
+
+        if (savedHost) serverHostInput.value = savedHost;
+        if (savedPath) targetPathInput.value = savedPath;
+
+        if (savedHost || savedPath) applyParams();
+      })();
+
+      // 5. 实时搜索与关键词过滤
+      const search = document.getElementById("search");
+      const searchClear = document.getElementById("searchClear");
+      const emptyState = document.getElementById("emptyState");
+
+      function filterContent() {
+        const q = search.value.trim().toLowerCase();
+        searchClear.style.display = q ? "block" : "none";
+        let anyVisible = false;
+
+        document.querySelectorAll(".section").forEach((section) => {
+          let sectionHasMatch = false;
+          section.querySelectorAll(".card").forEach((card) => {
+            const text = card.textContent.toLowerCase();
+            const hit = !q || text.includes(q);
+            card.classList.toggle("hidden", !hit);
+            if (hit) sectionHasMatch = true;
+          });
+          section.classList.toggle("hidden", !sectionHasMatch);
+          if (sectionHasMatch) anyVisible = true;
+        });
+
+        emptyState.classList.toggle("hidden", anyVisible);
+      }
+
+      search.addEventListener("input", filterContent);
+      searchClear.addEventListener("click", () => {
+        search.value = "";
+        filterContent();
+        search.focus();
+      });
+
+      // 全局快捷键 '/' 或 'Ctrl+K' 聚焦搜索
+      window.addEventListener("keydown", (e) => {
+        if ((e.key === "/" || (e.ctrlKey && e.key === "k")) && document.activeElement !== search && document.activeElement !== serverHostInput && document.activeElement !== targetPathInput) {
+          e.preventDefault();
+          search.focus();
+        } else if (e.key === "Escape") {
+          if (document.activeElement === search) {
+            search.value = "";
+            filterContent();
+            search.blur();
+          }
+          closeDrawer();
+        }
+      });
+
+      // 6. ScrollSpy 滚动高亮
+      const sections = document.querySelectorAll(".section");
+      const navLinks = document.querySelectorAll(".sidebar .nav-link");
+      const mobileTabLinks = document.querySelectorAll(".mobile-tab-item");
+
+      function onScroll() {
+        const scrollPos = window.scrollY + 120;
+        sections.forEach((sec) => {
+          const top = sec.offsetTop;
+          const height = sec.offsetHeight;
+          const id = sec.getAttribute("id");
+
+          if (scrollPos >= top && scrollPos < top + height) {
+            navLinks.forEach((link) => {
+              link.classList.toggle("active", link.getAttribute("href") === "#" + id);
+            });
+            mobileTabLinks.forEach((link) => {
+              const active = link.getAttribute("href") === "#" + id;
+              link.classList.toggle("active", active);
+              if (active) {
+                link.scrollIntoView({ behavior: "smooth", inline: "center", block: "nearest" });
+              }
+            });
+          }
+        });
+
+        const backTopBtn = document.getElementById("backTop");
+        backTopBtn.classList.toggle("show", window.scrollY > 300);
+      }
+
+      window.addEventListener("scroll", onScroll, { passive: true });
+
+      document.getElementById("backTop").addEventListener("click", () => {
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      });
+
+      // 7. 移动端 抽屉 Drawer
+      const drawerOverlay = document.getElementById("drawerOverlay");
+      const mobileDrawer = document.getElementById("mobileDrawer");
+      const drawerToggle = document.getElementById("drawerToggle");
+      const drawerClose = document.getElementById("drawerClose");
+
+      function openDrawer() {
+        drawerOverlay.classList.add("open");
+        mobileDrawer.classList.add("open");
+      }
+      function closeDrawer() {
+        drawerOverlay.classList.remove("open");
+        mobileDrawer.classList.remove("open");
+      }
+
+      if (drawerToggle) drawerToggle.addEventListener("click", openDrawer);
+      if (drawerClose) drawerClose.addEventListener("click", closeDrawer);
+      if (drawerOverlay) drawerOverlay.addEventListener("click", closeDrawer);
+
+      document.querySelectorAll(".drawer-link").forEach((link) => {
+        link.addEventListener("click", () => {
+          closeDrawer();
+        });
+      });
+
+    })();
+  </script>
+</body>
+</html>

@@ -23,7 +23,6 @@
             </svg>
           </div>
           <div>
-            <p class="eyebrow">Toolbox</p>
             <h1>工具盒子</h1>
           </div>
           <button id="sidebarCloseBtn" class="sidebar-close-btn" type="button" aria-label="关闭菜单">
@@ -139,7 +138,6 @@
             </svg>
           </button>
           <div>
-            <p class="eyebrow">Focused Workspace</p>
             <h2 id="workspaceTitle">编码工具</h2>
             <p class="workspace-subtitle" id="workspaceSubtitle">常见文本编码和解码集中在一个面板里。</p>
           </div>
@@ -994,8 +992,12 @@
               <h3>查询结果转 API 语句</h3>
               <p class="section-text">支持 Console 和 cURL，两栏布局更适合边调参数边看输出。</p>
             </div>
-            <div class="section-tags" style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
-              <a href="es-cheatsheet.html" target="_blank" class="es-cheat-badge" style="display: inline-flex; align-items: center; gap: 6px; padding: 5px 12px; border-radius: 20px; background: linear-gradient(135deg, #6366f1, #8b5cf6); color: #fff; font-weight: 600; font-size: 12.5px; text-decoration: none; box-shadow: 0 4px 12px rgba(99,102,241,0.3); transition: all 0.2s ease;">⚡ 语法速查表 ↗</a>
+            <div class="section-tags es-section-tags">
+              <a href="es-cheatsheet.html" target="_blank" class="es-cheat-badge">
+                <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+                <span>语法速查表</span>
+                <svg class="es-badge-arrow" viewBox="0 0 24 24" width="11" height="11" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/></svg>
+              </a>
               <span>Index</span>
               <span>Bulk</span>
               <span>cURL</span>
@@ -1003,15 +1005,20 @@
           </div>
 
           <!-- 快速跳转速查表 Banner -->
-          <div style="margin: 0 0 20px 0; padding: 14px 18px; border-radius: 12px; background: rgba(99, 102, 241, 0.08); border: 1px solid rgba(99, 102, 241, 0.2); display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap;">
-            <div style="display: flex; align-items: center; gap: 12px;">
-              <span style="font-size: 22px;">📚</span>
-              <div>
-                <strong style="font-size: 14px; color: var(--text-color, #f1f5f9); display: block; margin-bottom: 2px;">Elasticsearch 常见用法速查备忘单 (Cheat Sheet)</strong>
-                <span style="font-size: 12.5px; color: var(--text-muted, #94a3b8);">覆盖索引管理、新增 Create、查询 Read、更新 Update、删除 Delete 及运维进阶用法</span>
+          <div class="es-cheat-banner">
+            <div class="es-cheat-banner-main">
+              <span class="es-cheat-banner-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+              </span>
+              <div class="es-cheat-banner-text">
+                <strong class="es-cheat-banner-title">Elasticsearch 常见用法速查备忘单</strong>
+                <span class="es-cheat-banner-sub">覆盖索引管理、新增 Create、查询 Read、更新 Update、删除 Delete 及运维进阶用法</span>
               </div>
             </div>
-            <a href="es-cheatsheet.html" target="_blank" style="padding: 8px 16px; border-radius: 8px; background: var(--accent-color, #6366f1); color: #fff; font-weight: 600; font-size: 13px; text-decoration: none; white-space: nowrap; transition: all 0.2s ease;">打开速查表 ↗</a>
+            <a href="es-cheatsheet.html" target="_blank" class="es-cheat-banner-cta">
+              <span>打开速查表</span>
+              <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/></svg>
+            </a>
           </div>
 
           <div class="split-workbench es-workbench">
