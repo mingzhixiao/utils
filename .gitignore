@@ -53,3 +53,5 @@ coverage/
 .codebuddy/
 test/
 codebuddy.md
+.agents
+log.json
