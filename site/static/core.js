@@ -506,6 +506,7 @@ function init() {
   bindFapiaoActions();
   bindHttpFormActions();
   bindArrayActions();
+  bindTsvJsonActions();
   bindEsActions();
   bindExcelActions();
   bindWordPdfActions();

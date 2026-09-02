@@ -17,6 +17,7 @@ The shared page lives under `site/`, so the extension and the website always use
 - Invoice tools: merge invoice images / PDF into a single PDF or Word document
 - HTTP tools: GET / POST (Form / JSON) to bash / PowerShell cURL
 - Array tools: newline / comma / JSON array / quoted-comma conversions with dedup & sort
+- TSV tool: convert tab-separated table data (header row + rows) to JSON objects
 - Elasticsearch tools: Console output, bash cURL, PowerShell cURL, and bulk helpers
 - Office tools: extract embedded images from Excel / Word, download individually or as ZIP
 - Document conversion: convert `.docx` / `.docm` to PDF locally and download; convert PDF pages to PNG / JPEG images (single page download or ZIP, multiple clarity options)
@@ -42,7 +43,8 @@ The shared page lives under `site/`, so the extension and the website always use
 │  │  ├─ es.js            # Elasticsearch output helpers
 │  │  ├─ http-form.js     # HTTP form to cURL
 │  │  ├─ array.js         # array format conversion
-│  │  ├─ excel.js         # Office image extraction
+│  │  ├─ tsv-json.js       # tab-separated table → JSON
+│  │  ├─ excel.js          # Office image extraction
 │  │  ├─ word-pdf.js      # Word to PDF
 │  │  ├─ pdf-to-image.js  # PDF to PNG / JPEG images
 │  │  └─ theme-init.js    # early theme setup (no flash)
