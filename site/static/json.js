@@ -766,6 +766,303 @@ function extractJsonProjection(root, basePath, fieldsText) {
 }
 
 
+function javaToStringToJson(inputStr, options = {}) {
+  const keepClassName = !!options.keepClassName;
+  if (!inputStr || typeof inputStr !== "string") {
+    throw new Error("请输入包含 Java toString 的文本");
+  }
+  const str = inputStr.trim();
+  if (!str) {
+    throw new Error("输入文本为空");
+  }
+
+  let pos = 0;
+
+  function skipWhitespace() {
+    while (pos < str.length && /\s/.test(str[pos])) {
+      pos++;
+    }
+  }
+
+  function parseAny() {
+    skipWhitespace();
+    if (pos >= str.length) return null;
+
+    const ch = str[pos];
+
+    if (ch === '"' || ch === "'") {
+      return parseQuotedString();
+    }
+
+    if (ch === '[') {
+      if (isObjectInsideBracket(pos)) {
+        pos++;
+        return parseObject(']', null);
+      } else {
+        return parseArray();
+      }
+    }
+
+    if (ch === '{') {
+      pos++;
+      return parseObject('}', null);
+    }
+    if (ch === '(') {
+      pos++;
+      return parseObject(')', null);
+    }
+
+    const classMatch = str.slice(pos).match(/^([a-zA-Z_$][\w\.\$<>\?]*)(?:@[0-9a-fA-F]+)?\s*([\(\{\[])/);
+    if (classMatch) {
+      const className = classMatch[1];
+      const openBracket = classMatch[2];
+      const closeBracket = openBracket === '(' ? ')' : openBracket === '{' ? '}' : ']';
+
+      if (className === 'Optional' && openBracket === '[') {
+        pos += classMatch[0].length;
+        const val = parseAny();
+        skipWhitespace();
+        if (str[pos] === ']') pos++;
+        return val;
+      }
+
+      pos += classMatch[0].length;
+      return parseObject(closeBracket, className);
+    }
+
+    if (str.slice(pos).startsWith("Optional.empty")) {
+      pos += "Optional.empty".length;
+      return null;
+    }
+
+    return parseUnquotedPrimitive();
+  }
+
+  function parseQuotedString() {
+    const quoteChar = str[pos];
+    pos++;
+    let res = "";
+    let escaped = false;
+
+    while (pos < str.length) {
+      const c = str[pos];
+      if (escaped) {
+        if (c === 'n') res += '\n';
+        else if (c === 'r') res += '\r';
+        else if (c === 't') res += '\t';
+        else res += c;
+        escaped = false;
+      } else if (c === '\\') {
+        escaped = true;
+      } else if (c === quoteChar) {
+        pos++;
+        const trimmed = res.trim();
+        if ((trimmed.startsWith('{') && trimmed.endsWith('}')) || (trimmed.startsWith('[') && trimmed.endsWith(']'))) {
+          try {
+            return JSON.parse(trimmed);
+          } catch (e) {
+            // Fallthrough
+          }
+        }
+        return res;
+      } else {
+        res += c;
+      }
+      pos++;
+    }
+    return res;
+  }
+
+  function parseObject(closeChar, className = null) {
+    const obj = {};
+    if (className && keepClassName) {
+      obj["@type"] = className;
+    }
+
+    while (pos < str.length) {
+      skipWhitespace();
+      const ch = str[pos];
+
+      if (!ch || ch === closeChar) {
+        if (ch === closeChar) pos++;
+        return obj;
+      }
+
+      if (ch === ',' || ch === ';') {
+        pos++;
+        continue;
+      }
+
+      const key = parseKey();
+      if (key === null) {
+        if (str[pos] === closeChar) {
+          pos++;
+          return obj;
+        }
+        pos++;
+        continue;
+      }
+
+      skipWhitespace();
+      if (str[pos] === '=' || str[pos] === ':') {
+        pos++;
+      }
+
+      skipWhitespace();
+      const val = parseAny();
+      obj[key] = val;
+
+      skipWhitespace();
+      if (str[pos] === ',' || str[pos] === ';') {
+        pos++;
+      }
+    }
+    return obj;
+  }
+
+  function parseKey() {
+    skipWhitespace();
+    const ch = str[pos];
+    if (ch === '"' || ch === "'") {
+      return parseQuotedString();
+    }
+
+    let keyStr = "";
+    while (pos < str.length) {
+      const c = str[pos];
+      if (c === '=' || c === ':' || c === ',' || c === ';' || c === ')' || c === '}' || c === ']') {
+        break;
+      }
+      keyStr += c;
+      pos++;
+    }
+    keyStr = keyStr ? keyStr.trim() : null;
+    return keyStr ? keyStr : null;
+  }
+
+  function parseArray() {
+    pos++;
+    const arr = [];
+
+    while (pos < str.length) {
+      skipWhitespace();
+      const ch = str[pos];
+
+      if (!ch || ch === ']') {
+        if (ch === ']') pos++;
+        return arr;
+      }
+
+      if (ch === ',' || ch === ';') {
+        pos++;
+        continue;
+      }
+
+      const val = parseAny();
+      arr.push(val);
+
+      skipWhitespace();
+      if (str[pos] === ',' || str[pos] === ';') {
+        pos++;
+      }
+    }
+    return arr;
+  }
+
+  function isObjectInsideBracket(startPos) {
+    let tempPos = startPos + 1;
+    while (tempPos < str.length && /\s/.test(str[tempPos])) tempPos++;
+    const rest = str.slice(tempPos);
+    return /^([a-zA-Z_$][\w\.\$]*|"[^"]+"|\'[^\']+\')\s*[:=]/.test(rest);
+  }
+
+  function parseUnquotedPrimitive() {
+    let raw = "";
+    let innerDepth = 0;
+    let inQuote = null;
+    let escaped = false;
+
+    while (pos < str.length) {
+      const c = str[pos];
+
+      if (inQuote) {
+        if (escaped) {
+          escaped = false;
+        } else if (c === '\\') {
+          escaped = true;
+        } else if (c === inQuote) {
+          inQuote = null;
+        }
+        raw += c;
+        pos++;
+        continue;
+      }
+
+      if (c === '"' || c === "'") {
+        inQuote = c;
+        raw += c;
+        pos++;
+        continue;
+      }
+
+      if (c === '(' || c === '{' || c === '[') {
+        innerDepth++;
+        raw += c;
+        pos++;
+        continue;
+      }
+
+      if (c === ')' || c === '}' || c === ']') {
+        if (innerDepth > 0) {
+          innerDepth--;
+          raw += c;
+          pos++;
+          continue;
+        } else {
+          break;
+        }
+      }
+
+      if ((c === ',' || c === ';') && innerDepth === 0) {
+        break;
+      }
+
+      raw += c;
+      pos++;
+    }
+
+    const trimmed = raw.trim();
+
+    if (trimmed === "null" || trimmed === "undefined") {
+      return null;
+    }
+    if (/^true$/i.test(trimmed)) return true;
+    if (/^false$/i.test(trimmed)) return false;
+
+    const numMatch = trimmed.match(/^(-?\d+(?:\.\d+)?(?:[eE][+-]?\d+)?)[fFdDlL]?$/);
+    if (numMatch) {
+      const numVal = Number(numMatch[1]);
+      if (!isNaN(numVal)) {
+        return numVal;
+      }
+    }
+
+    if ((trimmed.startsWith('{') && trimmed.endsWith('}')) || (trimmed.startsWith('[') && trimmed.endsWith(']'))) {
+      try {
+        return JSON.parse(trimmed);
+      } catch (e) {
+        // Fallthrough
+      }
+    }
+
+    return trimmed;
+  }
+
+  const result = parseAny();
+  return result;
+}
+
+
 const JSON_EXTRACT_EXAMPLE = {
   users: [
     { id: 1, name: "Alice", roles: ["admin", "user"] },
@@ -794,6 +1091,21 @@ function bindJsonActions() {
       setOutput("jsonOutput", jsonToCsv(parsed));
     },
     csvToJson: () => setOutput("jsonOutput", csvToJson($("jsonInput").value)),
+    javaToStringToJson: () => {
+      const input = $("jsonInput").value;
+      if (!input.trim()) {
+        showToast("请输入 Java toString 文本", true);
+        return;
+      }
+      try {
+        const parsed = javaToStringToJson(input, { keepClassName: false });
+        setOutput("jsonOutput", JSON.stringify(parsed, null, 2));
+        renderJsonTree(parsed);
+        showToast("Java toString 转换成功");
+      } catch (err) {
+        showToast(`转换失败: ${err.message}`, true);
+      }
+    },
     jsonRenderTree: () => {
       const source = $("jsonOutput").value.trim() || $("jsonInput").value.trim();
       const parsed = safeJsonParse(source);
@@ -870,6 +1182,63 @@ function bindJsonActions() {
       setOutput("jsonExtractOutput", "");
       setText("jsonExtractPathOut", "-");
       setText("jsonExtractType", "-");
+    },
+    jsonConvertJavaToString: () => {
+      const input = $("jsonJavaInput").value;
+      if (!input.trim()) {
+        showToast("请输入 Java toString 文本", true);
+        return;
+      }
+      const keepType = $("jsonJavaKeepType")?.checked || false;
+      try {
+        const parsed = javaToStringToJson(input, { keepClassName: keepType });
+        const jsonStr = JSON.stringify(parsed, null, 2);
+        setOutput("jsonJavaOutput", jsonStr);
+        setText("jsonJavaStatus", "转换成功");
+        setText("jsonJavaType", describeExtractedType(parsed));
+        showToast("转换成功");
+      } catch (err) {
+        setText("jsonJavaStatus", "转换失败");
+        setText("jsonJavaType", "错误");
+        showToast(`转换失败: ${err.message}`, true);
+      }
+    },
+    fillJavaToStringExample: () => {
+      const example = `User(id=1001, name="张三", age=25, isVip=true, score=98.5f, tags=[ADMIN, DEVELOPER], address=Address(street="朝阳路100号", city="北京", zip="100000"), extraMap={k1=100L, k2="test"}, nullVal=null, createTime=2026-09-03T12:00:00Z)`;
+      setOutput("jsonJavaInput", example);
+      $("jsonJavaInput").focus();
+    },
+    jsonJavaUseMain: () => {
+      $("jsonJavaInput").value = $("jsonInput").value;
+    },
+    clearJavaToString: () => {
+      setOutput("jsonJavaInput", "");
+      setOutput("jsonJavaOutput", "");
+      setText("jsonJavaStatus", "就绪");
+      setText("jsonJavaType", "-");
+    },
+    jsonJavaSendToTree: () => {
+      const output = $("jsonJavaOutput").value.trim();
+      if (!output) {
+        showToast("没有可发送的转换结果", true);
+        return;
+      }
+      const parsed = safeJsonParse(output);
+      renderJsonTree(parsed);
+      const treeTab = document.querySelector('[data-subtab-target="jsonTreePane"]');
+      if (treeTab) activateSubtab(treeTab);
+      showToast("已载入树视图");
+    },
+    jsonJavaSendToMain: () => {
+      const output = $("jsonJavaOutput").value.trim();
+      if (!output) {
+        showToast("没有可发送的转换结果", true);
+        return;
+      }
+      $("jsonInput").value = output;
+      const mainTab = document.querySelector('[data-subtab-target="jsonTransformPane"]');
+      if (mainTab) activateSubtab(mainTab);
+      showToast("已填入主转换输入框");
     },
   };
   bindActions(actions);

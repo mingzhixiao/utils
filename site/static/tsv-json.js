@@ -106,6 +106,29 @@ function bindTsvJsonActions() {
       setText("tsvRowCount", 0);
       setText("tsvColCount", 0);
     },
+    jsonTsvSendToTree: () => {
+      const output = $("tsvOutput").value.trim();
+      if (!output) {
+        showToast("没有可发送的转换结果", true);
+        return;
+      }
+      const parsed = safeJsonParse(output);
+      renderJsonTree(parsed);
+      const treeTab = document.querySelector('[data-subtab-target="jsonTreePane"]');
+      if (treeTab) activateSubtab(treeTab);
+      showToast("已载入树视图");
+    },
+    jsonTsvSendToMain: () => {
+      const output = $("tsvOutput").value.trim();
+      if (!output) {
+        showToast("没有可发送的转换结果", true);
+        return;
+      }
+      $("jsonInput").value = output;
+      const mainTab = document.querySelector('[data-subtab-target="jsonTransformPane"]');
+      if (mainTab) activateSubtab(mainTab);
+      showToast("已填入主转换输入框");
+    },
   };
   bindActions(actions);
 }
