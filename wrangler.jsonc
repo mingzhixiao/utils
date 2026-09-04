@@ -4,5 +4,11 @@
   "compatibility_date": "2026-07-03",
   "assets": {
     "directory": "./site"
-  }
+  },
+  "routes": [
+    {
+      "pattern": "utils.420118.xyz",
+      "custom_domain": true
+    }
+  ]
 }
