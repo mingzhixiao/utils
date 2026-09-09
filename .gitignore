@@ -55,3 +55,4 @@ test/
 codebuddy.md
 .agents
 log.json
+.codegraph/
