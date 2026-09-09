@@ -27,12 +27,44 @@ function getFapiaoPageSizeMM() {
 }
 
 
+function updateFapiaoGapUi() {
+  const mode = $("fapiaoGapMode").value;
+  const isCustom = mode === "custom";
+  $("fapiaoCustomGapGroup").classList.toggle("hidden-field", !isCustom);
+  $("fapiaoCustomCutLineGroup").classList.toggle("hidden-field", !isCustom);
+  if (mode === "gap_line" || mode === "gap_only") {
+    $("fapiaoImgGap").value = "0.1";
+  } else if (mode === "none") {
+    $("fapiaoImgGap").value = "0";
+  }
+}
+
+
 function getFapiaoImageConfig() {
+  const mode = $("fapiaoGapMode") ? $("fapiaoGapMode").value : "gap_line";
+  let gapMM = 1; // 默认 0.1cm 缝隙
+  let drawCutLine = true;
+
+  if (mode === "none") {
+    gapMM = 0;
+    drawCutLine = false;
+  } else if (mode === "gap_only") {
+    gapMM = (parseFloat($("fapiaoImgGap").value) || 0.1) * 10;
+    drawCutLine = false;
+  } else if (mode === "gap_line") {
+    gapMM = (parseFloat($("fapiaoImgGap").value) || 0.1) * 10;
+    drawCutLine = true;
+  } else if (mode === "custom") {
+    gapMM = (parseFloat($("fapiaoImgGap").value) || 0) * 10;
+    drawCutLine = $("fapiaoCutLineOption") ? $("fapiaoCutLineOption").value === "yes" : true;
+  }
+
   return {
     wMM: (parseFloat($("fapiaoImgWidth").value) || 21) * 10,
     hMM: (parseFloat($("fapiaoImgHeight").value) || 11) * 10,
-    gapMM: (parseFloat($("fapiaoImgGap").value) || 0) * 10,
+    gapMM,
     xMM: (parseFloat($("fapiaoImgOffsetX").value) || 0) * 10,
+    drawCutLine,
   };
 }
 
@@ -305,7 +337,7 @@ async function generateFapiaoPdf() {
   await ensureVendor("jspdf");
 
   const { w: pageW, h: pageH } = getFapiaoPageSizeMM();
-  const { wMM: imgW, hMM: imgH, gapMM: gap, xMM } = getFapiaoImageConfig();
+  const { wMM: imgW, hMM: imgH, gapMM: gap, xMM, drawCutLine } = getFapiaoImageConfig();
 
   setFapiaoGenerateEnabled(false);
   showFapiaoProgress("正在生成 PDF...", "");
@@ -323,6 +355,17 @@ async function generateFapiaoPdf() {
       doc.addPage([pageW, pageH]);
       curY = 0;
     }
+    if (curY > 0 && drawCutLine) {
+      const cutLineY = curY - (gap > 0 ? gap / 2 : 0);
+      doc.saveGraphicsState();
+      doc.setDrawColor(180, 180, 180);
+      doc.setLineWidth(0.2);
+      doc.setLineDashPattern([2, 2], 0);
+      const lineLeft = Math.max(5, xMM);
+      const lineRight = Math.min(pageW - 5, xMM + imgW);
+      doc.line(lineLeft, cutLineY, lineRight, cutLineY);
+      doc.restoreGraphicsState();
+    }
     showFapiaoProgress(`正在处理第 ${index + 1}/${state.fapiaoImageFiles.length} 张图片...`, "");
     const jpegData = await resizeFapiaoImage(state.fapiaoImageFiles[index], imgW, imgH);
     doc.addImage(jpegData, "JPEG", xMM, curY, imgW, imgH);
@@ -336,11 +379,12 @@ async function generateFapiaoPdf() {
 }
 
 
-function buildFapiaoWordLayout(pageH, imgH, gap) {
+function buildFapiaoWordLayout(pageH, imgH, gap, imageCount = (typeof state !== "undefined" && state.fapiaoImageFiles ? state.fapiaoImageFiles.length : 0)) {
   const layout = [];
   let curY = 0;
   let curPageImgs = [];
-  for (let index = 0; index < state.fapiaoImageFiles.length; index += 1) {
+  const count = typeof imageCount === "number" ? imageCount : 0;
+  for (let index = 0; index < count; index += 1) {
     if (curY + imgH > pageH) {
       layout.push(curPageImgs);
       curPageImgs = [];
@@ -356,13 +400,14 @@ function buildFapiaoWordLayout(pageH, imgH, gap) {
 }
 
 
-function buildFapiaoWordDocumentXml(layout, pageW, pageH, imgW, imgH, xMM, totalImages) {
+function buildFapiaoWordDocumentXml(layout, pageW, pageH, imgW, imgH, xMM, totalImages, gapMM = 0, drawCutLine = false) {
   const emuPerMm = 36000;
   const imgEmuW = Math.round(imgW * emuPerMm);
   const imgEmuH = Math.round(imgH * emuPerMm);
   const pageTwipsW = Math.round((pageW * 1440) / 25.4);
   const pageTwipsH = Math.round((pageH * 1440) / 25.4);
   const indentTwips = Math.round((xMM * 1440) / 25.4);
+  const gapTwips = Math.round((gapMM * 1440) / 25.4);
 
   let docXml = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>';
   docXml +=
@@ -377,8 +422,19 @@ function buildFapiaoWordDocumentXml(layout, pageW, pageH, imgW, imgH, xMM, total
 
   let docPrId = 1;
   layout.forEach((imgs, pageIndex) => {
-    imgs.forEach((imgIdx) => {
-      docXml += "<w:p><w:pPr><w:spacing w:before=\"0\" w:after=\"0\"/><w:jc w:val=\"left\"/>";
+    imgs.forEach((imgIdx, innerIdx) => {
+      if (innerIdx > 0 && drawCutLine) {
+        const halfGap = Math.max(40, Math.round(gapTwips / 2));
+        docXml += `<w:p><w:pPr><w:spacing w:before="${halfGap}" w:after="${halfGap}"/><w:jc w:val="center"/>`;
+        if (indentTwips > 0) {
+          docXml += `<w:ind w:left="${indentTwips}"/>`;
+        }
+        docXml += '<w:pBdr><w:bottom w:val="dashed" w:sz="4" w:space="1" w:color="B0B0B0"/></w:pBdr>';
+        docXml += "</w:pPr></w:p>";
+      }
+
+      const spacingBefore = (innerIdx > 0 && gapTwips > 0 && !drawCutLine) ? gapTwips : 0;
+      docXml += `<w:p><w:pPr><w:spacing w:before="${spacingBefore}" w:after="0"/><w:jc w:val="left"/>`;
       if (indentTwips > 0) {
         docXml += `<w:ind w:left="${indentTwips}"/>`;
       }
@@ -416,7 +472,7 @@ async function generateFapiaoWord() {
   await ensureVendor("jszip");
 
   const { w: pageW, h: pageH } = getFapiaoPageSizeMM();
-  const { wMM: imgW, hMM: imgH, gapMM: gap, xMM } = getFapiaoImageConfig();
+  const { wMM: imgW, hMM: imgH, gapMM: gap, xMM, drawCutLine } = getFapiaoImageConfig();
   const totalImages = state.fapiaoImageFiles.length;
   const layout = buildFapiaoWordLayout(pageH, imgH, gap);
 
@@ -472,7 +528,10 @@ async function generateFapiaoWord() {
     mediaFolder.file(`img${index}.jpeg`, base64, { base64: true });
   }
 
-  zip.file("word/document.xml", buildFapiaoWordDocumentXml(layout, pageW, pageH, imgW, imgH, xMM, totalImages));
+  zip.file(
+    "word/document.xml",
+    buildFapiaoWordDocumentXml(layout, pageW, pageH, imgW, imgH, xMM, totalImages, gap, drawCutLine)
+  );
 
   const blob = await zip.generateAsync({
     type: "blob",
@@ -495,9 +554,11 @@ async function generateFapiaoWord() {
 
 function bindFapiaoActions() {
   updateFapiaoPageSizeUi();
+  updateFapiaoGapUi();
   renderFapiaoPreview();
 
   $("fapiaoPageSize").addEventListener("change", updateFapiaoPageSizeUi);
+  $("fapiaoGapMode").addEventListener("change", updateFapiaoGapUi);
 
   const dropZone = $("fapiaoDropZone");
   dropZone.addEventListener("dragover", (event) => {

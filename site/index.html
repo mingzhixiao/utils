@@ -849,7 +849,7 @@
                 <input id="fapiaoPageHeight" type="number" value="29.7" step="0.1" min="0.1" />
               </label>
             </div>
-            <p class="helper-text section-label">图片设置（在页面上的位置和大小）</p>
+            <p class="helper-text section-label">图片与裁剪设置（位置、尺寸及打印裁剪）</p>
             <div class="field-grid fapiao-field-grid cols-4">
               <label>
                 <span>图片宽度（cm）</span>
@@ -860,12 +860,28 @@
                 <input id="fapiaoImgHeight" type="number" value="11" step="0.1" min="0.1" />
               </label>
               <label>
-                <span>图片间距（cm）</span>
-                <input id="fapiaoImgGap" type="number" value="0" step="0.1" min="0" />
-              </label>
-              <label>
                 <span>距左边距（cm）</span>
                 <input id="fapiaoImgOffsetX" type="number" value="0" step="0.1" min="0" />
+              </label>
+              <label>
+                <span>中间间隔与裁剪线</span>
+                <select id="fapiaoGapMode">
+                  <option value="gap_line" selected>留缝隙 + 裁剪线（推荐 0.1cm）</option>
+                  <option value="none">无间隔（紧凑无缝）</option>
+                  <option value="gap_only">仅留微缝（0.1cm，无裁剪线）</option>
+                  <option value="custom">自定义间隔...</option>
+                </select>
+              </label>
+              <label id="fapiaoCustomGapGroup" class="hidden-field">
+                <span>自定义间距（cm）</span>
+                <input id="fapiaoImgGap" type="number" value="0.1" step="0.1" min="0" />
+              </label>
+              <label id="fapiaoCustomCutLineGroup" class="hidden-field">
+                <span>打印裁剪参考线</span>
+                <select id="fapiaoCutLineOption">
+                  <option value="yes" selected>绘制分割线（虚线）</option>
+                  <option value="no">不绘制</option>
+                </select>
               </label>
             </div>
           </details>
