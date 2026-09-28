@@ -70,6 +70,7 @@ function getFapiaoImageConfig() {
 
 
 function setFapiaoGenerateEnabled(enabled) {
+  $("fapiaoPreviewBtn").disabled = !enabled;
   $("fapiaoGeneratePdfBtn").disabled = !enabled;
   $("fapiaoGenerateWordBtn").disabled = !enabled;
 }
@@ -433,6 +434,31 @@ function buildFapiaoWordLayout(pageH, imgH, gap, imageCount = (typeof state !== 
 }
 
 
+function buildFapiaoOutputPreviewPages(pageW, pageH, imgW, imgH, gap, xMM, drawCutLine, imageCount) {
+  const layout = buildFapiaoWordLayout(pageH, imgH, gap, imageCount);
+  const lineLeft = Math.max(5, xMM);
+  const lineRight = Math.min(pageW - 5, xMM + imgW);
+  const lineWidth = Math.max(0, lineRight - lineLeft);
+  return {
+    pageWidth: pageW,
+    pageHeight: pageH,
+    pages: layout.map((indices, pageIndex) => ({
+      pageNumber: pageIndex + 1,
+      items: indices.map((imageIndex, innerIndex) => {
+        const topMM = innerIndex * (imgH + gap);
+        const cutLineTopMM = Math.max(0, topMM - (gap > 0 ? gap / 2 : 0));
+        return {
+          imageIndex,
+          leftMM: xMM,
+          topMM,
+          cutLine: innerIndex > 0 && drawCutLine && lineWidth > 0 ? { leftMM: lineLeft, topMM: cutLineTopMM, widthMM: lineWidth } : null,
+        };
+      }),
+    })),
+  };
+}
+
+
 function buildFapiaoWordDocumentXml(layout, pageW, pageH, imgW, imgH, xMM, totalImages, gapMM = 0, drawCutLine = false) {
   const emuPerMm = 36000;
   const imgEmuW = Math.round(imgW * emuPerMm);
@@ -585,6 +611,91 @@ async function generateFapiaoWord() {
 }
 
 
+function clearFapiaoOutputPreview() {
+  state.fapiaoPreviewUrls.forEach((url) => URL.revokeObjectURL(url));
+  state.fapiaoPreviewUrls = [];
+  const pages = $("fapiaoPreviewPages");
+  if (pages) {
+    pages.innerHTML = "";
+  }
+  setText("fapiaoPreviewPageCount", "0 页");
+}
+
+
+function renderFapiaoOutputPreview() {
+  clearFapiaoOutputPreview();
+  const { w: pageW, h: pageH } = getFapiaoPageSizeMM();
+  const { wMM: imgW, hMM: imgH, gapMM: gap, xMM, drawCutLine } = getFapiaoImageConfig();
+  const preview = buildFapiaoOutputPreviewPages(pageW, pageH, imgW, imgH, gap, xMM, drawCutLine, state.fapiaoImageFiles.length);
+  const pages = $("fapiaoPreviewPages");
+
+  preview.pages.forEach((page) => {
+    const wrapper = document.createElement("div");
+    wrapper.className = "fapiao-preview-page-wrap";
+
+    const label = document.createElement("span");
+    label.className = "fapiao-preview-page-label";
+    label.textContent = `第 ${page.pageNumber} 页`;
+
+    const pageElement = document.createElement("div");
+    pageElement.className = "fapiao-preview-page";
+    pageElement.style.setProperty("--fapiao-page-ratio", `${pageW} / ${pageH}`);
+
+    page.items.forEach((item) => {
+      if (item.cutLine) {
+        const cutLine = document.createElement("div");
+        cutLine.className = "fapiao-preview-cut-line";
+        cutLine.style.left = `${(item.cutLine.leftMM / pageW) * 100}%`;
+        cutLine.style.top = `${(item.cutLine.topMM / pageH) * 100}%`;
+        cutLine.style.width = `${(item.cutLine.widthMM / pageW) * 100}%`;
+        pageElement.appendChild(cutLine);
+      }
+
+      const image = document.createElement("img");
+      const url = URL.createObjectURL(state.fapiaoImageFiles[item.imageIndex]);
+      state.fapiaoPreviewUrls.push(url);
+      image.src = url;
+      image.alt = `第 ${page.pageNumber} 页第 ${item.imageIndex + 1} 张发票`;
+      image.style.left = `${(item.leftMM / pageW) * 100}%`;
+      image.style.top = `${(item.topMM / pageH) * 100}%`;
+      image.style.width = `${(imgW / pageW) * 100}%`;
+      image.style.height = `${(imgH / pageH) * 100}%`;
+      pageElement.appendChild(image);
+    });
+
+    wrapper.appendChild(label);
+    wrapper.appendChild(pageElement);
+    pages.appendChild(wrapper);
+  });
+
+  setText("fapiaoPreviewPageCount", `${preview.pages.length} 页`);
+  return preview.pages.length;
+}
+
+
+function closeFapiaoOutputPreview() {
+  const dialog = $("fapiaoPreviewDialog");
+  if (dialog.open) {
+    dialog.close();
+    return;
+  }
+  clearFapiaoOutputPreview();
+}
+
+
+function previewFapiaoOutput() {
+  if (!state.fapiaoImageFiles.length) {
+    throw new Error("请先添加发票图片");
+  }
+  const pageCount = renderFapiaoOutputPreview();
+  const dialog = $("fapiaoPreviewDialog");
+  if (!dialog.open) {
+    dialog.showModal();
+  }
+  showFapiaoProgress(`预览已生成（共 ${pageCount} 页）`, "success");
+}
+
+
 function bindFapiaoActions() {
   updateFapiaoPageSizeUi();
   updateFapiaoGapUi();
@@ -629,10 +740,21 @@ function bindFapiaoActions() {
     addFapiaoFiles(files);
   });
 
+  const previewDialog = $("fapiaoPreviewDialog");
+  $("fapiaoPreviewCloseBtn").addEventListener("click", closeFapiaoOutputPreview);
+  previewDialog.addEventListener("close", clearFapiaoOutputPreview);
+  previewDialog.addEventListener("click", (event) => {
+    if (event.target === previewDialog) {
+      previewDialog.close();
+    }
+  });
+
   const actions = {
+    previewFapiaoOutput: () => previewFapiaoOutput(),
     generateFapiaoPdf: () => generateFapiaoPdf(),
     generateFapiaoWord: () => generateFapiaoWord(),
     clearFapiaoList: () => {
+      closeFapiaoOutputPreview();
       state.fapiaoImageFiles = [];
       renderFapiaoPreview();
       showFapiaoProgress("列表已清空", "success");

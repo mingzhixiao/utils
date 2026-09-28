@@ -2051,6 +2051,117 @@ body.is-dragging {
   color: var(--danger);
 }
 
+.fapiao-preview-dialog {
+  width: min(1080px, calc(100vw - 32px));
+  height: min(88vh, 920px);
+  max-width: none;
+  max-height: none;
+  margin: auto;
+  padding: 0;
+  overflow: hidden;
+  color: var(--text);
+  background: var(--panel-bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-xl);
+}
+
+.fapiao-preview-dialog::backdrop {
+  background: rgba(3, 7, 18, 0.72);
+  backdrop-filter: blur(6px);
+}
+
+.fapiao-preview-dialog-panel {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.fapiao-preview-dialog-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 14px 18px;
+  border-bottom: 1px solid var(--border);
+  background: var(--panel-strong);
+}
+
+.fapiao-preview-dialog-header h3 {
+  margin: 2px 0 0;
+  font-size: 16px;
+}
+
+.fapiao-preview-dialog-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.fapiao-preview-close {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  padding: 0;
+  color: var(--muted-strong);
+  background: transparent;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+}
+
+.fapiao-preview-close:hover {
+  color: var(--text);
+  background: var(--accent-soft);
+  border-color: var(--accent);
+}
+
+.fapiao-preview-pages {
+  display: grid;
+  gap: 22px;
+  flex: 1;
+  min-height: 0;
+  padding: 22px;
+  overflow: auto;
+  background: var(--bg-2);
+}
+
+.fapiao-preview-page-wrap {
+  display: grid;
+  gap: 8px;
+  justify-items: center;
+}
+
+.fapiao-preview-page-label {
+  color: var(--muted-strong);
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.fapiao-preview-page {
+  position: relative;
+  width: min(100%, 680px);
+  aspect-ratio: var(--fapiao-page-ratio, 210 / 297);
+  overflow: hidden;
+  background: #fff;
+  box-shadow: var(--shadow-lg);
+}
+
+.fapiao-preview-page img {
+  position: absolute;
+  display: block;
+  object-fit: fill;
+  pointer-events: none;
+}
+
+.fapiao-preview-cut-line {
+  position: absolute;
+  border-top: 1px dashed #b0b0b0;
+  pointer-events: none;
+}
+
 .result-list,
 .image-compare-grid {
   display: grid;
@@ -2864,6 +2975,20 @@ body.is-dragging {
     right: 16px;
     text-align: center;
     bottom: 16px;
+  }
+
+  .fapiao-preview-dialog {
+    width: calc(100vw - 20px);
+    height: calc(100vh - 20px);
+  }
+
+  .fapiao-preview-dialog-header {
+    padding: 12px 14px;
+  }
+
+  .fapiao-preview-pages {
+    gap: 16px;
+    padding: 14px;
   }
 
   /* 极窄屏操作按钮单列铺满 */

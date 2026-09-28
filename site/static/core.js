@@ -14,6 +14,7 @@ const state = {
   },
   fapiaoImageFiles: [],
   fapiaoProgressTimer: null,
+  fapiaoPreviewUrls: [],
   excelImages: [],
   excelProgressTimer: null,
   wordPdfFile: null,

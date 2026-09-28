@@ -824,6 +824,7 @@
             <div class="section-tags">
               <span>PDF</span>
               <span>Word</span>
+              <span>Preview</span>
               <span>Drag Sort</span>
             </div>
           </div>
@@ -904,12 +905,34 @@
             <div id="fapiaoPreviewList" class="fapiao-preview-list empty-state">尚未添加文件</div>
             <p class="fapiao-progress" id="fapiaoProgress"></p>
             <div class="action-row wrap">
+              <button class="secondary" data-action="previewFapiaoOutput" id="fapiaoPreviewBtn" type="button" disabled>在线预览</button>
               <button data-action="generateFapiaoPdf" id="fapiaoGeneratePdfBtn" type="button" disabled>生成并下载 PDF</button>
               <button class="accent-green" data-action="generateFapiaoWord" id="fapiaoGenerateWordBtn" type="button" disabled>生成并下载 Word</button>
               <button class="secondary" data-action="clearFapiaoList" id="fapiaoClearBtn" type="button" style="display: none">清空列表</button>
             </div>
             <p class="helper-text">可拖拽列表项调整顺序；所有处理均在浏览器本地完成，不上传服务器。</p>
           </article>
+
+          <dialog class="fapiao-preview-dialog" id="fapiaoPreviewDialog" aria-labelledby="fapiaoPreviewTitle">
+            <div class="fapiao-preview-dialog-panel">
+              <div class="fapiao-preview-dialog-header">
+                <div>
+                  <p class="panel-kicker">Preview</p>
+                  <h3 id="fapiaoPreviewTitle">合并结果预览</h3>
+                </div>
+                <div class="fapiao-preview-dialog-actions">
+                  <span class="info-badge" id="fapiaoPreviewPageCount">0 页</span>
+                  <button class="fapiao-preview-close" id="fapiaoPreviewCloseBtn" type="button" aria-label="关闭预览">
+                    <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <line x1="18" y1="6" x2="6" y2="18"></line>
+                      <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
+                  </button>
+                </div>
+              </div>
+              <div class="fapiao-preview-pages" id="fapiaoPreviewPages"></div>
+            </div>
+          </dialog>
         </section>
 
         <section class="tool-panel" id="httpSection" data-panel-title="HTTP 工具" data-panel-description="GET 与 POST 请求互转，支持 Form 表单和 JSON 参数格式。">
