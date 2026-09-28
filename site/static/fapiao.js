@@ -309,6 +309,11 @@ function getFapiaoClipboardFiles(clipboardData) {
   if (!clipboardData) {
     return [];
   }
+  const directFiles = Array.from(clipboardData.files || []);
+  if (directFiles.length) {
+    return directFiles;
+  }
+
   const files = [];
   const seen = new Set();
   const addFile = (file) => {
@@ -323,7 +328,6 @@ function getFapiaoClipboardFiles(clipboardData) {
     files.push(file);
   };
 
-  Array.from(clipboardData.files || []).forEach(addFile);
   Array.from(clipboardData.items || []).forEach((item) => {
     if (item.kind === "file") {
       addFile(item.getAsFile());
