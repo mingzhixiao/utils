@@ -304,6 +304,35 @@ async function addFapiaoFiles(fileList) {
 }
 
 
+// 提取剪贴板文件，兼容浏览器提供的 files 与 items 两种数据结构。
+function getFapiaoClipboardFiles(clipboardData) {
+  if (!clipboardData) {
+    return [];
+  }
+  const files = [];
+  const seen = new Set();
+  const addFile = (file) => {
+    if (!file) {
+      return;
+    }
+    const key = `${file.name || ""}\n${file.size || 0}\n${file.type || ""}\n${file.lastModified || 0}`;
+    if (seen.has(key)) {
+      return;
+    }
+    seen.add(key);
+    files.push(file);
+  };
+
+  Array.from(clipboardData.files || []).forEach(addFile);
+  Array.from(clipboardData.items || []).forEach((item) => {
+    if (item.kind === "file") {
+      addFile(item.getAsFile());
+    }
+  });
+  return files;
+}
+
+
 const _fapiaoImageCache = new WeakMap();
 
 async function decodeFapiaoImage(file) {
@@ -581,6 +610,19 @@ function bindFapiaoActions() {
       addFapiaoFiles(event.target.files);
       event.target.value = "";
     }
+  });
+
+  // 仅在发票面板激活时接收粘贴，避免影响其他工具中的文本粘贴。
+  document.addEventListener("paste", (event) => {
+    if (!$("fapiaoSection").classList.contains("active")) {
+      return;
+    }
+    const files = getFapiaoClipboardFiles(event.clipboardData);
+    if (!files.length) {
+      return;
+    }
+    event.preventDefault();
+    addFapiaoFiles(files);
   });
 
   const actions = {
