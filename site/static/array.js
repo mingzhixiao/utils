@@ -6,6 +6,7 @@ const arrayFormatLabels = {
   comma: "逗号分隔",
   jsonArray: "JSON 数组",
   quotedComma: "双引号逗号",
+  plainComma: "去引号逗号",
 };
 
 
@@ -24,8 +25,8 @@ function detectArrayFormat(input) {
       return "jsonArray";
     } catch (_) { /* fall through */ }
   }
-  // Quoted comma: each item wrapped in double quotes
-  if (/^"[^"]*"(,"[^"]*")*$/.test(trimmed)) {
+  // Quoted comma: each item wrapped in double quotes（允许逗号后带空白，如 "a", "b"）
+  if (/^"(?:[^"\\]|\\.)*"(?:\s*,\s*"(?:[^"\\]|\\.)*")*$/.test(trimmed)) {
     return "quotedComma";
   }
   // Comma: contains commas and no newlines (or fewer)
@@ -73,6 +74,9 @@ function formatArrayOutput(items, format) {
       return JSON.stringify(items, null, 2);
     case "quotedComma":
       return items.map((s) => `"${s}"`).join(",");
+    case "plainComma":
+      // 逗号分割并去掉每项首尾的引号（兼容单/双引号），保证输出不含引号
+      return items.map((s) => s.replace(/^["']+|["']+$/g, "")).join(",");
     case "comma":
       return items.join(",");
     case "newline":
