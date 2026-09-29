@@ -3002,3 +3002,47 @@ body.is-dragging {
     flex: 1 1 calc(50% - 8px);
   }
 }
+
+/* JSON 按键查找：候选路径选项 */
+.key-option-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin: 2px 0 4px;
+}
+
+.key-option-group {
+  margin: 4px 0 0;
+  font-size: var(--text-xs);
+  color: var(--muted);
+}
+
+.key-option-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+button.key-option {
+  max-width: 100%;
+  padding: 4px 10px;
+  border-radius: var(--radius-full);
+  border: 1px solid var(--border);
+  background: var(--overlay-subtle);
+  color: var(--muted-strong);
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  text-align: left;
+  overflow-wrap: anywhere;
+  cursor: pointer;
+}
+
+button.key-option:hover {
+  border-color: var(--accent);
+  background: var(--accent-soft);
+  color: var(--text);
+}
+
+.key-option-list[hidden] {
+  display: none;
+}

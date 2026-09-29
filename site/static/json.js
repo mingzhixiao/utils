@@ -800,6 +800,136 @@ function extractJsonProjection(root, basePath, fieldsText) {
 }
 
 
+// —— 按键查找候选路径 ——
+// 解析键名查询文本：支持英文/中文逗号与空白分隔；带空格的键用单/双引号包住，如 "store name"。
+function parseJsonKeyQuery(text) {
+  const tokens = String(text == null ? "" : text).match(/"[^"]*"|'[^']*'|[^,，]+/g) || [];
+  const keys = [];
+  tokens.forEach((token) => {
+    const part = token.trim();
+    if (!part) {
+      return;
+    }
+    const quoted = part.match(/^["'](.*)["']$/s);
+    if (quoted) {
+      if (quoted[1]) {
+        keys.push(quoted[1]);
+      }
+      return;
+    }
+    part.split(/\s+/).forEach((key) => {
+      if (key) {
+        keys.push(key);
+      }
+    });
+  });
+  return keys;
+}
+
+
+// 键名安全时用 .key 点号形式，含特殊字符时用 ["key"] 形式，保证生成的路径可被 parseJsonPathSegments 解析。
+function formatJsonKeySegment(key) {
+  return /^[\w$]+$/.test(key) ? `.${key}` : `[${JSON.stringify(key)}]`;
+}
+
+
+// 遍历 JSON，收集给定键名出现的所有路径：
+// singles 为单键候选（路径形状用 [*] 归并数组下标，count 为出现次数，sample 为首个具体路径）；
+// combined 为组合提取建议（同一数组元素或对象中出现 ≥2 个目标键，可配合多字段投影使用）。
+// 防御超大 JSON：限制遍历节点数、深度与结果条数。
+const JSON_KEY_SCAN_MAX_NODES = 20000;
+const JSON_KEY_SCAN_MAX_DEPTH = 16;
+const JSON_KEY_MAX_SINGLE_RESULTS = 60;
+const JSON_KEY_MAX_COMBINED_RESULTS = 10;
+
+
+function findJsonKeyPaths(root, keys) {
+  const keySet = new Set(keys);
+  const singles = new Map();
+  const combined = new Map();
+  let nodes = 0;
+  let truncated = false;
+
+  const recordSingle = (path, sample) => {
+    const entry = singles.get(path);
+    if (entry) {
+      entry.count += 1;
+      return;
+    }
+    if (singles.size >= JSON_KEY_MAX_SINGLE_RESULTS) {
+      truncated = true;
+      return;
+    }
+    singles.set(path, { path, count: 1, sample });
+  };
+  const recordCombined = (base, matchedKeys) => {
+    const existing = combined.get(base);
+    if (existing) {
+      matchedKeys.forEach((key) => existing.keys.add(key));
+      return;
+    }
+    if (combined.size >= JSON_KEY_MAX_COMBINED_RESULTS) {
+      truncated = true;
+      return;
+    }
+    combined.set(base, { base, keys: new Set(matchedKeys) });
+  };
+
+  const walk = (value, shape, sample, depth, inArray) => {
+    if (nodes >= JSON_KEY_SCAN_MAX_NODES || depth > JSON_KEY_SCAN_MAX_DEPTH) {
+      truncated = true;
+      return;
+    }
+    nodes += 1;
+    if (Array.isArray(value)) {
+      // 数组层级做元素键并集，命中 ≥2 个键时给出组合提取建议（基础路径 = 数组本身）
+      const union = new Set();
+      value.forEach((item, index) => {
+        if (item && typeof item === "object" && !Array.isArray(item)) {
+          Object.keys(item).forEach((key) => {
+            if (keySet.has(key)) {
+              union.add(key);
+            }
+          });
+        }
+        walk(item, `${shape}[*]`, `${sample}[${index}]`, depth + 1, true);
+      });
+      if (union.size >= 2) {
+        recordCombined(shape, union);
+      }
+      return;
+    }
+    if (value && typeof value === "object") {
+      const matched = Object.keys(value).filter((key) => keySet.has(key));
+      matched.forEach((key) => {
+        recordSingle(shape + formatJsonKeySegment(key), sample + formatJsonKeySegment(key));
+      });
+      if (!inArray && matched.length >= 2) {
+        recordCombined(shape, matched);
+      }
+      Object.keys(value).forEach((key) => {
+        walk(value[key], shape + formatJsonKeySegment(key), sample + formatJsonKeySegment(key), depth + 1, false);
+      });
+    }
+  };
+
+  walk(root, "$", "$", 0, false);
+  return { singles: [...singles.values()], combined: [...combined.values()], truncated };
+}
+
+
+// 取候选路径首个具体位置的值，作为选项悬浮预览
+function previewJsonExtractSample(parsed, samplePath) {
+  try {
+    const value = extractJsonByPath(parsed, samplePath);
+    const text = typeof value === "string" ? value : JSON.stringify(value);
+    return text && text.length > 60 ? `${text.slice(0, 60)}…` : String(text);
+  } catch (error) {
+    return "";
+  }
+}
+
+
 function javaToStringToJson(inputStr, options = {}) {
   const keepClassName = !!options.keepClassName;
   if (!inputStr || typeof inputStr !== "string") {
@@ -1265,6 +1395,20 @@ function bindJsonActions() {
       setText("jsonExtractType", describeExtractedType(result));
       showToast("提取成功");
     },
+    jsonFindKeys: () => {
+      const input = $("jsonExtractInput").value;
+      if (!input.trim()) {
+        showToast("请输入 JSON 内容", true);
+        return;
+      }
+      const keys = parseJsonKeyQuery($("jsonExtractKeys").value);
+      if (!keys.length) {
+        showToast("请输入要查找的键名", true);
+        return;
+      }
+      const parsed = safeJsonParse(input);
+      renderJsonKeyOptions(parsed, keys, findJsonKeyPaths(parsed, keys));
+    },
     jsonExtractUseMain: () => {
       $("jsonExtractInput").value = $("jsonInput").value;
     },
@@ -1334,6 +1478,78 @@ function bindJsonActions() {
     },
   };
   bindActions(actions);
+
+  // 按键查找：渲染候选路径选项，点击后填入对应输入框并直接提取
+  const renderJsonKeyOptions = (parsed, keys, found) => {
+    const wrap = $("jsonKeyOptions");
+    wrap.innerHTML = "";
+    const fragments = [];
+    if (found.combined.length) {
+      const label = document.createElement("p");
+      label.className = "key-option-group";
+      label.textContent = "组合提取（填入基础路径与字段，批量提取多条记录）";
+      const row = document.createElement("div");
+      row.className = "key-option-row";
+      found.combined.forEach((item) => {
+        const fields = [...item.keys].join(", ");
+        const btn = document.createElement("button");
+        btn.type = "button";
+        btn.className = "key-option";
+        btn.textContent = `${item.base} → { ${fields} }`;
+        btn.title = "填入基础路径与字段并提取";
+        btn.dataset.keyBase = item.base;
+        btn.dataset.keyFields = fields;
+        row.appendChild(btn);
+      });
+      fragments.push(label, row);
+    }
+    if (found.singles.length) {
+      const label = document.createElement("p");
+      label.className = "key-option-group";
+      label.textContent = "单键路径（点击填入提取路径并提取）";
+      const row = document.createElement("div");
+      row.className = "key-option-row";
+      found.singles.forEach((item) => {
+        const btn = document.createElement("button");
+        btn.type = "button";
+        btn.className = "key-option";
+        btn.textContent = item.count > 1 ? `${item.path}（${item.count} 处）` : item.path;
+        const preview = previewJsonExtractSample(parsed, item.sample);
+        if (preview) {
+          btn.title = `样例：${preview}`;
+        }
+        btn.dataset.keyPath = item.path;
+        row.appendChild(btn);
+      });
+      fragments.push(label, row);
+    }
+    if (!fragments.length) {
+      wrap.hidden = true;
+      showToast(`未找到包含键 ${keys.join("、")} 的路径`, true);
+      return;
+    }
+    if (found.truncated) {
+      showToast("结果较多，仅展示前一部分", true);
+    }
+    fragments.forEach((el) => wrap.appendChild(el));
+    wrap.hidden = false;
+  };
+
+  const keyOptionWrap = $("jsonKeyOptions");
+  keyOptionWrap.addEventListener("click", (event) => {
+    const btn = event.target.closest("button.key-option");
+    if (!btn) return;
+    if (btn.dataset.keyPath) {
+      $("jsonExtractPath").value = btn.dataset.keyPath;
+      actions.jsonExtract();
+      return;
+    }
+    if (btn.dataset.keyBase !== undefined) {
+      $("jsonExtractBase").value = btn.dataset.keyBase;
+      $("jsonExtractFields").value = btn.dataset.keyFields;
+      actions.jsonExtractFields();
+    }
+  });
 
   // JSON 差异对比：结构化视图 / 文本摘要 切换（去掉两处重复输出）
   const diffViewTabs = document.querySelectorAll(".diff-view-tabs .section-tab");

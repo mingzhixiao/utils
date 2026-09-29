@@ -299,6 +299,15 @@
                     <button class="secondary" data-action="clearJsonExtract" type="button">清空</button>
                   </div>
                   <p class="helper-text">路径语法：<code>$.a.b</code>、<code>a[0].c</code>、<code>a["带空格的键"]</code>；数组支持 <code>[n]</code>、<code>[-1]</code> 末位、<code>[*]</code> 全部元素。</p>
+                  <p class="helper-text section-label">按键查找（输入键名，自动列出可提取的候选路径）</p>
+                  <label class="field-label" for="jsonExtractKeys">
+                    <span>键名<small>逗号或空格分隔可填多个；带空格的键用引号包住</small></span>
+                    <input id="jsonExtractKeys" type="text" placeholder='例如 name 或 name, roles 或 "store name"' />
+                  </label>
+                  <div class="action-row wrap">
+                    <button data-action="jsonFindKeys" type="button">查找候选路径</button>
+                  </div>
+                  <div id="jsonKeyOptions" class="key-option-list" hidden></div>
                   <p class="helper-text section-label">多字段批量提取（如 users[*] 同时取 name 与 roles）</p>
                   <label class="field-label" for="jsonExtractBase">
                     <span>基础路径<small>留空则按整份 JSON 投影</small></span>
