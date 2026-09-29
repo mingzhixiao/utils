@@ -312,7 +312,12 @@ function bindEsActions() {
 
   const actions = {
     convertEsData: () => {
-      const input = safeJsonParse($("esInput").value);
+      const raw = $("esInput").value;
+      if (!raw.trim()) {
+        showToast("请输入 JSON 数据", true);
+        return;
+      }
+      const input = safeJsonParse(raw);
       const mode = $("esMode").value;
       const outputStyle = $("esOutputStyle").value;
       const sourceFields = mode === "bulkDelete" ? [] : parseFieldList($("esSourceFields").value);

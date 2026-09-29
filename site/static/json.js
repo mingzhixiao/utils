@@ -13,6 +13,40 @@ function normalizeRowValue(value) {
 }
 
 
+// 转换处理：合法 JSON 先压缩成单行再转义，输出带引号的完整字符串字面量，可直接嵌入其他 JSON 或代码；
+// 非 JSON 文本按原文转义（引号、反斜杠、换行等控制字符）。
+function jsonEscape(text) {
+  let source = text;
+  try {
+    source = JSON.stringify(JSON.parse(text));
+  } catch (error) {
+    // 非 JSON 文本按原文转义
+  }
+  return JSON.stringify(source);
+}
+
+
+// 去除转义：优先按 JSON 字符串字面量整体解析（兼容带外层引号的输入），
+// 否则手动反转义 \" \\ \/ \n \r \t \b \f \uXXXX 等常见转义序列。
+function jsonUnescape(text) {
+  const trimmed = text.trim();
+  if (trimmed.length >= 2 && trimmed.startsWith('"') && trimmed.endsWith('"')) {
+    try {
+      return JSON.parse(trimmed);
+    } catch (error) {
+      // 引号内内容转义非法时退回手动反转义
+    }
+  }
+  return trimmed.replace(/\\(u[0-9a-fA-F]{4}|["\\\/bfnrt])/g, (match, seq) => {
+    if (seq.startsWith("u")) {
+      return String.fromCharCode(parseInt(seq.slice(1), 16));
+    }
+    const map = { '"': '"', "\\": "\\", "/": "/", b: "\b", f: "\f", n: "\n", r: "\r", t: "\t" };
+    return map[seq];
+  });
+}
+
+
 function jsonToCsv(data) {
   const rows = Array.isArray(data) ? data : [data];
   if (!rows.length || typeof rows[0] !== "object" || rows[0] === null || Array.isArray(rows[0])) {
@@ -1077,20 +1111,58 @@ function bindJsonActions() {
   updateJsonDiffStats([]);
   const actions = {
     jsonFormat: () => {
-      const parsed = safeJsonParse($("jsonInput").value);
+      const input = $("jsonInput").value;
+      if (!input.trim()) {
+        showToast("请输入 JSON 内容", true);
+        return;
+      }
+      const parsed = safeJsonParse(input);
       setOutput("jsonOutput", JSON.stringify(parsed, null, 2));
       renderJsonTree(parsed);
     },
     jsonMinify: () => {
-      const parsed = safeJsonParse($("jsonInput").value);
+      const input = $("jsonInput").value;
+      if (!input.trim()) {
+        showToast("请输入 JSON 内容", true);
+        return;
+      }
+      const parsed = safeJsonParse(input);
       setOutput("jsonOutput", JSON.stringify(parsed));
       renderJsonTree(parsed);
     },
     jsonToCsv: () => {
-      const parsed = safeJsonParse($("jsonInput").value);
+      const input = $("jsonInput").value;
+      if (!input.trim()) {
+        showToast("请输入 JSON 内容", true);
+        return;
+      }
+      const parsed = safeJsonParse(input);
       setOutput("jsonOutput", jsonToCsv(parsed));
     },
-    csvToJson: () => setOutput("jsonOutput", csvToJson($("jsonInput").value)),
+    csvToJson: () => {
+      const input = $("jsonInput").value;
+      if (!input.trim()) {
+        showToast("请输入 CSV 内容", true);
+        return;
+      }
+      setOutput("jsonOutput", csvToJson(input));
+    },
+    jsonEscape: () => {
+      const input = $("jsonInput").value;
+      if (!input.trim()) {
+        showToast("请输入要转义的内容", true);
+        return;
+      }
+      setOutput("jsonOutput", jsonEscape(input));
+    },
+    jsonUnescape: () => {
+      const input = $("jsonInput").value;
+      if (!input.trim()) {
+        showToast("请输入要去除转义的内容", true);
+        return;
+      }
+      setOutput("jsonOutput", jsonUnescape(input));
+    },
     javaToStringToJson: () => {
       const input = $("jsonInput").value;
       if (!input.trim()) {
@@ -1108,6 +1180,10 @@ function bindJsonActions() {
     },
     jsonRenderTree: () => {
       const source = $("jsonOutput").value.trim() || $("jsonInput").value.trim();
+      if (!source) {
+        showToast("请输入 JSON 内容", true);
+        return;
+      }
       const parsed = safeJsonParse(source);
       renderJsonTree(parsed);
     },
@@ -1118,8 +1194,14 @@ function bindJsonActions() {
       setJsonTreeExpansion(false);
     },
     jsonCompare: () => {
-      const left = safeJsonParse($("jsonDiffLeft").value);
-      const right = safeJsonParse($("jsonDiffRight").value);
+      const leftRaw = $("jsonDiffLeft").value;
+      const rightRaw = $("jsonDiffRight").value;
+      if (!leftRaw.trim() || !rightRaw.trim()) {
+        showToast("请输入左右两侧的 JSON", true);
+        return;
+      }
+      const left = safeJsonParse(leftRaw);
+      const right = safeJsonParse(rightRaw);
       const diffs = diffJsonValues(left, right);
       renderJsonDiffViewer(left, right);
       renderJsonDiffOutput(diffs);
@@ -1138,7 +1220,12 @@ function bindJsonActions() {
       $("jsonDiffRight").value = $("jsonOutput").value || $("jsonInput").value;
     },
     jsonExtract: () => {
-      const parsed = safeJsonParse($("jsonExtractInput").value);
+      const input = $("jsonExtractInput").value;
+      if (!input.trim()) {
+        showToast("请输入 JSON 内容", true);
+        return;
+      }
+      const parsed = safeJsonParse(input);
       const path = $("jsonExtractPath").value.trim();
       const result = extractJsonByPath(parsed, path);
       setOutput("jsonExtractOutput", JSON.stringify(result, null, 2));
@@ -1164,7 +1251,12 @@ function bindJsonActions() {
       $("jsonExtractFields").focus();
     },
     jsonExtractFields: () => {
-      const parsed = safeJsonParse($("jsonExtractInput").value);
+      const input = $("jsonExtractInput").value;
+      if (!input.trim()) {
+        showToast("请输入 JSON 内容", true);
+        return;
+      }
+      const parsed = safeJsonParse(input);
       const base = $("jsonExtractBase").value.trim();
       const fields = $("jsonExtractFields").value.trim();
       const result = extractJsonProjection(parsed, base, fields);
