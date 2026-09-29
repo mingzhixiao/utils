@@ -140,6 +140,42 @@ async function loadCompressPreviews(files) {
   return items;
 }
 
+// 提取剪贴板中的图片文件，兼容浏览器提供的 files 与 items 两种数据结构，并按内容特征去重。
+function extractClipboardImageFiles(clipboardData) {
+  if (!clipboardData) {
+    return [];
+  }
+  const files = [];
+  const seen = new Set();
+  const addFile = (file) => {
+    if (!file || !file.type.startsWith("image/")) {
+      return;
+    }
+    const key = `${file.name || ""}\n${file.size || 0}\n${file.type || ""}\n${file.lastModified || 0}`;
+    if (seen.has(key)) {
+      return;
+    }
+    seen.add(key);
+    files.push(file);
+  };
+
+  Array.from(clipboardData.files || []).forEach(addFile);
+  Array.from(clipboardData.items || []).forEach((item) => {
+    if (item.kind === "file") {
+      addFile(item.getAsFile());
+    }
+  });
+  return files;
+}
+
+async function loadImageCompressFiles(files) {
+  state.imageCompressPreviews.forEach((p) => p.downloadUrl && URL.revokeObjectURL(p.downloadUrl));
+  await loadCompressPreviews(files);
+  renderImagePreviews(state.imageCompressPreviews);
+  // Auto-compress at current quality
+  await updateCompressPreviews(Number($("compressQuality").value) / 100);
+}
+
 function extractImageUrls(text) {
   const pattern = /\bhttps?:\/\/[^\s"'<>]+?\.(?:png|jpe?g|gif|bmp|webp|svg)(?:\?[^\s"'<>]*)?/gi;
   return Array.from(new Set(text.match(pattern) || []));
@@ -269,11 +305,23 @@ function bindImageActions() {
       renderImagePreviews([]);
       return;
     }
-    state.imageCompressPreviews.forEach((p) => p.downloadUrl && URL.revokeObjectURL(p.downloadUrl));
-    await loadCompressPreviews(files);
-    renderImagePreviews(state.imageCompressPreviews);
-    // Auto-compress at current quality
-    await updateCompressPreviews(Number($("compressQuality").value) / 100);
+    await loadImageCompressFiles(files);
+  });
+
+  // 仅在图片工具的压缩面板激活时接收粘贴，避免影响其他工具中的文本粘贴。
+  document.addEventListener("paste", (event) => {
+    if (!$("imageSection").classList.contains("active")) {
+      return;
+    }
+    if (!$("imageCompressPane").classList.contains("active")) {
+      return;
+    }
+    const files = extractClipboardImageFiles(event.clipboardData);
+    if (!files.length) {
+      return;
+    }
+    event.preventDefault();
+    loadImageCompressFiles(files);
   });
 
   $("imageCompareZoom").addEventListener("input", (event) => {
