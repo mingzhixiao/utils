@@ -3046,3 +3046,978 @@ button.key-option:hover {
 .key-option-list[hidden] {
   display: none;
 }
+
+
+/* ==========================================================================
+   CSV / 表格数据查看器样式 (CSV Viewer)
+   ========================================================================== */
+
+.csv-config-card {
+  margin-bottom: var(--space-md);
+  padding: var(--space-md) var(--space-lg);
+  transition: padding var(--dur-normal) var(--ease-out), margin var(--dur-normal) var(--ease-out);
+}
+
+.csv-config-card.collapsed {
+  margin-bottom: var(--space-xs);
+  padding: var(--space-xs) var(--space-lg);
+}
+
+.csv-config-card.collapsed .csv-upload-and-text,
+.csv-config-card.collapsed .csv-controls-bar {
+  display: none;
+}
+
+.csv-header-left {
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+  flex-wrap: wrap;
+}
+
+.csv-header-left h3 {
+  margin: 0;
+  font-size: var(--text-base);
+  font-weight: 600;
+}
+
+.csv-upload-and-text {
+  display: grid;
+  grid-template-columns: 280px 1fr;
+  gap: var(--space-md);
+  margin: var(--space-sm) 0;
+}
+
+.csv-drop-zone {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  gap: var(--space-xs);
+  padding: var(--space-md) var(--space-sm);
+  border: 1.5px dashed var(--border);
+  border-radius: var(--radius-md);
+  background: var(--color-paper-2);
+  cursor: pointer;
+  transition: border-color var(--dur-normal) var(--ease-out),
+              background var(--dur-normal) var(--ease-out);
+  min-height: 120px;
+}
+
+.csv-drop-zone:hover,
+.csv-drop-zone.active {
+  border-color: var(--color-accent);
+  background: var(--color-accent-soft);
+}
+
+.csv-drop-zone .upload-icon {
+  color: var(--color-accent);
+}
+
+.csv-drop-zone input[type="file"] {
+  display: none;
+}
+
+.upload-text-group {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.upload-text-group strong {
+  font-size: var(--text-sm);
+  color: var(--color-text);
+}
+
+.upload-text-group .helper-text {
+  font-size: var(--text-xs);
+  color: var(--color-muted);
+}
+
+.csv-text-input-wrap {
+  position: relative;
+  width: 100%;
+}
+
+.csv-workbench-input {
+  width: 100%;
+  height: 100%;
+  min-height: 120px;
+  max-height: 200px;
+  resize: vertical;
+  padding: 10px 12px;
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  line-height: 1.6;
+}
+
+.csv-controls-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: var(--space-sm);
+  padding-top: var(--space-xs);
+  border-top: 1px solid var(--color-border);
+}
+
+.csv-control-group {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+  flex-wrap: wrap;
+}
+
+.csv-control-item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+  font-size: var(--text-xs);
+  color: var(--color-muted);
+}
+
+.csv-control-item select {
+  font-size: var(--text-xs);
+  padding: 4px 8px;
+  border-radius: var(--radius-sm);
+}
+
+.csv-checkbox-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: var(--text-xs);
+  color: var(--color-text);
+  cursor: pointer;
+  user-select: none;
+}
+
+.csv-checkbox-item input[type="checkbox"] {
+  cursor: pointer;
+  accent-color: var(--color-accent);
+}
+
+.csv-inline-stats {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+  margin: 0;
+  padding: 0;
+}
+
+.csv-inline-stats .compare-stat {
+  padding: 2px 10px;
+}
+
+/* ===== 下方表格卡片与工具栏 ===== */
+
+.csv-viewer-card {
+  padding: var(--space-md) var(--space-lg);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+}
+
+.csv-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-md);
+  flex-wrap: wrap;
+  padding-bottom: var(--space-xs);
+}
+
+.csv-search-area {
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+  flex: 1 1 300px;
+  max-width: 480px;
+}
+
+.csv-search-input-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+  flex: 1;
+}
+
+.csv-search-input-wrap .search-icon {
+  position: absolute;
+  left: 10px;
+  color: var(--color-muted);
+  pointer-events: none;
+}
+
+.csv-search-input {
+  width: 100%;
+  padding: 7px 10px 7px 32px;
+  font-size: var(--text-xs);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--color-border);
+  background: var(--color-paper-2);
+  color: var(--color-text);
+}
+
+.csv-column-select {
+  padding: 7px 10px;
+  font-size: var(--text-xs);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--color-border);
+  background: var(--color-paper-2);
+  color: var(--color-text);
+}
+
+.csv-actions-group {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  flex-wrap: wrap;
+}
+
+.csv-page-size-wrap {
+  display: flex;
+  align-items: center;
+  font-size: var(--text-xs);
+  color: var(--color-muted);
+}
+
+.csv-page-size-wrap select {
+  font-size: var(--text-xs);
+  padding: 5px 8px;
+  margin-left: 4px;
+}
+
+/* ===== 表格容器与样式 ===== */
+
+.csv-table-container {
+  position: relative;
+  width: 100%;
+  max-height: 560px;
+  min-height: 240px;
+  overflow: auto;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: var(--color-paper-1);
+}
+
+.csv-data-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  font-size: var(--text-xs);
+  line-height: 1.5;
+  margin: 0;
+}
+
+.csv-data-table thead {
+  position: sticky;
+  top: 0;
+  z-index: 5;
+}
+
+.csv-data-table th {
+  background: var(--color-panel-strong);
+  color: var(--color-text);
+  font-weight: 600;
+  padding: 10px 12px;
+  text-align: left;
+  border-bottom: 2px solid var(--color-border);
+  border-right: 1px solid var(--color-border);
+  white-space: nowrap;
+  user-select: none;
+}
+
+.csv-data-table th.sortable {
+  cursor: pointer;
+  transition: background var(--dur-fast) ease;
+}
+
+.csv-data-table th.sortable:hover {
+  background: var(--color-card-bg);
+  color: var(--color-accent);
+}
+
+.csv-data-table th .th-content {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.csv-data-table th .sort-icon {
+  font-size: 10px;
+  opacity: 0.45;
+  transition: opacity var(--dur-fast) ease, color var(--dur-fast) ease;
+}
+
+.csv-data-table th.sort-asc .sort-icon,
+.csv-data-table th.sort-desc .sort-icon {
+  opacity: 1;
+  color: var(--color-accent);
+}
+
+.csv-data-table th.csv-th-index,
+.csv-data-table td.csv-td-index {
+  width: 44px;
+  min-width: 44px;
+  max-width: 50px;
+  text-align: center;
+  color: var(--color-muted);
+  font-family: var(--font-mono);
+  background: var(--color-panel-strong);
+  position: sticky;
+  left: 0;
+  z-index: 2;
+  border-right: 1px solid var(--color-border);
+}
+
+.csv-data-table thead th.csv-th-index {
+  z-index: 6;
+}
+
+.csv-data-table th.csv-th-action,
+.csv-data-table td.csv-td-action {
+  width: 60px;
+  text-align: center;
+  white-space: nowrap;
+  padding: 6px 8px;
+}
+
+.csv-data-table td {
+  padding: 8px 12px;
+  border-bottom: 1px solid var(--color-border);
+  border-right: 1px solid var(--color-border);
+  color: var(--color-text);
+  max-width: 320px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  vertical-align: middle;
+}
+
+.csv-data-table td.text-right {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+.csv-data-table tbody tr:nth-child(even) td {
+  background: var(--color-paper-2);
+}
+
+.csv-data-table tbody tr:hover td {
+  background: var(--color-accent-soft);
+}
+
+.csv-data-table tbody tr.selected td {
+  background: var(--color-accent-soft);
+  box-shadow: inset 0 0 0 1px var(--color-accent);
+}
+
+.csv-empty-cell {
+  color: var(--color-muted);
+  opacity: 0.55;
+  font-style: italic;
+}
+
+.csv-highlight {
+  background: #facc15;
+  color: #000;
+  border-radius: 2px;
+  padding: 0 2px;
+  font-weight: 600;
+}
+
+.csv-detail-btn {
+  padding: 3px 8px;
+  font-size: 11px;
+  border-radius: var(--radius-sm);
+  background: var(--color-card-bg);
+  border: 1px solid var(--color-border);
+  color: var(--color-muted-strong);
+  cursor: pointer;
+  transition: all var(--dur-fast) ease;
+}
+
+.csv-detail-btn:hover {
+  border-color: var(--color-accent);
+  background: var(--color-accent);
+  color: #fff;
+}
+
+.csv-no-match {
+  text-align: center;
+  padding: 40px !important;
+  color: var(--color-muted);
+}
+
+/* ===== 空状态 ===== */
+
+.csv-empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 48px 24px;
+  text-align: center;
+  color: var(--color-muted);
+  gap: var(--space-xs);
+}
+
+.csv-empty-state svg {
+  color: var(--color-muted);
+  margin-bottom: var(--space-xs);
+  opacity: 0.7;
+}
+
+.csv-empty-state .empty-title {
+  font-size: var(--text-base);
+  font-weight: 600;
+  color: var(--color-text);
+  margin: 0;
+}
+
+.csv-empty-state .empty-subtitle {
+  font-size: var(--text-xs);
+  color: var(--color-muted);
+  margin: 0;
+  max-width: 360px;
+}
+
+/* ===== 分页控制条 ===== */
+
+.csv-pagination-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--space-xs) 4px 0;
+  font-size: var(--text-xs);
+  color: var(--color-muted);
+}
+
+.csv-pagination-btns {
+  display: flex;
+  gap: var(--space-xs);
+}
+
+.csv-pagination-btns button {
+  padding: 4px 12px;
+  font-size: var(--text-xs);
+}
+
+/* ===== 单行详情模态框 ===== */
+
+.csv-detail-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  background: rgba(0, 0, 0, 0.65);
+  backdrop-filter: blur(4px);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-md);
+}
+
+.csv-detail-modal.open {
+  display: flex;
+}
+
+.csv-detail-box {
+  width: 100%;
+  max-width: 640px;
+  max-height: 85vh;
+  background: var(--color-card-bg);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lg);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  animation: modalPop 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes modalPop {
+  from {
+    transform: scale(0.96);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.csv-detail-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--space-md) var(--space-lg);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.csv-detail-header h4 {
+  margin: 0;
+  font-size: var(--text-base);
+  font-weight: 600;
+  color: var(--color-text);
+}
+
+.csv-detail-header-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+}
+
+.icon-close-btn {
+  background: transparent;
+  border: none;
+  font-size: 16px;
+  color: var(--color-muted);
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: var(--radius-sm);
+}
+
+.icon-close-btn:hover {
+  background: var(--color-paper-2);
+  color: var(--color-text);
+}
+
+.csv-detail-body {
+  padding: var(--space-md) var(--space-lg);
+  overflow-y: auto;
+}
+
+.csv-detail-grid {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+}
+
+.csv-detail-item {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: var(--space-xs) var(--space-sm);
+  background: var(--color-paper-1);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+}
+
+.csv-detail-item .detail-label {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: var(--text-xs);
+  font-weight: 600;
+  color: var(--color-muted-strong);
+}
+
+.detail-copy-cell {
+  background: transparent;
+  border: 1px solid var(--color-border);
+  padding: 2px 6px;
+  font-size: 11px;
+  border-radius: var(--radius-sm);
+  color: var(--color-muted);
+  cursor: pointer;
+}
+
+.detail-copy-cell:hover {
+  border-color: var(--color-accent);
+  color: var(--color-accent);
+}
+
+.csv-detail-item .detail-value {
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  color: var(--color-text);
+  word-break: break-all;
+  white-space: pre-wrap;
+  user-select: text;
+}
+
+@media (max-width: 768px) {
+  .csv-upload-and-text {
+    grid-template-columns: 1fr;
+  }
+  .csv-controls-bar {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .csv-toolbar {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .csv-search-area {
+    max-width: 100%;
+  }
+}
+
+
+/* ===== 表头筛选与 Popover 样式 ===== */
+
+.csv-data-table th .th-content {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px;
+  width: 100%;
+}
+
+.csv-data-table th .th-text {
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.th-filter-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  background: transparent;
+  border: 1px solid transparent;
+  padding: 3px;
+  border-radius: var(--radius-sm);
+  color: var(--color-muted);
+  cursor: pointer;
+  transition: all var(--dur-fast) ease;
+}
+
+.th-filter-btn:hover {
+  background: var(--color-card-bg);
+  border-color: var(--color-border);
+  color: var(--color-text);
+}
+
+.th-filter-btn.active,
+th.has-filter .th-filter-btn {
+  color: var(--color-accent);
+  background: var(--color-accent-soft);
+  border-color: var(--color-accent);
+}
+
+.th-filter-btn .filter-dot {
+  position: absolute;
+  top: 1px;
+  right: 1px;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--color-accent);
+}
+
+th.has-filter {
+  box-shadow: inset 0 -2px 0 var(--color-accent);
+}
+
+/* 快捷表头筛选输入行 */
+.csv-filter-row th {
+  padding: 4px 6px;
+  background: var(--color-paper-2);
+  border-bottom: 2px solid var(--color-border);
+}
+
+.csv-th-index-filter {
+  width: 44px;
+  background: var(--color-panel-strong);
+}
+
+.col-filter-input {
+  width: 100%;
+  padding: 4px 8px;
+  font-size: 11px;
+  font-family: var(--font-body);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  background: var(--color-card-bg);
+  color: var(--color-text);
+  outline: none;
+}
+
+.col-filter-input:focus {
+  border-color: var(--color-accent);
+  box-shadow: 0 0 0 2px var(--color-accent-soft);
+}
+
+/* 表格上方已生效筛选标签栏 */
+.csv-active-filters-bar {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--space-xs);
+  padding: 6px 12px;
+  background: var(--color-paper-2);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  margin-bottom: var(--space-xs);
+  font-size: var(--text-xs);
+}
+
+.active-filters-label {
+  font-weight: 600;
+  color: var(--color-muted-strong);
+  font-size: 11.5px;
+}
+
+.active-filters-list {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px;
+  flex: 1;
+}
+
+.active-filter-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 8px;
+  background: var(--color-card-bg);
+  border: 1px solid var(--color-accent);
+  border-radius: var(--radius-full);
+  font-size: 11px;
+  color: var(--color-text);
+  animation: fadeIn 0.15s ease-out;
+}
+
+.active-filter-tag .tag-title {
+  color: var(--color-muted);
+}
+
+.active-filter-tag .tag-val {
+  font-weight: 600;
+  color: var(--color-accent);
+}
+
+.active-filter-tag .tag-remove-btn {
+  background: transparent;
+  border: none;
+  color: var(--color-muted);
+  cursor: pointer;
+  padding: 0 2px;
+  font-size: 11px;
+  line-height: 1;
+  border-radius: 50%;
+}
+
+.active-filter-tag .tag-remove-btn:hover {
+  color: var(--color-danger);
+}
+
+.clear-all-filters-btn {
+  background: transparent;
+  border: none;
+  font-size: 11px;
+  color: var(--color-muted);
+  cursor: pointer;
+  padding: 2px 6px;
+  border-radius: var(--radius-sm);
+  transition: color var(--dur-fast) ease;
+}
+
+.clear-all-filters-btn:hover {
+  color: var(--color-danger);
+  text-decoration: underline;
+}
+
+/* 表头过滤切换按钮激活态 */
+#csvToggleHeaderFilterBtn.active,
+#csvToggleFilterRowBtn.active {
+  background: var(--color-accent-soft);
+  border-color: var(--color-accent);
+  color: var(--color-accent);
+}
+
+/* ===== 单列表头筛选 Popover 浮层 ===== */
+
+.csv-col-filter-popover {
+  position: absolute;
+  z-index: 1000;
+  width: 270px;
+  background: var(--color-card-bg);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-lg);
+  display: none;
+  flex-direction: column;
+  overflow: hidden;
+  animation: popoverFade 0.18s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.csv-col-filter-popover.open {
+  display: flex;
+}
+
+@keyframes popoverFade {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.popover-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 12px;
+  border-bottom: 1px solid var(--color-border);
+  background: var(--color-paper-2);
+}
+
+.popover-title {
+  font-size: 12px;
+  color: var(--color-text);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.popover-title strong {
+  color: var(--color-accent);
+}
+
+.popover-close-btn {
+  background: transparent;
+  border: none;
+  color: var(--color-muted);
+  cursor: pointer;
+  padding: 2px 4px;
+  font-size: 13px;
+  line-height: 1;
+}
+
+.popover-close-btn:hover {
+  color: var(--color-text);
+}
+
+.popover-body {
+  padding: 10px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.popover-search-wrap {
+  width: 100%;
+}
+
+.popover-search-input {
+  width: 100%;
+  padding: 6px 10px;
+  font-size: 12px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  background: var(--color-paper-1);
+  color: var(--color-text);
+}
+
+.popover-search-input:focus {
+  border-color: var(--color-accent);
+  outline: none;
+}
+
+.popover-actions-bar {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+}
+
+.popover-link-btn {
+  background: transparent;
+  border: none;
+  padding: 0;
+  color: var(--color-accent);
+  cursor: pointer;
+  font-size: 11px;
+}
+
+.popover-link-btn:hover {
+  text-decoration: underline;
+}
+
+.popover-split {
+  color: var(--color-border);
+}
+
+.popover-items-summary {
+  margin-left: auto;
+  color: var(--color-muted);
+}
+
+.popover-values-list {
+  max-height: 180px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding-right: 2px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  background: var(--color-paper-1);
+  padding: 4px;
+}
+
+.popover-val-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 6px;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  font-size: 11.5px;
+  user-select: none;
+  transition: background var(--dur-fast) ease;
+}
+
+.popover-val-item:hover {
+  background: var(--color-accent-soft);
+}
+
+.popover-val-checkbox {
+  cursor: pointer;
+  accent-color: var(--color-accent);
+}
+
+.popover-val-item .val-label {
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: var(--color-text);
+}
+
+.popover-val-item .val-label.val-empty {
+  color: var(--color-muted);
+  font-style: italic;
+}
+
+.popover-val-item .val-count {
+  font-size: 10px;
+  color: var(--color-muted);
+  background: var(--color-paper-2);
+  padding: 1px 5px;
+  border-radius: var(--radius-full);
+}
+
+.popover-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 12px;
+  border-top: 1px solid var(--color-border);
+  background: var(--color-paper-2);
+}
+
+.popover-footer button {
+  padding: 4px 10px;
+  font-size: 11.5px;
+}

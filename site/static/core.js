@@ -512,6 +512,7 @@ function init() {
   bindExcelActions();
   bindWordPdfActions();
   bindPdfToImageActions();
+  bindCsvActions();
 }
 
 document.addEventListener("DOMContentLoaded", init);

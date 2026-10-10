@@ -129,6 +129,20 @@ function bindTsvJsonActions() {
       if (mainTab) activateSubtab(mainTab);
       showToast("已填入主转换输入框");
     },
+    jsonTsvSendToCsv: () => {
+      const text = $("tsvInput").value.trim();
+      if (!text) {
+        showToast("制表符输入框中无数据", true);
+        return;
+      }
+      if ($("csvInput")) $("csvInput").value = text;
+      if ($("csvDelimiterSelect")) $("csvDelimiterSelect").value = "\t";
+      activatePanel("csvSection");
+      if (typeof loadCsvFromInput === "function") {
+        loadCsvFromInput();
+      }
+      showToast("已载入 CSV 查看器");
+    },
   };
   bindActions(actions);
 }

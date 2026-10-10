@@ -1,1444 +1,1758 @@
 <!DOCTYPE html>
 <html lang="zh-CN" data-theme="dark">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>工具盒子</title>
-    <link rel="icon" href="favicon.svg" type="image/svg+xml" />
-    <link rel="icon" href="icons/icon32.png" sizes="32x32" type="image/png" />
-    <link rel="icon" href="icons/icon16.png" sizes="16x16" type="image/png" />
-    <link rel="stylesheet" href="styles.css" />
-    <script src="static/theme-init.js"></script>
-  </head>
-  <body>
-    <div class="app-shell">
-      <aside class="side-rail">
-        <div class="brand-block">
-          <div class="logo-area">
-            <svg class="logo-icon" viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/>
-              <polyline points="3.27 6.96 12 12.01 20.73 6.96"/>
-              <line x1="12" y1="22.08" x2="12" y2="12"/>
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>工具盒子</title>
+  <link rel="icon" href="favicon.svg" type="image/svg+xml" />
+  <link rel="icon" href="icons/icon32.png" sizes="32x32" type="image/png" />
+  <link rel="icon" href="icons/icon16.png" sizes="16x16" type="image/png" />
+  <link rel="stylesheet" href="styles.css" />
+  <script src="static/theme-init.js"></script>
+</head>
+
+<body>
+  <div class="app-shell">
+    <aside class="side-rail">
+      <div class="brand-block">
+        <div class="logo-area">
+          <svg class="logo-icon" viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor"
+            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path
+              d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z" />
+            <polyline points="3.27 6.96 12 12.01 20.73 6.96" />
+            <line x1="12" y1="22.08" x2="12" y2="12" />
+          </svg>
+        </div>
+        <div>
+          <h1>工具盒子</h1>
+        </div>
+        <button id="sidebarCloseBtn" class="sidebar-close-btn" type="button" aria-label="关闭菜单">
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"
+            stroke-linecap="round" stroke-linejoin="round">
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+          </svg>
+        </button>
+      </div>
+
+      <nav class="panel-nav" id="topNav">
+        <button class="panel-chip active" data-panel="encodingSection" type="button">
+          <div class="chip-lead">
+            <svg class="nav-icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor"
+              stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M16 18l6-6-6-6M8 6L2 12l6 6" />
             </svg>
+            <span class="chip-title">编码工具</span>
           </div>
+          <span class="chip-desc">URL、Unicode、Base64、转义</span>
+        </button>
+        <button class="panel-chip" data-panel="jsonSection" type="button">
+          <div class="chip-lead">
+            <svg class="nav-icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor"
+              stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path
+                d="M12 2a3 3 0 0 0-3 3v3a3 3 0 0 1-3 3 3 3 0 0 1 3 3v3a3 3 0 0 0 3 3M12 2a3 3 0 0 1 3 3v3a3 3 0 0 0 3 3 3 3 0 0 0-3 3v3a3 3 0 0 1-3 3" />
+            </svg>
+            <span class="chip-title">JSON 工具</span>
+          </div>
+          <span class="chip-desc">格式化、树视图、Java toString、制表符转 JSON</span>
+        </button>
+                <button class="panel-chip" data-panel="csvSection" type="button">
+          <div class="chip-lead">
+            <svg class="nav-icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor"
+              stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M3 3h18v18H3zM3 9h18M3 15h18M9 3v18M15 3v18" />
+            </svg>
+            <span class="chip-title">CSV 查看</span>
+          </div>
+          <span class="chip-desc">表格预览、搜索过滤、排序、多格式导出</span>
+        </button>
+        <button class="panel-chip" data-panel="sqlSection" type="button">
+          <div class="chip-lead">
+            <svg class="nav-icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor"
+              stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <ellipse cx="12" cy="5" rx="9" ry="3" />
+              <path d="M3 5v6c0 1.66 4 3 9 3s9-1.34 9-3V5M3 11v6c0 1.66 4 3 9 3s9-1.34 9-3v-6" />
+            </svg>
+            <span class="chip-title">SQL 工具</span>
+          </div>
+          <span class="chip-desc">压缩、去注释、生成 Java 对象</span>
+        </button>
+        <button class="panel-chip" data-panel="timeSection" type="button">
+          <div class="chip-lead">
+            <svg class="nav-icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor"
+              stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="10" />
+              <polyline points="12 6 12 12 16 14" />
+            </svg>
+            <span class="chip-title">时间工具</span>
+          </div>
+          <span class="chip-desc">当前时间、双向转换</span>
+        </button>
+        <button class="panel-chip" data-panel="imageSection" type="button">
+          <div class="chip-lead">
+            <svg class="nav-icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor"
+              stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
+              <circle cx="8.5" cy="8.5" r="1.5" />
+              <polyline points="21 15 16 10 5 21" />
+            </svg>
+            <span class="chip-title">图片工具</span>
+          </div>
+          <span class="chip-desc">压缩、批量看图、失败筛选</span>
+        </button>
+        <button class="panel-chip" data-panel="fapiaoSection" type="button">
+          <div class="chip-lead">
+            <svg class="nav-icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor"
+              stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+              <polyline points="14 2 14 8 20 8" />
+              <line x1="16" y1="13" x2="8" y2="13" />
+              <line x1="16" y1="17" x2="8" y2="17" />
+              <polyline points="10 9 9 9 8 9" />
+            </svg>
+            <span class="chip-title">发票工具</span>
+          </div>
+          <span class="chip-desc">图片合并 PDF / Word</span>
+        </button>
+        <button class="panel-chip" data-panel="httpSection" type="button">
+          <div class="chip-lead">
+            <svg class="nav-icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor"
+              stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" />
+            </svg>
+            <span class="chip-title">HTTP 工具</span>
+          </div>
+          <span class="chip-desc">GET/POST 互转 cURL</span>
+        </button>
+        <button class="panel-chip" data-panel="arraySection" type="button">
+          <div class="chip-lead">
+            <svg class="nav-icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor"
+              stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="8" y1="6" x2="21" y2="6" />
+              <line x1="8" y1="12" x2="21" y2="12" />
+              <line x1="8" y1="18" x2="21" y2="18" />
+              <line x1="3" y1="6" x2="3.01" y2="6" />
+              <line x1="3" y1="12" x2="3.01" y2="12" />
+              <line x1="3" y1="18" x2="3.01" y2="18" />
+            </svg>
+            <span class="chip-title">数组工具</span>
+          </div>
+          <span class="chip-desc">换行/逗号/JSON 互转</span>
+        </button>
+        <button class="panel-chip" data-panel="esSection" type="button">
+          <div class="chip-lead">
+            <svg class="nav-icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor"
+              stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="4 17 10 11 4 5" />
+              <line x1="12" y1="19" x2="20" y2="19" />
+            </svg>
+            <span class="chip-title">ES 工具</span>
+          </div>
+          <span class="chip-desc">Console、cURL、语法速查</span>
+        </button>
+        <button class="panel-chip" data-panel="excelSection" type="button">
+          <div class="chip-lead">
+            <svg class="nav-icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor"
+              stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+              <polyline points="14 2 14 8 20 8" />
+              <rect x="3" y="13" width="18" height="8" rx="1" />
+              <path d="M3 17h18" />
+              <path d="M7 13v8M12 13v8M17 13v8" />
+            </svg>
+            <span class="chip-title">Office 工具</span>
+          </div>
+          <span class="chip-desc">Excel/Word 图片提取</span>
+        </button>
+        <button class="panel-chip" data-panel="wordPdfSection" type="button">
+          <div class="chip-lead">
+            <svg class="nav-icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor"
+              stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+              <polyline points="14 2 14 8 20 8" />
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+              <polyline points="17 8 12 3 7 8" />
+              <line x1="12" y1="3" x2="12" y2="15" />
+            </svg>
+            <span class="chip-title">文档转换</span>
+          </div>
+          <span class="chip-desc">Word→PDF、PDF→图片</span>
+        </button>
+        <a class="panel-chip panel-link" href="md-index.html">
+          <div class="chip-lead">
+            <svg class="nav-icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor"
+              stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2zM22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z" />
+            </svg>
+            <span class="chip-title">Markdown 阅读</span>
+          </div>
+          <span class="chip-desc">独立页面 · 目录导航 · 代码高亮</span>
+        </a>
+      </nav>
+
+      <div class="sidebar-footer">
+        <div class="system-status">
+          <span class="status-dot online"></span>
+          <span class="status-text">本地服务就绪</span>
+        </div>
+      </div>
+    </aside>
+
+    <main class="workspace">
+      <header class="workspace-header">
+        <button id="menuToggleBtn" class="menu-toggle-btn" type="button" aria-label="打开菜单">
+          <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"
+            stroke-linecap="round" stroke-linejoin="round">
+            <line x1="3" y1="12" x2="21" y2="12"></line>
+            <line x1="3" y1="6" x2="21" y2="6"></line>
+            <line x1="3" y1="18" x2="21" y2="18"></line>
+          </svg>
+        </button>
+        <div>
+          <h2 id="workspaceTitle">编码工具</h2>
+          <p class="workspace-subtitle" id="workspaceSubtitle">常见文本编码和解码集中在一个面板里。</p>
+        </div>
+        <button id="themeToggleBtn" class="theme-toggle-btn" type="button" aria-label="切换主题">
+          <div class="theme-toggle-inner">
+            <svg class="sun-icon" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor"
+              stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="5" />
+              <line x1="12" y1="1" x2="12" y2="3" />
+              <line x1="12" y1="21" x2="12" y2="23" />
+              <line x1="4.22" y1="4.22" x2="5.64" y2="5.64" />
+              <line x1="18.36" y1="18.36" x2="19.78" y2="19.78" />
+              <line x1="1" y1="12" x2="3" y2="12" />
+              <line x1="21" y1="12" x2="23" y2="12" />
+              <line x1="4.22" y1="19.78" x2="5.64" y2="18.36" />
+              <line x1="18.36" y1="5.64" x2="19.78" y2="4.22" />
+            </svg>
+            <svg class="moon-icon" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor"
+              stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
+            </svg>
+            <span class="theme-text">切换主题</span>
+          </div>
+        </button>
+      </header>
+
+      <section class="tool-panel active" id="encodingSection" data-panel-title="编码工具"
+        data-panel-description="常见文本编码和解码集中在一个面板里。">
+        <div class="section-banner">
           <div>
-            <h1>工具盒子</h1>
+            <p class="panel-kicker">Encoding</p>
+            <h3>常用编码转换</h3>
           </div>
-          <button id="sidebarCloseBtn" class="sidebar-close-btn" type="button" aria-label="关闭菜单">
-            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <line x1="18" y1="6" x2="6" y2="18"></line>
-              <line x1="6" y1="6" x2="18" y2="18"></line>
-            </svg>
-          </button>
+          <div class="section-tags">
+            <span>URL</span>
+            <span>Unicode</span>
+            <span>Base64</span>
+            <span>Escape</span>
+          </div>
         </div>
 
-        <nav class="panel-nav" id="topNav">
-          <button class="panel-chip active" data-panel="encodingSection" type="button">
-            <div class="chip-lead">
-              <svg class="nav-icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 18l6-6-6-6M8 6L2 12l6 6"/></svg>
-              <span class="chip-title">编码工具</span>
+        <div class="split-workbench">
+          <article class="card workspace-pane">
+            <div class="card-header">
+              <h3>输入与方式</h3>
+              <span class="info-badge" id="encodingActiveBadge">URL</span>
             </div>
-            <span class="chip-desc">URL、Unicode、Base64、转义</span>
-          </button>
-          <button class="panel-chip" data-panel="jsonSection" type="button">
-            <div class="chip-lead">
-              <svg class="nav-icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a3 3 0 0 0-3 3v3a3 3 0 0 1-3 3 3 3 0 0 1 3 3v3a3 3 0 0 0 3 3M12 2a3 3 0 0 1 3 3v3a3 3 0 0 0 3 3 3 3 0 0 0-3 3v3a3 3 0 0 1-3 3"/></svg>
-              <span class="chip-title">JSON 工具</span>
+            <div class="mode-switch" id="encodingTypeSwitch">
+              <button class="mode-pill active" data-encoding-type="url" type="button">URL</button>
+              <button class="mode-pill" data-encoding-type="unicode" type="button">Unicode</button>
+              <button class="mode-pill" data-encoding-type="base64" type="button">Base64</button>
+              <button class="mode-pill" data-encoding-type="escape" type="button">转义</button>
             </div>
-            <span class="chip-desc">格式化、树视图、Java toString、制表符转 JSON</span>
-          </button>
-          <button class="panel-chip" data-panel="sqlSection" type="button">
-            <div class="chip-lead">
-              <svg class="nav-icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M3 5v6c0 1.66 4 3 9 3s9-1.34 9-3V5M3 11v6c0 1.66 4 3 9 3s9-1.34 9-3v-6"/></svg>
-              <span class="chip-title">SQL 工具</span>
+            <p class="helper-text" id="encodingModeHint">适合处理 query 参数、回调地址和浏览器地址栏内容。</p>
+            <textarea id="encodingInput" class="workbench-input" placeholder="输入需要转换的内容"></textarea>
+            <div class="action-row">
+              <button id="encodingEncodeBtn" data-action="runEncodingEncode" type="button">编码</button>
+              <button id="encodingDecodeBtn" data-action="runEncodingDecode" type="button">解码</button>
+              <button class="secondary" data-action="fillEncodingResult" type="button">结果回填</button>
+              <button class="secondary" data-action="clearEncodingPanels" type="button">清空</button>
             </div>
-            <span class="chip-desc">压缩、去注释、生成 Java 对象</span>
-          </button>
-          <button class="panel-chip" data-panel="timeSection" type="button">
-            <div class="chip-lead">
-              <svg class="nav-icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-              <span class="chip-title">时间工具</span>
-            </div>
-            <span class="chip-desc">当前时间、双向转换</span>
-          </button>
-          <button class="panel-chip" data-panel="imageSection" type="button">
-            <div class="chip-lead">
-              <svg class="nav-icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
-              <span class="chip-title">图片工具</span>
-            </div>
-            <span class="chip-desc">压缩、批量看图、失败筛选</span>
-          </button>
-          <button class="panel-chip" data-panel="fapiaoSection" type="button">
-            <div class="chip-lead">
-              <svg class="nav-icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
-              <span class="chip-title">发票工具</span>
-            </div>
-            <span class="chip-desc">图片合并 PDF / Word</span>
-          </button>
-          <button class="panel-chip" data-panel="httpSection" type="button">
-            <div class="chip-lead">
-              <svg class="nav-icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
-              <span class="chip-title">HTTP 工具</span>
-            </div>
-            <span class="chip-desc">GET/POST 互转 cURL</span>
-          </button>
-          <button class="panel-chip" data-panel="arraySection" type="button">
-            <div class="chip-lead">
-              <svg class="nav-icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
-              <span class="chip-title">数组工具</span>
-            </div>
-            <span class="chip-desc">换行/逗号/JSON 互转</span>
-          </button>
-          <button class="panel-chip" data-panel="esSection" type="button">
-            <div class="chip-lead">
-              <svg class="nav-icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="4 17 10 11 4 5"/><line x1="12" y1="19" x2="20" y2="19"/></svg>
-              <span class="chip-title">ES 工具</span>
-            </div>
-            <span class="chip-desc">Console、cURL、语法速查</span>
-          </button>
-          <button class="panel-chip" data-panel="excelSection" type="button">
-            <div class="chip-lead">
-              <svg class="nav-icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><rect x="3" y="13" width="18" height="8" rx="1"/><path d="M3 17h18"/><path d="M7 13v8M12 13v8M17 13v8"/></svg>
-              <span class="chip-title">Office 工具</span>
-            </div>
-            <span class="chip-desc">Excel/Word 图片提取</span>
-          </button>
-          <button class="panel-chip" data-panel="wordPdfSection" type="button">
-            <div class="chip-lead">
-              <svg class="nav-icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
-              <span class="chip-title">文档转换</span>
-            </div>
-            <span class="chip-desc">Word→PDF、PDF→图片</span>
-          </button>
-          <a class="panel-chip panel-link" href="md-index.html">
-            <div class="chip-lead">
-              <svg class="nav-icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2zM22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
-              <span class="chip-title">Markdown 阅读</span>
-            </div>
-            <span class="chip-desc">独立页面 · 目录导航 · 代码高亮</span>
-          </a>
-        </nav>
+          </article>
 
-        <div class="sidebar-footer">
-          <div class="system-status">
-            <span class="status-dot online"></span>
-            <span class="status-text">本地服务就绪</span>
+          <article class="card workspace-pane">
+            <div class="card-header">
+              <h3>转换结果</h3>
+              <button class="copy-btn" data-copy-target="encodingOutput" type="button">复制结果</button>
+            </div>
+            <div class="compare-stats">
+              <div class="compare-stat">
+                <span>原 → 后字符数</span>
+                <strong id="encodingCharDelta">0 → 0</strong>
+              </div>
+              <div class="compare-stat">
+                <span>输出方向</span>
+                <strong id="encodingLastAction">等待操作</strong>
+              </div>
+              <div class="compare-stat">
+                <span>结果长度</span>
+                <strong id="encodingOutputLength">0</strong>
+              </div>
+            </div>
+            <textarea id="encodingOutput" class="output wide-output" readonly placeholder="转换结果会显示在这里"></textarea>
+            <p class="helper-text">左侧先选一种编码方式，再执行编码或解码；右侧结果可直接复制或回填继续处理。</p>
+          </article>
+        </div>
+      </section>
+
+      <section class="tool-panel" id="jsonSection" data-panel-title="JSON 工具"
+        data-panel-description="转换、树视图和差异分析拆成独立面板，更容易定位。">
+        <div class="section-banner">
+          <div>
+            <p class="panel-kicker">JSON</p>
+            <h3>处理、查看、对比</h3>
+            <p class="section-text">把 JSON 的日常操作拆成三个清晰工作区，避免工具都堆在下面。</p>
+          </div>
+          <div class="section-tags">
+            <span>Format</span>
+            <span>Tree</span>
+            <span>Extract</span>
+            <span>Diff</span>
+            <span>Java toString</span>
+            <span>TSV</span>
           </div>
         </div>
-      </aside>
 
-      <main class="workspace">
-        <header class="workspace-header">
-          <button id="menuToggleBtn" class="menu-toggle-btn" type="button" aria-label="打开菜单">
-            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <line x1="3" y1="12" x2="21" y2="12"></line>
-              <line x1="3" y1="6" x2="21" y2="6"></line>
-              <line x1="3" y1="18" x2="21" y2="18"></line>
-            </svg>
-          </button>
-          <div>
-            <h2 id="workspaceTitle">编码工具</h2>
-            <p class="workspace-subtitle" id="workspaceSubtitle">常见文本编码和解码集中在一个面板里。</p>
-          </div>
-          <button id="themeToggleBtn" class="theme-toggle-btn" type="button" aria-label="切换主题">
-            <div class="theme-toggle-inner">
-              <svg class="sun-icon" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
-              <svg class="moon-icon" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
-              <span class="theme-text">切换主题</span>
-            </div>
-          </button>
-        </header>
+        <div class="section-tabs" data-subtab-group="json">
+          <button class="section-tab active" data-subtab-target="jsonTransformPane" type="button">转换处理</button>
+          <button class="section-tab" data-subtab-target="jsonTreePane" type="button">树视图</button>
+          <button class="section-tab" data-subtab-target="jsonExtractPane" type="button">提取数据</button>
+          <button class="section-tab" data-subtab-target="jsonDiffPane" type="button">差异对比</button>
+          <button class="section-tab" data-subtab-target="jsonJavaToStringPane" type="button">Java toString 转
+            JSON</button>
+          <button class="section-tab" data-subtab-target="jsonTsvPane" type="button">制表符转 JSON</button>
+        </div>
 
-        <section class="tool-panel active" id="encodingSection" data-panel-title="编码工具" data-panel-description="常见文本编码和解码集中在一个面板里。">
-          <div class="section-banner">
-            <div>
-              <p class="panel-kicker">Encoding</p>
-              <h3>常用编码转换</h3>
-            </div>
-            <div class="section-tags">
-              <span>URL</span>
-              <span>Unicode</span>
-              <span>Base64</span>
-              <span>Escape</span>
-            </div>
-          </div>
-
-          <div class="split-workbench">
-            <article class="card workspace-pane">
-              <div class="card-header">
-                <h3>输入与方式</h3>
-                <span class="info-badge" id="encodingActiveBadge">URL</span>
-              </div>
-              <div class="mode-switch" id="encodingTypeSwitch">
-                <button class="mode-pill active" data-encoding-type="url" type="button">URL</button>
-                <button class="mode-pill" data-encoding-type="unicode" type="button">Unicode</button>
-                <button class="mode-pill" data-encoding-type="base64" type="button">Base64</button>
-                <button class="mode-pill" data-encoding-type="escape" type="button">转义</button>
-              </div>
-              <p class="helper-text" id="encodingModeHint">适合处理 query 参数、回调地址和浏览器地址栏内容。</p>
-              <textarea id="encodingInput" class="workbench-input" placeholder="输入需要转换的内容"></textarea>
-              <div class="action-row">
-                <button id="encodingEncodeBtn" data-action="runEncodingEncode" type="button">编码</button>
-                <button id="encodingDecodeBtn" data-action="runEncodingDecode" type="button">解码</button>
-                <button class="secondary" data-action="fillEncodingResult" type="button">结果回填</button>
-                <button class="secondary" data-action="clearEncodingPanels" type="button">清空</button>
-              </div>
-            </article>
-
-            <article class="card workspace-pane">
-              <div class="card-header">
-                <h3>转换结果</h3>
-                <button class="copy-btn" data-copy-target="encodingOutput" type="button">复制结果</button>
-              </div>
-              <div class="compare-stats">
-                <div class="compare-stat">
-                  <span>原 → 后字符数</span>
-                  <strong id="encodingCharDelta">0 → 0</strong>
-                </div>
-                <div class="compare-stat">
-                  <span>输出方向</span>
-                  <strong id="encodingLastAction">等待操作</strong>
-                </div>
-                <div class="compare-stat">
-                  <span>结果长度</span>
-                  <strong id="encodingOutputLength">0</strong>
-                </div>
-              </div>
-              <textarea id="encodingOutput" class="output wide-output" readonly placeholder="转换结果会显示在这里"></textarea>
-              <p class="helper-text">左侧先选一种编码方式，再执行编码或解码；右侧结果可直接复制或回填继续处理。</p>
-            </article>
-          </div>
-        </section>
-
-        <section class="tool-panel" id="jsonSection" data-panel-title="JSON 工具" data-panel-description="转换、树视图和差异分析拆成独立面板，更容易定位。">
-          <div class="section-banner">
-            <div>
-              <p class="panel-kicker">JSON</p>
-              <h3>处理、查看、对比</h3>
-              <p class="section-text">把 JSON 的日常操作拆成三个清晰工作区，避免工具都堆在下面。</p>
-            </div>
-            <div class="section-tags">
-              <span>Format</span>
-              <span>Tree</span>
-              <span>Extract</span>
-              <span>Diff</span>
-              <span>Java toString</span>
-              <span>TSV</span>
-            </div>
-          </div>
-
-          <div class="section-tabs" data-subtab-group="json">
-            <button class="section-tab active" data-subtab-target="jsonTransformPane" type="button">转换处理</button>
-            <button class="section-tab" data-subtab-target="jsonTreePane" type="button">树视图</button>
-            <button class="section-tab" data-subtab-target="jsonExtractPane" type="button">提取数据</button>
-            <button class="section-tab" data-subtab-target="jsonDiffPane" type="button">差异对比</button>
-            <button class="section-tab" data-subtab-target="jsonJavaToStringPane" type="button">Java toString 转 JSON</button>
-            <button class="section-tab" data-subtab-target="jsonTsvPane" type="button">制表符转 JSON</button>
-          </div>
-
-          <div class="subpanel-stack">
-            <div class="subpanel active" id="jsonTransformPane">
-              <div class="split-workbench">
-                <article class="card tall workspace-pane">
-                  <div class="card-header">
-                    <h3>JSON 输入</h3>
-                    <button class="copy-btn" data-copy-target="jsonInput" type="button">复制输入</button>
-                  </div>
-                  <textarea id="jsonInput" placeholder='输入 JSON、被转义的 JSON 字符串，或 CSV'></textarea>
-                  <div class="action-row wrap">
-                    <button data-action="jsonFormat" type="button">格式化</button>
-                    <button data-action="jsonMinify" type="button">压缩</button>
-                    <button data-action="jsonToCsv" type="button">JSON 转 CSV</button>
-                    <button data-action="csvToJson" type="button">CSV 转 JSON</button>
-                    <button data-action="jsonEscape" type="button">转义</button>
-                    <button data-action="jsonUnescape" type="button">去除转义</button>
-                    <button class="secondary" data-action="javaToStringToJson" type="button">Java toString 转 JSON</button>
-                  </div>
-                </article>
-
-                <article class="card tall workspace-pane">
-                  <div class="card-header">
-                    <h3>JSON 结果</h3>
-                    <button class="copy-btn" data-copy-target="jsonOutput" type="button">复制结果</button>
-                  </div>
-                  <textarea id="jsonOutput" class="output" placeholder="处理结果"></textarea>
-                </article>
-              </div>
-            </div>
-
-            <div class="subpanel" id="jsonTreePane">
-              <article class="card tree-card">
+        <div class="subpanel-stack">
+          <div class="subpanel active" id="jsonTransformPane">
+            <div class="split-workbench">
+              <article class="card tall workspace-pane">
                 <div class="card-header">
-                  <h3>JSON 树视图</h3>
-                  <div class="action-row compact">
-                    <button class="secondary" data-action="jsonRenderTree" type="button">刷新</button>
-                    <button class="secondary" data-action="jsonExpandTree" type="button">展开全部</button>
-                    <button class="secondary" data-action="jsonCollapseTree" type="button">折叠全部</button>
-                  </div>
+                  <h3>JSON 输入</h3>
+                  <button class="copy-btn" data-copy-target="jsonInput" type="button">复制输入</button>
                 </div>
-                <div id="jsonTree" class="tree-view empty-state">输入合法 JSON 后可查看树结构</div>
-              </article>
-            </div>
-
-            <div class="subpanel" id="jsonExtractPane">
-              <div class="split-workbench">
-                <article class="card workspace-pane">
-                  <div class="card-header">
-                    <h3>JSON 与路径</h3>
-                    <button class="copy-btn" data-copy-target="jsonExtractInput" type="button">复制输入</button>
-                  </div>
-                  <textarea id="jsonExtractInput" class="workbench-input" placeholder='粘贴 JSON，例如 {"users":[{"name":"Alice"},{"name":"Bob"}]}'></textarea>
-                  <label class="field-label" for="jsonExtractPath">
-                    <span>提取路径</span>
-                    <input id="jsonExtractPath" type="text" placeholder="例如 $.users[0].name 或 users[*].name" />
-                  </label>
-                  <div class="action-row wrap">
-                    <button data-action="jsonExtract" type="button">提取</button>
-                    <button class="secondary" data-action="fillJsonExtractExample" type="button">示例</button>
-                    <button class="secondary" data-action="jsonExtractUseMain" type="button">用主输入</button>
-                    <button class="secondary" data-action="clearJsonExtract" type="button">清空</button>
-                  </div>
-                  <p class="helper-text">路径语法：<code>$.a.b</code>、<code>a[0].c</code>、<code>a["带空格的键"]</code>；数组支持 <code>[n]</code>、<code>[-1]</code> 末位、<code>[*]</code> 全部元素。</p>
-                  <p class="helper-text section-label">按键查找（输入键名，自动列出可提取的候选路径）</p>
-                  <label class="field-label" for="jsonExtractKeys">
-                    <span>键名<small>逗号或空格分隔可填多个；带空格的键用引号包住</small></span>
-                    <input id="jsonExtractKeys" type="text" placeholder='例如 name 或 name, roles 或 "store name"' />
-                  </label>
-                  <div class="action-row wrap">
-                    <button data-action="jsonFindKeys" type="button">查找候选路径</button>
-                  </div>
-                  <div id="jsonKeyOptions" class="key-option-list" hidden></div>
-                  <p class="helper-text section-label">多字段批量提取（如 users[*] 同时取 name 与 roles）</p>
-                  <label class="field-label" for="jsonExtractBase">
-                    <span>基础路径<small>留空则按整份 JSON 投影</small></span>
-                    <input id="jsonExtractBase" type="text" placeholder="例如 users[*] 或 users" />
-                  </label>
-                  <label class="field-label" for="jsonExtractFields">
-                    <span>字段<small>逗号分隔，支持 别名:子路径；子路径以 $ 开头从根取值</small></span>
-                    <input id="jsonExtractFields" type="text" placeholder='例如 name, roles 或 $["store name"], name' />
-                  </label>
-                  <div class="action-row wrap">
-                    <button data-action="jsonExtractFields" type="button">提取字段</button>
-                    <button class="secondary" data-action="fillJsonExtractFieldsExample" type="button">示例(多字段)</button>
-                    <button class="secondary" data-action="fillJsonExtractRootExample" type="button">示例(含根字段)</button>
-                  </div>
-                  <p class="helper-text">跨层引用：字段子路径以 <code>$</code> 开头（如 <code>$["store name"]</code>）表示从整份 JSON 的根取值，可把根上的字段拼进遍历出的每条结果。</p>
-                </article>
-
-                <article class="card workspace-pane">
-                  <div class="card-header">
-                    <h3>提取结果</h3>
-                    <button class="copy-btn" data-copy-target="jsonExtractOutput" type="button">复制结果</button>
-                  </div>
-                  <div class="compare-stats">
-                    <div class="compare-stat">
-                      <span>使用路径</span>
-                      <strong id="jsonExtractPathOut">-</strong>
-                    </div>
-                    <div class="compare-stat">
-                      <span>结果类型</span>
-                      <strong id="jsonExtractType">-</strong>
-                    </div>
-                  </div>
-                  <textarea id="jsonExtractOutput" class="output wide-output" readonly placeholder="提取结果会显示在这里"></textarea>
-                  <p class="helper-text">结果为对象或数组时以格式化 JSON 输出；通配符 <code>[*]</code> 会收集每个匹配元素，返回数组。</p>
-                </article>
-              </div>
-            </div>
-
-            <div class="subpanel" id="jsonDiffPane">
-              <article class="card">
-                <div class="card-header">
-                  <h3>JSON 对比</h3>
-                  <button class="copy-btn" data-copy-target="jsonDiffOutput" type="button">复制摘要</button>
-                </div>
-                <div class="grid two">
-                  <textarea id="jsonDiffLeft" placeholder="左侧 JSON"></textarea>
-                  <textarea id="jsonDiffRight" placeholder="右侧 JSON"></textarea>
-                </div>
-                <div class="action-row">
-                  <button data-action="jsonCompare" type="button">开始对比</button>
-                  <button class="secondary" data-action="jsonLoadDiffLeft" type="button">主输入填左侧</button>
-                  <button class="secondary" data-action="jsonLoadDiffRight" type="button">主结果填右侧</button>
-                  <button class="secondary" data-action="jsonDiffExpandAll" type="button">展开全部</button>
-                  <button class="secondary" data-action="jsonDiffCollapseAll" type="button">折叠全部</button>
-                </div>
-                <div class="compare-stats diff-stats">
-                  <div class="compare-stat">
-                    <span>差异总数</span>
-                    <strong id="jsonDiffTotal">0</strong>
-                  </div>
-                  <div class="compare-stat">
-                    <span>新增</span>
-                    <strong id="jsonDiffAdded">0</strong>
-                  </div>
-                  <div class="compare-stat">
-                    <span>删除</span>
-                    <strong id="jsonDiffRemoved">0</strong>
-                  </div>
-                  <div class="compare-stat">
-                    <span>变更</span>
-                    <strong id="jsonDiffChanged">0</strong>
-                  </div>
-                </div>
-                <div class="section-tabs diff-view-tabs">
-                  <button class="section-tab active" data-diff-view="viewer" type="button">结构化视图</button>
-                  <button class="section-tab" data-diff-view="summary" type="button">文本摘要</button>
-                </div>
-                <div id="jsonDiffViewerWrap">
-                  <div class="diff-viewer-shell">
-                    <div class="diff-viewer-titlebar">
-                      <span>结构化对比视图</span>
-                      <span class="info-badge">Side by Side</span>
-                    </div>
-                    <div id="jsonDiffViewer" class="diff-viewer empty-state">输入两份合法 JSON 后可查看结构化差异</div>
-                  </div>
-                </div>
-                <div id="jsonDiffSummaryWrap" hidden>
-                  <pre id="jsonDiffOutput" class="diff-output empty-state">输入两份合法 JSON 后可查看差异摘要</pre>
+                <textarea id="jsonInput" placeholder='输入 JSON、被转义的 JSON 字符串，或 CSV'></textarea>
+                <div class="action-row wrap">
+                  <button data-action="jsonFormat" type="button">格式化</button>
+                  <button data-action="jsonMinify" type="button">压缩</button>
+                  <button data-action="jsonToCsv" type="button">JSON 转 CSV</button>
+                  <button data-action="csvToJson" type="button">CSV 转 JSON</button>
+                  <button data-action="jsonEscape" type="button">转义</button>
+                  <button data-action="jsonUnescape" type="button">去除转义</button>
+                  <button class="secondary" data-action="javaToStringToJson" type="button">Java toString 转 JSON</button>
                 </div>
               </article>
-            </div>
 
-            <div class="subpanel" id="jsonJavaToStringPane">
-              <div class="split-workbench">
-                <article class="card workspace-pane">
-                  <div class="card-header">
-                    <h3>Java toString 输入</h3>
-                    <button class="copy-btn" data-copy-target="jsonJavaInput" type="button">复制输入</button>
-                  </div>
-                  <textarea id="jsonJavaInput" class="workbench-input" placeholder="粘贴 Java 的 toString() 输出文本，例如 Lombok / IDE 自动生成的对象或数组&#10;示例：User(id=1, name=Alice, age=20, roles=[ADMIN, USER], address=Address(city=Beijing))"></textarea>
-                  <div class="field-label" style="display: flex; align-items: center; gap: 8px; margin-bottom: 12px; cursor: pointer; user-select: none;">
-                    <input type="checkbox" id="jsonJavaKeepType" style="width: auto; cursor: pointer;" />
-                    <span>保留类名字段 (添加 &quot;@type&quot;: &quot;ClassName&quot;)</span>
-                  </div>
-                  <div class="action-row wrap">
-                    <button data-action="jsonConvertJavaToString" type="button">转换为 JSON</button>
-                    <button class="secondary" data-action="fillJavaToStringExample" type="button">填入示例</button>
-                    <button class="secondary" data-action="jsonJavaUseMain" type="button">从主输入载入</button>
-                    <button class="secondary" data-action="clearJavaToString" type="button">清空</button>
-                  </div>
-                  <p class="helper-text">支持 Lombok <code>@ToString</code>、Record、IDE 自动生成的 <code>toString()</code>、Apache Commons <code>ToStringBuilder</code>、Map/List 及嵌套对象文本转换。</p>
-                </article>
-
-                <article class="card workspace-pane">
-                  <div class="card-header">
-                    <h3>JSON 转换结果</h3>
-                    <button class="copy-btn" data-copy-target="jsonJavaOutput" type="button">复制结果</button>
-                  </div>
-                  <div class="compare-stats">
-                    <div class="compare-stat">
-                      <span>转换状态</span>
-                      <strong id="jsonJavaStatus">就绪</strong>
-                    </div>
-                    <div class="compare-stat">
-                      <span>顶层类型</span>
-                      <strong id="jsonJavaType">-</strong>
-                    </div>
-                  </div>
-                  <textarea id="jsonJavaOutput" class="output wide-output" readonly placeholder="转换后的 JSON 结果会显示在这里"></textarea>
-                  <div class="action-row wrap" style="margin-top: 12px;">
-                    <button class="secondary" data-action="jsonJavaSendToTree" type="button">在树视图中查看</button>
-                    <button class="secondary" data-action="jsonJavaSendToMain" type="button">填入转换处理</button>
-                  </div>
-                </article>
-              </div>
-            </div>
-
-            <div class="subpanel" id="jsonTsvPane">
-              <div class="split-workbench">
-                <article class="card workspace-pane">
-                  <div class="card-header">
-                    <h3>制表符数据输入</h3>
-                    <button class="copy-btn" data-copy-target="tsvInput" type="button">复制输入</button>
-                  </div>
-                  <textarea id="tsvInput" class="workbench-input" placeholder="粘贴 Tab 分隔的数据（如 Excel / 数据库查询结果），首行为表头，后续每行为一条记录"></textarea>
-                  <div class="field-grid">
-                    <label>
-                      <span>空值处理</span>
-                      <select id="tsvEmptyAsNull">
-                        <option value="keep" selected>保留空字符串</option>
-                        <option value="null">转为 null</option>
-                      </select>
-                    </label>
-                    <label>
-                      <span>字段值类型</span>
-                      <select id="tsvInferTypes">
-                        <option value="text" selected>全部作为文本</option>
-                        <option value="smart">智能识别数字/布尔</option>
-                      </select>
-                    </label>
-                  </div>
-                  <div class="action-row wrap">
-                    <button data-action="convertTsv" type="button">转换</button>
-                    <button class="secondary" data-action="fillTsvExample" type="button">示例</button>
-                    <button class="secondary" data-action="clearTsv" type="button">清空</button>
-                  </div>
-                  <p class="helper-text">粘贴 Tab 分隔数据（TSV），首行为表头，自动转换为 JSON 对象数组。</p>
-                </article>
-
-                <article class="card workspace-pane">
-                  <div class="card-header">
-                    <h3>JSON 结果</h3>
-                    <button class="copy-btn" data-copy-target="tsvOutput" type="button">复制结果</button>
-                  </div>
-                  <div class="compare-stats">
-                    <div class="compare-stat">
-                      <span>数据行数</span>
-                      <strong id="tsvRowCount">0</strong>
-                    </div>
-                    <div class="compare-stat">
-                      <span>字段数</span>
-                      <strong id="tsvColCount">0</strong>
-                    </div>
-                  </div>
-                  <textarea id="tsvOutput" class="output wide-output" readonly placeholder="转换结果会显示在这里"></textarea>
-                  <div class="action-row wrap" style="margin-top: 12px;">
-                    <button class="secondary" data-action="jsonTsvSendToTree" type="button">在树视图中查看</button>
-                    <button class="secondary" data-action="jsonTsvSendToMain" type="button">填入转换处理</button>
-                  </div>
-                </article>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        <section class="tool-panel" id="sqlSection" data-panel-title="SQL 工具" data-panel-description="压缩 SQL、去除注释，并根据 CREATE TABLE 生成 Java 实体类。">
-          <div class="section-banner">
-            <div>
-              <p class="panel-kicker">SQL</p>
-              <h3>SQL 处理</h3>
-              <p class="section-text">一键压缩 SQL（移除注释、合并空白、整理函数括号），也可根据 CREATE TABLE 语句生成 Java 实体类。</p>
-            </div>
-            <div class="section-tags">
-              <span>Compress</span>
-              <span>Comment</span>
-              <span>Java POJO</span>
-            </div>
-          </div>
-
-          <div class="section-tabs" data-subtab-group="sql">
-            <button class="section-tab active" data-subtab-target="sqlCompressPane" type="button">SQL 压缩</button>
-            <button class="section-tab" data-subtab-target="sqlJavaPane" type="button">生成 Java 对象</button>
-          </div>
-
-          <div class="subpanel-stack">
-            <div class="subpanel active" id="sqlCompressPane">
-              <div class="split-workbench">
-                <article class="card workspace-pane">
-                  <div class="card-header">
-                    <h3>输入 SQL</h3>
-                    <span class="info-badge" id="sqlInputCharCount">0 字符</span>
-                  </div>
-                  <textarea id="sqlInput" class="workbench-input" placeholder="在此粘贴 SQL 语句...&#10;&#10;例如:&#10;SELECT COUNT(*), SUM(price) FROM orders;"></textarea>
-                  <div class="action-row wrap">
-                    <button data-action="compressSql" type="button">压缩</button>
-                    <button class="secondary" data-action="clearSqlPanels" type="button">清空</button>
-                    <button class="secondary" data-action="fillSqlExampleSelect" type="button">简单</button>
-                    <button class="secondary" data-action="fillSqlExampleInsert" type="button">插入</button>
-                    <button class="secondary" data-action="fillSqlExampleComplex" type="button">复杂 SQL</button>
-                  </div>
-                  <p class="helper-text">支持 Ctrl+Enter 快速压缩；所有处理均在浏览器本地完成，不上传服务器。</p>
-                </article>
-
-                <article class="card workspace-pane">
-                  <div class="card-header">
-                    <h3>压缩结果</h3>
-                    <button class="copy-btn" data-copy-target="sqlOutput" type="button">复制结果</button>
-                  </div>
-                  <div class="compare-stats">
-                    <div class="compare-stat">
-                      <span>输出长度</span>
-                      <strong id="sqlOutputCharCount">0 字符</strong>
-                    </div>
-                    <div class="compare-stat">
-                      <span>压缩比</span>
-                      <strong id="sqlCompressRatio">-</strong>
-                    </div>
-                    <div class="compare-stat">
-                      <span>行数</span>
-                      <strong><span id="sqlLineCountBefore">0</span> → <span id="sqlLineCountAfter">0</span></strong>
-                    </div>
-                  </div>
-                  <textarea id="sqlOutput" class="output wide-output" readonly placeholder="压缩结果会显示在这里"></textarea>
-                  <p class="helper-text">压缩后会移除多行/单行注释，合并换行与多余空格，并整理逗号与括号后的间距。</p>
-                </article>
-              </div>
-            </div>
-
-            <div class="subpanel" id="sqlJavaPane">
-              <div class="split-workbench">
-                <article class="card workspace-pane">
-                  <div class="card-header">
-                    <h3>CREATE TABLE 语句</h3>
-                    <span class="info-badge" id="sqlJavaInputBadge">0 字段</span>
-                  </div>
-                  <textarea id="sqlJavaInput" class="workbench-input" placeholder="在此粘贴 CREATE TABLE 语句...&#10;&#10;例如:&#10;CREATE TABLE `user_info` (&#10;  `id` BIGINT NOT NULL AUTO_INCREMENT COMMENT '主键',&#10;  `user_name` VARCHAR(64) NOT NULL COMMENT '用户名',&#10;  `age` INT DEFAULT NULL,&#10;  `create_time` DATETIME DEFAULT NULL&#10;) ENGINE=InnoDB DEFAULT CHARSET=utf8;"></textarea>
-                  <div class="field-grid">
-                    <label>
-                      <span>类名</span>
-                      <input id="sqlJavaClassName" type="text" placeholder="留空则按表名生成" />
-                    </label>
-                    <label>
-                      <span>包名</span>
-                      <input id="sqlJavaPackage" type="text" placeholder="如 com.example.entity" />
-                    </label>
-                  </div>
-                  <details class="config-details">
-                    <summary>更多生成选项</summary>
-                    <div class="field-grid">
-                      <label>
-                        <span>字段命名</span>
-                        <select id="sqlJavaFieldStyle">
-                          <option value="camel" selected>转驼峰</option>
-                          <option value="original">保持原样</option>
-                        </select>
-                      </label>
-                      <label>
-                        <span>类型策略</span>
-                        <select id="sqlJavaTypeStrategy">
-                          <option value="wrapper" selected>包装类</option>
-                          <option value="primitive">基本类型</option>
-                        </select>
-                      </label>
-                    </div>
-                    <div class="field-grid">
-                      <label>
-                        <span>日期类型</span>
-                        <select id="sqlJavaDateType">
-                          <option value="local">java.time</option>
-                          <option value="sql" selected>java.util / sql</option>
-                        </select>
-                      </label>
-                      <label>
-                        <span>生成风格</span>
-                        <select id="sqlJavaStyle">
-                          <option value="lombok" selected>Lombok @Data</option>
-                          <option value="getterSetter">Getter/Setter</option>
-                          <option value="fields">仅字段</option>
-                        </select>
-                      </label>
-                    </div>
-                  </details>
-                  <div class="action-row wrap">
-                    <button data-action="generateJavaFromSql" type="button">生成 Java 对象</button>
-                    <button class="secondary" data-action="fillSqlExampleJava" type="button">示例</button>
-                    <button class="secondary" data-action="clearSqlJavaPanels" type="button">清空</button>
-                  </div>
-                  <p class="helper-text">解析 CREATE TABLE 的列定义，自动映射 Java 类型并生成实体类；支持注释、主键识别与选项配置。所有解析均在浏览器本地完成。</p>
-                </article>
-
-                <article class="card workspace-pane">
-                  <div class="card-header">
-                    <h3>Java 代码</h3>
-                    <button class="copy-btn" data-copy-target="sqlJavaOutput" type="button">复制结果</button>
-                  </div>
-                  <div class="compare-stats">
-                    <div class="compare-stat">
-                      <span>类名</span>
-                      <strong id="sqlJavaClassNameOut">-</strong>
-                    </div>
-                    <div class="compare-stat">
-                      <span>字段数</span>
-                      <strong id="sqlJavaFieldCount">0</strong>
-                    </div>
-                    <div class="compare-stat">
-                      <span>风格</span>
-                      <strong id="sqlJavaStyleOut">Lombok</strong>
-                    </div>
-                  </div>
-                  <textarea id="sqlJavaOutput" class="output wide-output" readonly placeholder="生成的 Java 实体类会显示在这里"></textarea>
-                  <p class="helper-text">生成的代码可直接复制到项目中使用；切换上方选项会即时重新生成。</p>
-                </article>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        <section class="tool-panel" id="timeSection" data-panel-title="时间工具" data-panel-description="当前时间和两种常用转换放在同一屏里，减少来回跳转。">
-          <div class="section-banner">
-            <div>
-              <p class="panel-kicker">Time</p>
-              <h3>时间戳与时间互转</h3>
-              <p class="section-text">输入一个值即可自动识别是时间还是时间戳，再在右侧给出完整转换结果。</p>
-            </div>
-            <div class="section-tags">
-              <span>Now</span>
-              <span>Timestamp</span>
-              <span>DateTime</span>
-            </div>
-          </div>
-
-          <div class="split-workbench">
-            <article class="card workspace-pane">
-              <div class="card-header">
-                <h3>输入与当前时间</h3>
-                <button class="copy-btn" data-copy-target="nowDisplay" type="button">复制当前时间</button>
-              </div>
-              <div class="mini-stat-grid">
-                <div class="stat-item">
-                  <span>本地时间</span>
-                  <strong id="nowDisplay">-</strong>
-                  <button class="copy-btn mini" data-copy-target="nowDisplay" type="button">复制</button>
-                </div>
-                <div class="stat-item">
-                  <span>秒级时间戳</span>
-                  <strong id="nowSeconds">-</strong>
-                  <button class="copy-btn mini" data-copy-target="nowSeconds" type="button">复制</button>
-                </div>
-                <div class="stat-item">
-                  <span>毫秒级时间戳</span>
-                  <strong id="nowMilliseconds">-</strong>
-                  <button class="copy-btn mini" data-copy-target="nowMilliseconds" type="button">复制</button>
-                </div>
-              </div>
-              <textarea id="timeSmartInput" class="workbench-input" placeholder="输入 10/13 位时间戳，或 2026-04-24 18:30:00"></textarea>
-              <div class="action-row">
-                <button data-action="smartConvertTime" type="button">智能转换</button>
-                <button class="secondary" data-action="fillNowSeconds" type="button">当前秒戳</button>
-                <button class="secondary" data-action="fillNowDatetime" type="button">当前时间</button>
-                <button class="secondary" data-action="fillTimePrimaryResult" type="button">结果回填</button>
-                <button class="secondary" data-action="clearTimePanels" type="button">清空</button>
-              </div>
-              <p class="helper-text">支持秒级时间戳、毫秒级时间戳、`yyyy-MM-dd HH:mm:ss` 和浏览器可识别的日期时间格式。</p>
-            </article>
-
-            <article class="card workspace-pane">
-              <div class="card-header">
-                <h3>识别结果</h3>
-                <button class="copy-btn" data-copy-target="timeConversionOutput" type="button">复制结果</button>
-              </div>
-              <div class="result-metrics">
-                <div class="compare-stat">
-                  <span>识别类型</span>
-                  <strong id="timeDetectedType">等待输入</strong>
-                </div>
-                <div class="compare-stat">
-                  <span id="timePrimaryLabel">主结果</span>
-                  <strong id="timePrimaryValue">-</strong>
-                </div>
-                <div class="compare-stat">
-                  <span id="timeSecondaryLabel">补充结果</span>
-                  <strong id="timeSecondaryValue">-</strong>
-                </div>
-                <div class="compare-stat">
-                  <span>时区</span>
-                  <strong id="timeResultZone">-</strong>
-                </div>
-              </div>
-              <textarea id="timeConversionOutput" class="output wide-output" placeholder="转换结果会显示在这里"></textarea>
-              <p class="helper-text">输入后会自动识别类型，右侧会给出适合复制的完整结果和关键摘要。</p>
-            </article>
-          </div>
-        </section>
-
-        <section class="tool-panel" id="imageSection" data-panel-title="图片工具" data-panel-description="把压缩和批量看图拆开，方便单独操作，也更容易快速定位。">
-          <div class="section-banner">
-            <div>
-              <p class="panel-kicker">Image</p>
-              <h3>压缩与批量看图</h3>
-              <p class="section-text">图片压缩和图片地址对比预览分别独立，降低操作干扰。</p>
-            </div>
-            <div class="section-tags">
-              <span>Compress</span>
-              <span>Preview</span>
-              <span>Failed Only</span>
-            </div>
-          </div>
-
-          <div class="section-tabs" data-subtab-group="image">
-            <button class="section-tab active" data-subtab-target="imageCompressPane" type="button">图片压缩</button>
-            <button class="section-tab" data-subtab-target="imageComparePane" type="button">批量对比</button>
-          </div>
-
-          <div class="subpanel-stack">
-            <div class="subpanel active" id="imageCompressPane">
-              <article class="card">
+              <article class="card tall workspace-pane">
                 <div class="card-header">
-                  <h3>百分比压缩</h3>
+                  <h3>JSON 结果</h3>
+                  <button class="copy-btn" data-copy-target="jsonOutput" type="button">复制结果</button>
                 </div>
-                <label class="upload-box" for="imageCompressInput">
-                  <input id="imageCompressInput" type="file" accept="image/*" multiple />
-                  <span>选择一张或多张图片，或按 Ctrl+V 粘贴截图</span>
+                <textarea id="jsonOutput" class="output" placeholder="处理结果"></textarea>
+              </article>
+            </div>
+          </div>
+
+          <div class="subpanel" id="jsonTreePane">
+            <article class="card tree-card">
+              <div class="card-header">
+                <h3>JSON 树视图</h3>
+                <div class="action-row compact">
+                  <button class="secondary" data-action="jsonRenderTree" type="button">刷新</button>
+                  <button class="secondary" data-action="jsonExpandTree" type="button">展开全部</button>
+                  <button class="secondary" data-action="jsonCollapseTree" type="button">折叠全部</button>
+                </div>
+              </div>
+              <div id="jsonTree" class="tree-view empty-state">输入合法 JSON 后可查看树结构</div>
+            </article>
+          </div>
+
+          <div class="subpanel" id="jsonExtractPane">
+            <div class="split-workbench">
+              <article class="card workspace-pane">
+                <div class="card-header">
+                  <h3>JSON 与路径</h3>
+                  <button class="copy-btn" data-copy-target="jsonExtractInput" type="button">复制输入</button>
+                </div>
+                <textarea id="jsonExtractInput" class="workbench-input"
+                  placeholder='粘贴 JSON，例如 {"users":[{"name":"Alice"},{"name":"Bob"}]}'></textarea>
+                <label class="field-label" for="jsonExtractPath">
+                  <span>提取路径</span>
+                  <input id="jsonExtractPath" type="text" placeholder="例如 $.users[0].name 或 users[*].name" />
                 </label>
-                <div id="imagePreviewGrid" class="image-preview-grid" style="display:none;"></div>
-                <label class="range-label" for="compressQuality">
-                  压缩比例：<strong id="compressQualityValue">80%</strong>
+                <div class="action-row wrap">
+                  <button data-action="jsonExtract" type="button">提取</button>
+                  <button class="secondary" data-action="fillJsonExtractExample" type="button">示例</button>
+                  <button class="secondary" data-action="jsonExtractUseMain" type="button">用主输入</button>
+                  <button class="secondary" data-action="clearJsonExtract" type="button">清空</button>
+                </div>
+                <p class="helper-text">路径语法：<code>$.a.b</code>、<code>a[0].c</code>、<code>a["带空格的键"]</code>；数组支持
+                  <code>[n]</code>、<code>[-1]</code> 末位、<code>[*]</code> 全部元素。</p>
+                <p class="helper-text section-label">按键查找（输入键名，自动列出可提取的候选路径）</p>
+                <label class="field-label" for="jsonExtractKeys">
+                  <span>键名<small>逗号或空格分隔可填多个；带空格的键用引号包住</small></span>
+                  <input id="jsonExtractKeys" type="text" placeholder='例如 name 或 name, roles 或 "store name"' />
                 </label>
-                <input id="compressQuality" type="range" min="10" max="100" value="80" />
-                <div class="action-row">
-                  <button data-action="compressImages" type="button">下载全部</button>
+                <div class="action-row wrap">
+                  <button data-action="jsonFindKeys" type="button">查找候选路径</button>
                 </div>
-                <div id="compressResult" class="result-list empty-state">压缩结果会显示在这里</div>
+                <div id="jsonKeyOptions" class="key-option-list" hidden></div>
+                <p class="helper-text section-label">多字段批量提取（如 users[*] 同时取 name 与 roles）</p>
+                <label class="field-label" for="jsonExtractBase">
+                  <span>基础路径<small>留空则按整份 JSON 投影</small></span>
+                  <input id="jsonExtractBase" type="text" placeholder="例如 users[*] 或 users" />
+                </label>
+                <label class="field-label" for="jsonExtractFields">
+                  <span>字段<small>逗号分隔，支持 别名:子路径；子路径以 $ 开头从根取值</small></span>
+                  <input id="jsonExtractFields" type="text" placeholder='例如 name, roles 或 $["store name"], name' />
+                </label>
+                <div class="action-row wrap">
+                  <button data-action="jsonExtractFields" type="button">提取字段</button>
+                  <button class="secondary" data-action="fillJsonExtractFieldsExample" type="button">示例(多字段)</button>
+                  <button class="secondary" data-action="fillJsonExtractRootExample" type="button">示例(含根字段)</button>
+                </div>
+                <p class="helper-text">跨层引用：字段子路径以 <code>$</code> 开头（如 <code>$["store name"]</code>）表示从整份 JSON
+                  的根取值，可把根上的字段拼进遍历出的每条结果。</p>
               </article>
-            </div>
 
-            <div class="subpanel" id="imageComparePane">
-              <article class="card">
+              <article class="card workspace-pane">
                 <div class="card-header">
-                  <h3>批量解析图片地址并对比查看</h3>
+                  <h3>提取结果</h3>
+                  <button class="copy-btn" data-copy-target="jsonExtractOutput" type="button">复制结果</button>
                 </div>
-                <textarea id="imageUrlInput" placeholder="粘贴大段文本，自动提取其中的图片 URL"></textarea>
-                <div class="action-row">
-                  <button data-action="parseImageUrls" type="button">解析图片地址</button>
-                  <button class="secondary" data-action="copyParsedImageUrls" type="button">复制地址列表</button>
-                  <button class="secondary" data-action="toggleFailedOnly" id="toggleFailedOnlyBtn" type="button">只看失败</button>
-                </div>
-                <div class="field-grid">
-                  <label>
-                    <span>对比列数</span>
-                    <select id="imageCompareColumns">
-                      <option value="1">1 列</option>
-                      <option value="2">2 列</option>
-                      <option value="3">3 列</option>
-                      <option value="4" selected>4 列</option>
-                      <option value="5">5 列</option>
-                      <option value="6">6 列</option>
-                      <option value="7">7 列</option>
-                      <option value="8">8 列</option>
-                      <option value="9">9 列</option>
-                      <option value="10">10 列</option>
-                    </select>
-                  </label>
-                  <label class="range-label" for="imageCompareZoom">
-                    预览缩放：<strong id="imageCompareZoomValue">60%</strong>
-                  </label>
-                </div>
-                <input id="imageCompareZoom" type="range" min="60" max="180" value="60" />
                 <div class="compare-stats">
                   <div class="compare-stat">
-                    <span>总数</span>
-                    <strong id="imageTotalCount">0</strong>
+                    <span>使用路径</span>
+                    <strong id="jsonExtractPathOut">-</strong>
                   </div>
                   <div class="compare-stat">
-                    <span>成功</span>
-                    <strong id="imageLoadedCount">0</strong>
-                  </div>
-                  <div class="compare-stat">
-                    <span>失败</span>
-                    <strong id="imageFailedCount">0</strong>
+                    <span>结果类型</span>
+                    <strong id="jsonExtractType">-</strong>
                   </div>
                 </div>
-                <div id="imageCompareResult" class="image-compare-grid empty-state">解析出的图片会显示在这里</div>
+                <textarea id="jsonExtractOutput" class="output wide-output" readonly
+                  placeholder="提取结果会显示在这里"></textarea>
+                <p class="helper-text">结果为对象或数组时以格式化 JSON 输出；通配符 <code>[*]</code> 会收集每个匹配元素，返回数组。</p>
               </article>
             </div>
           </div>
-        </section>
 
-        <section class="tool-panel" id="fapiaoSection" data-panel-title="发票工具" data-panel-description="拖拽、选择或粘贴发票图片及 PDF，按页面尺寸合并导出 PDF 或 Word。">
-          <div class="section-banner">
-            <div>
-              <p class="panel-kicker">Invoice</p>
-              <h3>发票图片合并</h3>
-              <p class="section-text">支持 JPG / PNG / WEBP / BMP / PDF，可配置纸张与图片尺寸，一键生成 PDF 或 Word。</p>
-            </div>
-            <div class="section-tags">
-              <span>PDF</span>
-              <span>Word</span>
-              <span>Preview</span>
-              <span>Drag Sort</span>
-            </div>
-          </div>
-
-          <details class="settings-details fapiao-settings" open>
-            <summary>页面与图片设置</summary>
-            <p class="helper-text section-label">页面设置</p>
-            <div class="field-grid fapiao-field-grid cols-3">
-              <label>
-                <span>纸张</span>
-                <select id="fapiaoPageSize">
-                  <option value="a4">A4（21 × 29.7 cm）</option>
-                  <option value="a5">A5（14.8 × 21 cm）</option>
-                  <option value="custom">自定义</option>
-                </select>
-              </label>
-              <label id="fapiaoCustomWidthGroup" class="hidden-field">
-                <span>页面宽度（cm）</span>
-                <input id="fapiaoPageWidth" type="number" value="21" step="0.1" min="0.1" />
-              </label>
-              <label id="fapiaoCustomHeightGroup" class="hidden-field">
-                <span>页面高度（cm）</span>
-                <input id="fapiaoPageHeight" type="number" value="29.7" step="0.1" min="0.1" />
-              </label>
-            </div>
-            <p class="helper-text section-label">图片与裁剪设置（位置、尺寸及打印裁剪）</p>
-            <div class="field-grid fapiao-field-grid cols-4">
-              <label>
-                <span>图片宽度（cm）</span>
-                <input id="fapiaoImgWidth" type="number" value="21" step="0.1" min="0.1" />
-              </label>
-              <label>
-                <span>图片高度（cm）</span>
-                <input id="fapiaoImgHeight" type="number" value="11" step="0.1" min="0.1" />
-              </label>
-              <label>
-                <span>距左边距（cm）</span>
-                <input id="fapiaoImgOffsetX" type="number" value="0" step="0.1" min="0" />
-              </label>
-              <label>
-                <span>中间间隔与裁剪线</span>
-                <select id="fapiaoGapMode">
-                  <option value="gap_line" selected>留缝隙 + 裁剪线（推荐 0.1cm）</option>
-                  <option value="none">无间隔（紧凑无缝）</option>
-                  <option value="gap_only">仅留微缝（0.1cm，无裁剪线）</option>
-                  <option value="custom">自定义间隔...</option>
-                </select>
-              </label>
-              <label id="fapiaoCustomGapGroup" class="hidden-field">
-                <span>自定义间距（cm）</span>
-                <input id="fapiaoImgGap" type="number" value="0.1" step="0.1" min="0" />
-              </label>
-              <label id="fapiaoCustomCutLineGroup" class="hidden-field">
-                <span>打印裁剪参考线</span>
-                <select id="fapiaoCutLineOption">
-                  <option value="yes" selected>绘制分割线（虚线）</option>
-                  <option value="no">不绘制</option>
-                </select>
-              </label>
-            </div>
-          </details>
-
-          <article class="card">
-            <div class="card-header">
-              <h3>文件列表</h3>
-              <span class="info-badge" id="fapiaoFileCount">0 张</span>
-            </div>
-            <label class="upload-box fapiao-drop-zone" id="fapiaoDropZone" for="fapiaoFileInput">
-              <input id="fapiaoFileInput" type="file" accept="image/*,.pdf" multiple />
-              <svg class="upload-icon" viewBox="0 0 24 24" width="36" height="36" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
-                <polyline points="17 8 12 3 7 8"/>
-                <line x1="12" y1="3" x2="12" y2="15"/>
-              </svg>
-              <strong>拖拽发票图片或 PDF 到此处，点击选择，或按 Ctrl+V 粘贴</strong>
-              <span class="helper-text">支持 JPG / PNG / WEBP / BMP / PDF（PDF 每页作为一张图片），也可直接粘贴截图</span>
-            </label>
-            <div id="fapiaoPreviewList" class="fapiao-preview-list empty-state">尚未添加文件</div>
-            <p class="fapiao-progress" id="fapiaoProgress"></p>
-            <div class="action-row wrap">
-              <button class="secondary" data-action="previewFapiaoOutput" id="fapiaoPreviewBtn" type="button" disabled>在线预览</button>
-              <button data-action="generateFapiaoPdf" id="fapiaoGeneratePdfBtn" type="button" disabled>生成并下载 PDF</button>
-              <button class="accent-green" data-action="generateFapiaoWord" id="fapiaoGenerateWordBtn" type="button" disabled>生成并下载 Word</button>
-              <button class="secondary" data-action="clearFapiaoList" id="fapiaoClearBtn" type="button" style="display: none">清空列表</button>
-            </div>
-            <p class="helper-text">可拖拽列表项调整顺序；所有处理均在浏览器本地完成，不上传服务器。</p>
-          </article>
-
-          <dialog class="fapiao-preview-dialog" id="fapiaoPreviewDialog" aria-labelledby="fapiaoPreviewTitle">
-            <div class="fapiao-preview-dialog-panel">
-              <div class="fapiao-preview-dialog-header">
-                <div>
-                  <p class="panel-kicker">Preview</p>
-                  <h3 id="fapiaoPreviewTitle">合并结果预览</h3>
-                </div>
-                <div class="fapiao-preview-dialog-actions">
-                  <span class="info-badge" id="fapiaoPreviewPageCount">0 页</span>
-                  <button class="fapiao-preview-close" id="fapiaoPreviewCloseBtn" type="button" aria-label="关闭预览">
-                    <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                      <line x1="18" y1="6" x2="6" y2="18"></line>
-                      <line x1="6" y1="6" x2="18" y2="18"></line>
-                    </svg>
-                  </button>
-                </div>
-              </div>
-              <div class="fapiao-preview-pages" id="fapiaoPreviewPages"></div>
-            </div>
-          </dialog>
-        </section>
-
-        <section class="tool-panel" id="httpSection" data-panel-title="HTTP 工具" data-panel-description="GET 与 POST 请求互转，支持 Form 表单和 JSON 参数格式。">
-          <div class="section-banner">
-            <div>
-              <p class="panel-kicker">HTTP</p>
-              <h3>GET / POST 互转 cURL</h3>
-              <p class="section-text">支持 GET URL 与 POST（Form / JSON）双向转换，自动生成对应参数的 cURL 命令。</p>
-            </div>
-            <div class="section-tags">
-              <span>GET</span>
-              <span>Form</span>
-              <span>JSON</span>
-              <span>cURL</span>
-            </div>
-          </div>
-
-          <div class="split-workbench">
-            <article class="card workspace-pane">
+          <div class="subpanel" id="jsonDiffPane">
+            <article class="card">
               <div class="card-header">
-                <h3>请求参数</h3>
+                <h3>JSON 对比</h3>
+                <button class="copy-btn" data-copy-target="jsonDiffOutput" type="button">复制摘要</button>
               </div>
-              <div class="field-grid">
-                <label>
-                  <span>输入类型</span>
-                  <select id="httpInputMode">
-                    <option value="json">JSON 请求体</option>
-                    <option value="getUrl">GET URL（含查询参数）</option>
-                  </select>
-                </label>
-                <label id="httpBodyFormatGroup">
-                  <span id="httpBodyFormatLabelText">请求体格式</span>
-                  <select id="httpBodyFormat">
-                    <option value="form">Form 表单</option>
-                    <option value="json">JSON</option>
-                  </select>
-                  <span class="helper-text" id="httpBodyFormatHint" style="display:none;">GET 模式下，此选项决定 URL 中的参数值是否按 JSON 解析（例如数组、对象会保留为 JSON 字符串）。</span>
-                </label>
+              <div class="grid two">
+                <textarea id="jsonDiffLeft" placeholder="左侧 JSON"></textarea>
+                <textarea id="jsonDiffRight" placeholder="右侧 JSON"></textarea>
               </div>
-              <label>
-                <span id="httpFormUrlLabel">请求 URL</span>
-                <input id="httpFormUrl" type="text" placeholder="https://example.com/api/submit" />
-              </label>
-              <div class="field-grid">
-                <label>
-                  <span>输出方法</span>
-                  <select id="httpOutputMethod">
-                    <option value="GET">GET</option>
-                    <option value="POST" selected>POST</option>
-                    <option value="PUT">PUT</option>
-                    <option value="PATCH">PATCH</option>
-                  </select>
-                </label>
-                <label id="httpFormKeyStyleGroup">
-                  <span>嵌套键风格</span>
-                  <select id="httpFormKeyStyle">
-                    <option value="bracket">括号式 user[name]</option>
-                    <option value="dot">点号式 user.name</option>
-                  </select>
-                </label>
-                <label>
-                  <span>输出格式</span>
-                  <select id="httpFormOutputStyle">
-                    <option value="curl">cURL (bash)</option>
-                    <option value="curlPowerShell">cURL (PowerShell)</option>
-                  </select>
-                </label>
-              </div>
-              <label id="httpFormJsonGroup">
-                <span>请求体 JSON</span>
-                <textarea id="httpFormJsonInput" class="workbench-input" placeholder='{"username": "admin", "profile": {"age": 25}, "tags": ["a", "b"]}'></textarea>
-              </label>
               <div class="action-row">
-                <button data-action="convertHttpFormCurl" type="button">生成 cURL</button>
-                <button class="secondary" data-action="fillHttpFormExample" type="button">填充示例</button>
-                <button class="secondary" data-action="clearHttpFormPanels" type="button">清空</button>
+                <button data-action="jsonCompare" type="button">开始对比</button>
+                <button class="secondary" data-action="jsonLoadDiffLeft" type="button">主输入填左侧</button>
+                <button class="secondary" data-action="jsonLoadDiffRight" type="button">主结果填右侧</button>
+                <button class="secondary" data-action="jsonDiffExpandAll" type="button">展开全部</button>
+                <button class="secondary" data-action="jsonDiffCollapseAll" type="button">折叠全部</button>
               </div>
-              <p class="helper-text" id="httpInputModeHint">选择输入类型和输出方法后，可双向转换 GET 查询参数与 POST 请求体。</p>
-            </article>
-
-            <article class="card workspace-pane">
-              <div class="card-header">
-                <h3>cURL 输出</h3>
-                <button class="copy-btn" data-copy-target="httpFormOutput" type="button">复制结果</button>
-              </div>
-              <div class="compare-stats">
+              <div class="compare-stats diff-stats">
                 <div class="compare-stat">
-                  <span>字段数</span>
-                  <strong id="httpFormFieldCount">0</strong>
+                  <span>差异总数</span>
+                  <strong id="jsonDiffTotal">0</strong>
                 </div>
                 <div class="compare-stat">
-                  <span>输入类型</span>
-                  <strong id="httpInputModeLabel">JSON 请求体</strong>
+                  <span>新增</span>
+                  <strong id="jsonDiffAdded">0</strong>
                 </div>
                 <div class="compare-stat">
-                  <span>请求体格式</span>
-                  <strong id="httpBodyFormatLabel">Form 表单</strong>
+                  <span>删除</span>
+                  <strong id="jsonDiffRemoved">0</strong>
                 </div>
                 <div class="compare-stat">
-                  <span>输出方法</span>
-                  <strong id="httpOutputMethodLabel">POST</strong>
-                </div>
-                <div class="compare-stat">
-                  <span>输出格式</span>
-                  <strong id="httpFormFormatLabel">cURL (bash)</strong>
+                  <span>变更</span>
+                  <strong id="jsonDiffChanged">0</strong>
                 </div>
               </div>
-              <textarea id="httpFormBodyPreview" class="output" readonly placeholder="参数预览"></textarea>
-              <textarea id="httpFormOutput" class="output wide-output" placeholder="生成的 cURL 命令会显示在这里"></textarea>
-              <p class="helper-text">上方为参数预览（GET 为 query，POST 为请求体），下方为完整 cURL 命令，参数保持原文不转义。</p>
-            </article>
-          </div>
-        </section>
-
-        <section class="tool-panel" id="arraySection" data-panel-title="数组工具" data-panel-description="换行、逗号、JSON 数组等多种格式之间快速互转。">
-          <div class="section-banner">
-            <div>
-              <p class="panel-kicker">Array</p>
-              <h3>数组格式互转</h3>
-              <p class="section-text">支持换行分隔、逗号分隔、去引号逗号、JSON 数组、双引号逗号五种格式相互转换，并支持去重和排序。</p>
-            </div>
-            <div class="section-tags">
-              <span>换行</span>
-              <span>逗号</span>
-              <span>JSON</span>
-              <span>去重</span>
-            </div>
-          </div>
-
-          <div class="split-workbench">
-            <article class="card workspace-pane">
-              <div class="card-header">
-                <h3>输入</h3>
+              <div class="section-tabs diff-view-tabs">
+                <button class="section-tab active" data-diff-view="viewer" type="button">结构化视图</button>
+                <button class="section-tab" data-diff-view="summary" type="button">文本摘要</button>
               </div>
-              <label>
-                <span>输入格式</span>
-                <select id="arrayInputFormat">
-                  <option value="auto">自动检测</option>
-                  <option value="newline">每行一个</option>
-                  <option value="comma">逗号分隔</option>
-                  <option value="jsonArray">JSON 数组</option>
-                  <option value="quotedComma">双引号逗号</option>
-                </select>
-              </label>
-              <textarea id="arrayInput" placeholder="粘贴数据，支持自动检测格式&#10;例如：&#10;26070713452925944&#10;26070713331025518&#10;26070713195124733"></textarea>
-              <label>
-                <span>输出格式</span>
-                <select id="arrayOutputFormat">
-                  <option value="newline">每行一个</option>
-                  <option value="comma">逗号分隔</option>
-                  <option value="plainComma">去引号逗号</option>
-                  <option value="jsonArray">JSON 数组</option>
-                  <option value="quotedComma" selected>双引号逗号</option>
-                </select>
-              </label>
-              <div class="action-row">
-                <button data-action="convertArray" type="button">转换</button>
-                <button class="secondary" data-action="dedupArray" type="button">去重</button>
-                <button class="secondary" data-action="sortArrayAsc" type="button">升序</button>
-                <button class="secondary" data-action="sortArrayDesc" type="button">降序</button>
+              <div id="jsonDiffViewerWrap">
+                <div class="diff-viewer-shell">
+                  <div class="diff-viewer-titlebar">
+                    <span>结构化对比视图</span>
+                    <span class="info-badge">Side by Side</span>
+                  </div>
+                  <div id="jsonDiffViewer" class="diff-viewer empty-state">输入两份合法 JSON 后可查看结构化差异</div>
+                </div>
+              </div>
+              <div id="jsonDiffSummaryWrap" hidden>
+                <pre id="jsonDiffOutput" class="diff-output empty-state">输入两份合法 JSON 后可查看差异摘要</pre>
               </div>
             </article>
-
-            <article class="card workspace-pane">
-              <div class="card-header">
-                <h3>输出</h3>
-                <button class="copy-btn" data-copy-target="arrayOutput" type="button">复制结果</button>
-              </div>
-              <div class="compare-stats">
-                <div class="compare-stat">
-                  <span>条目数</span>
-                  <strong id="arrayItemCount">0</strong>
-                </div>
-                <div class="compare-stat">
-                  <span>去重后</span>
-                  <strong id="arrayUniqueCount">0</strong>
-                </div>
-                <div class="compare-stat">
-                  <span>输出格式</span>
-                  <strong id="arrayOutputFormatLabel">双引号逗号</strong>
-                </div>
-              </div>
-              <div class="field-grid array-affix-grid">
-                <label>
-                  <span>前缀（可选）</span>
-                  <input id="arrayPrefix" type="text" placeholder="默认不加，如 id_" />
-                </label>
-                <label>
-                  <span>后缀（可选）</span>
-                  <input id="arraySuffix" type="text" placeholder="默认不加，如 .png" />
-                </label>
-              </div>
-              <textarea id="arrayOutput" class="output wide-output" readonly placeholder="转换结果会显示在这里"></textarea>
-            </article>
           </div>
-        </section>
 
+          <div class="subpanel" id="jsonJavaToStringPane">
+            <div class="split-workbench">
+              <article class="card workspace-pane">
+                <div class="card-header">
+                  <h3>Java toString 输入</h3>
+                  <button class="copy-btn" data-copy-target="jsonJavaInput" type="button">复制输入</button>
+                </div>
+                <textarea id="jsonJavaInput" class="workbench-input"
+                  placeholder="粘贴 Java 的 toString() 输出文本，例如 Lombok / IDE 自动生成的对象或数组&#10;示例：User(id=1, name=Alice, age=20, roles=[ADMIN, USER], address=Address(city=Beijing))"></textarea>
+                <div class="field-label"
+                  style="display: flex; align-items: center; gap: 8px; margin-bottom: 12px; cursor: pointer; user-select: none;">
+                  <input type="checkbox" id="jsonJavaKeepType" style="width: auto; cursor: pointer;" />
+                  <span>保留类名字段 (添加 &quot;@type&quot;: &quot;ClassName&quot;)</span>
+                </div>
+                <div class="action-row wrap">
+                  <button data-action="jsonConvertJavaToString" type="button">转换为 JSON</button>
+                  <button class="secondary" data-action="fillJavaToStringExample" type="button">填入示例</button>
+                  <button class="secondary" data-action="jsonJavaUseMain" type="button">从主输入载入</button>
+                  <button class="secondary" data-action="clearJavaToString" type="button">清空</button>
+                </div>
+                <p class="helper-text">支持 Lombok <code>@ToString</code>、Record、IDE 自动生成的 <code>toString()</code>、Apache
+                  Commons <code>ToStringBuilder</code>、Map/List 及嵌套对象文本转换。</p>
+              </article>
 
-        <section class="tool-panel" id="esSection" data-panel-title="ES 工具" data-panel-description="查询结果转换、字段筛选和导出格式都收敛在一个操作面板里。">
-          <div class="section-banner">
-            <div>
-              <p class="panel-kicker">Elasticsearch</p>
-              <h3>查询结果转 API 语句</h3>
-              <p class="section-text">支持 Console 和 cURL，两栏布局更适合边调参数边看输出。</p>
-            </div>
-            <div class="section-tags es-section-tags">
-              <a href="es-cheatsheet.html" target="_blank" class="es-cheat-badge">
-                <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
-                <span>语法速查表</span>
-                <svg class="es-badge-arrow" viewBox="0 0 24 24" width="11" height="11" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/></svg>
-              </a>
-              <span>Index</span>
-              <span>Bulk</span>
-              <span>cURL</span>
+              <article class="card workspace-pane">
+                <div class="card-header">
+                  <h3>JSON 转换结果</h3>
+                  <button class="copy-btn" data-copy-target="jsonJavaOutput" type="button">复制结果</button>
+                </div>
+                <div class="compare-stats">
+                  <div class="compare-stat">
+                    <span>转换状态</span>
+                    <strong id="jsonJavaStatus">就绪</strong>
+                  </div>
+                  <div class="compare-stat">
+                    <span>顶层类型</span>
+                    <strong id="jsonJavaType">-</strong>
+                  </div>
+                </div>
+                <textarea id="jsonJavaOutput" class="output wide-output" readonly
+                  placeholder="转换后的 JSON 结果会显示在这里"></textarea>
+                <div class="action-row wrap" style="margin-top: 12px;">
+                  <button class="secondary" data-action="jsonJavaSendToTree" type="button">在树视图中查看</button>
+                  <button class="secondary" data-action="jsonJavaSendToMain" type="button">填入转换处理</button>
+                </div>
+              </article>
             </div>
           </div>
 
-          <!-- 快速跳转速查表 Banner -->
-          <div class="es-cheat-banner">
-            <div class="es-cheat-banner-main">
-              <span class="es-cheat-banner-icon" aria-hidden="true">
-                <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
-              </span>
-              <div class="es-cheat-banner-text">
-                <strong class="es-cheat-banner-title">Elasticsearch 常见用法速查备忘单</strong>
-                <span class="es-cheat-banner-sub">覆盖索引管理、新增 Create、查询 Read、更新 Update、删除 Delete 及运维进阶用法</span>
-              </div>
-            </div>
-            <a href="es-cheatsheet.html" target="_blank" class="es-cheat-banner-cta">
-              <span>打开速查表</span>
-              <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/></svg>
-            </a>
-          </div>
-
-          <div class="split-workbench es-workbench">
-            <article class="card tall">
-              <div class="card-header">
-                <h3>查询结果输入</h3>
-              </div>
-              <textarea id="esInput" placeholder='粘贴 ES 查询结果 JSON，例如 hits.hits、数组文档或单条 _source 文档'></textarea>
-              <div class="field-grid">
-                <label>
-                  <span>目标索引名</span>
-                  <input id="esIndexName" type="text" placeholder="可修改索引名，留空时使用原索引" />
-                </label>
-                <label>
-                  <span>输出模式</span>
-                  <select id="esMode">
-                    <option value="index">Index API</option>
-                    <option value="update">Update API</option>
-                    <option value="bulkIndex">Bulk Index</option>
-                    <option value="bulkUpdate">Bulk Update</option>
-                    <option value="bulkDelete">Bulk Delete</option>
-                  </select>
-                </label>
-              </div>
-              <div class="field-grid">
-                <label>
-                  <span>输出格式</span>
-                  <select id="esOutputStyle">
-                    <option value="console">Kibana Console</option>
-                    <option value="curl">cURL (bash)</option>
-                    <option value="curlPowerShell">cURL (PowerShell)</option>
-                  </select>
-                </label>
-                <label>
-                  <span>ES 地址</span>
-                  <input id="esBaseUrl" type="text" value="http://localhost:9200" placeholder="例如 http://localhost:9200" />
-                </label>
-              </div>
-              <details class="config-details">
-                <summary>高级字段筛选（可选）</summary>
+          <div class="subpanel" id="jsonTsvPane">
+            <div class="split-workbench">
+              <article class="card workspace-pane">
+                <div class="card-header">
+                  <h3>制表符数据输入</h3>
+                  <button class="copy-btn" data-copy-target="tsvInput" type="button">复制输入</button>
+                </div>
+                <textarea id="tsvInput" class="workbench-input"
+                  placeholder="粘贴 Tab 分隔的数据（如 Excel / 数据库查询结果），首行为表头，后续每行为一条记录"></textarea>
                 <div class="field-grid">
                   <label>
-                    <span>ID 字段名（可选）</span>
-                    <input id="esIdField" type="text" placeholder="当原始数据没有 _id 时可指定，例如 id" />
+                    <span>空值处理</span>
+                    <select id="tsvEmptyAsNull">
+                      <option value="keep" selected>保留空字符串</option>
+                      <option value="null">转为 null</option>
+                    </select>
                   </label>
                   <label>
-                    <span>导出字段（可选）</span>
-                    <input id="esSourceFields" type="text" placeholder="逗号分隔，如 user.id,name,age" />
+                    <span>字段值类型</span>
+                    <select id="tsvInferTypes">
+                      <option value="text" selected>全部作为文本</option>
+                      <option value="smart">智能识别数字/布尔</option>
+                    </select>
                   </label>
                 </div>
-              </details>
-              <div class="action-row">
-                <button data-action="convertEsData" type="button">生成 API 语句</button>
-              </div>
-              <p class="helper-text">支持数组、<code>hits.hits</code>、单条文档；可只保留指定字段，并输出 <code>Kibana Console</code>、<code>cURL (bash)</code> 或 <code>cURL (PowerShell)</code>。</p>
-            </article>
+                <div class="action-row wrap">
+                  <button data-action="convertTsv" type="button">转换</button>
+                  <button class="secondary" data-action="fillTsvExample" type="button">示例</button>
+                  <button class="secondary" data-action="clearTsv" type="button">清空</button>
+                </div>
+                <p class="helper-text">粘贴 Tab 分隔数据（TSV），首行为表头，自动转换为 JSON 对象数组。</p>
+              </article>
 
-            <article class="card tall es-output-card">
-              <div class="card-header">
-                <div class="es-output-heading">
-                  <h3>输出结果</h3>
-                  <p class="helper-text">生成后可直接复制，适合贴到 Kibana Console、bash 或 PowerShell。</p>
+              <article class="card workspace-pane">
+                <div class="card-header">
+                  <h3>JSON 结果</h3>
+                  <button class="copy-btn" data-copy-target="tsvOutput" type="button">复制结果</button>
                 </div>
-                <button class="copy-btn" data-copy-target="esOutput" type="button">复制结果</button>
-              </div>
-              <div class="compare-stats es-output-stats">
-                <div class="compare-stat">
-                  <span>文档数</span>
-                  <strong id="esDocumentCount">0</strong>
+                <div class="compare-stats">
+                  <div class="compare-stat">
+                    <span>数据行数</span>
+                    <strong id="tsvRowCount">0</strong>
+                  </div>
+                  <div class="compare-stat">
+                    <span>字段数</span>
+                    <strong id="tsvColCount">0</strong>
+                  </div>
                 </div>
-                <div class="compare-stat">
-                  <span>请求类型</span>
-                  <strong id="esModeLabel">Index API</strong>
+                <textarea id="tsvOutput" class="output wide-output" readonly placeholder="转换结果会显示在这里"></textarea>
+                <div class="action-row wrap" style="margin-top: 12px;">
+                  <button class="secondary" data-action="jsonTsvSendToTree" type="button">在树视图中查看</button>
+                  <button class="secondary" data-action="jsonTsvSendToMain" type="button">填入转换处理</button>
+                  <button class="secondary" data-action="jsonTsvSendToCsv" type="button">在 CSV 查看器中打开</button>
                 </div>
-                <div class="compare-stat">
-                  <span>输出格式</span>
-                  <strong id="esFormatLabel">Kibana Console</strong>
-                </div>
-                <div class="compare-stat">
-                  <span>总行数</span>
-                  <strong id="esOutputLineCount">0</strong>
-                </div>
-              </div>
-              <textarea id="esOutput" class="output es-output-area" placeholder="生成的 Index / Update / Bulk API 语句"></textarea>
-              <p class="helper-text">Bulk 文本会自动补齐 ES 需要的结尾换行；带特殊字符的文档 ID 也会自动做路径编码。</p>
-            </article>
-          </div>
-        </section>
-        <section class="tool-panel" id="excelSection" data-panel-title="Office 图片提取" data-panel-description="从 Excel / Word 中提取内嵌图片，勾选后单独或打包下载。">
-          <div class="section-banner">
-            <div>
-              <p class="panel-kicker">Office</p>
-              <h3>提取并下载图片</h3>
-              <p class="section-text">支持 .xlsx / .xlsm（xl/media）与 .docx / .docm（word/media），读取压缩包内的图片，按缩略图勾选，可逐个或打包下载。</p>
-            </div>
-            <div class="section-tags">
-              <span>Extract</span>
-              <span>Select</span>
-              <span>Download</span>
+              </article>
             </div>
           </div>
+        </div>
+      </section>
 
-          <article class="card">
-            <div class="card-header">
-              <h3>选择 Excel / Word 文件</h3>
-              <span class="info-badge" id="excelFileBadge">未选择</span>
+      
+      <section class="tool-panel" id="csvSection" data-panel-title="CSV 查看" data-panel-description="支持表格浏览、即时搜索过滤、列排序、分页以及 Markdown / JSON / CSV 导出。">
+        <div class="section-banner">
+          <div>
+            <p class="panel-kicker">Data Viewer</p>
+            <h3>CSV / 表格数据查看</h3>
+            <p class="section-text">高性能表格化浏览与数据分析，支持粘性表头、点击排序、多列实时检索、单行详情穿透与格式转换。</p>
+          </div>
+          <div class="section-tags">
+            <span>CSV / TSV</span>
+            <span>GBK / UTF-8</span>
+            <span>实时过滤</span>
+            <span>多格式导出</span>
+          </div>
+        </div>
+
+        <article class="card csv-config-card">
+          <div class="card-header">
+            <div class="csv-header-left">
+              <h3>数据来源与配置</h3>
+              <span class="info-badge" id="csvFileBadge">未载入数据</span>
+              <span class="info-badge success" id="csvDetectedDelimBadge" title="自动检测到的分隔符">逗号 (,)</span>
             </div>
-            <label class="upload-box excel-drop-zone" id="excelDropZone" for="excelFileInput">
-              <input id="excelFileInput" type="file" accept=".xlsx,.xlsm,.docx,.docm,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.openxmlformats-officedocument.wordprocessingml.document" />
-              <svg class="upload-icon" viewBox="0 0 24 24" width="36" height="36" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
-                <polyline points="17 8 12 3 7 8"/>
-                <line x1="12" y1="3" x2="12" y2="15"/>
-              </svg>
-              <strong>拖拽 Excel / Word 文件到此处，或点击选择</strong>
-              <span class="helper-text">仅支持 xlsx / xlsm / docx / docm，所有处理均在浏览器本地完成，不上传服务器。</span>
-            </label>
             <div class="action-row wrap">
-              <button data-action="excelSelectAll" type="button" class="secondary">全选</button>
-              <button data-action="excelSelectNone" type="button" class="secondary">取消全选</button>
-              <button data-action="excelDownloadSelected" type="button" id="excelDownloadBtn" disabled>下载选中图片</button>
-              <button class="accent-green" data-action="excelDownloadZip" type="button" id="excelDownloadZipBtn" disabled>打包下载 ZIP</button>
-              <button class="secondary" data-action="excelClearList" type="button" id="excelClearBtn" style="display: none">清空</button>
+              <button class="secondary" data-action="toggleCsvConfigCollapse" type="button" id="csvToggleConfigBtn" title="折叠或展开数据输入配置面板">折叠配置</button>
+              <button class="secondary" data-action="fillCsvExample" type="button">载入示例数据</button>
+              <button class="secondary" data-action="clearCsvData" type="button" id="csvClearBtn" disabled>清空</button>
             </div>
-            <p class="excel-progress" id="excelProgress"></p>
-            <div class="compare-stats excel-stats">
+          </div>
+
+          <div class="csv-upload-and-text">
+            <label class="upload-box csv-drop-zone" id="csvDropZone" for="csvFileInput">
+              <input id="csvFileInput" type="file" accept=".csv,.tsv,.txt" />
+              <svg class="upload-icon" viewBox="0 0 24 24" width="32" height="32" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                <polyline points="14 2 14 8 20 8"/>
+                <line x1="12" y1="18" x2="12" y2="12"/>
+                <line x1="9" y1="15" x2="12" y2="12"/>
+                <line x1="15" y1="15" x2="12" y2="12"/>
+              </svg>
+              <div class="upload-text-group">
+                <strong>点击上传或拖拽文件到此处</strong>
+                <span class="helper-text">支持 .csv / .tsv / .txt，纯本地浏览器解析，安全私密</span>
+              </div>
+            </label>
+
+            <div class="csv-text-input-wrap">
+              <textarea id="csvInput" class="workbench-input csv-workbench-input" placeholder="或在此直接粘贴 CSV / TSV 文本...&#10;支持自动检测分隔符，支持双引号包裹字段与换行内容"></textarea>
+            </div>
+          </div>
+
+          <div class="csv-controls-bar">
+            <div class="csv-control-group">
+              <label class="csv-control-item">
+                <span>分隔符</span>
+                <select id="csvDelimiterSelect">
+                  <option value="auto" selected>自动检测</option>
+                  <option value=",">逗号 (,)</option>
+                  <option value="&#9;">制表符 (Tab)</option>
+                  <option value=";">分号 (;)</option>
+                  <option value="|">竖线 (|)</option>
+                </select>
+              </label>
+
+              <label class="csv-control-item">
+                <span>文件编码</span>
+                <select id="csvEncodingSelect">
+                  <option value="utf-8" selected>UTF-8（通用）</option>
+                  <option value="gbk">GBK / GB18030（兼容 Excel 中文）</option>
+                </select>
+              </label>
+
+              <label class="csv-checkbox-item">
+                <input type="checkbox" id="csvHasHeaderCheck" checked />
+                <span>首行为表头</span>
+              </label>
+            </div>
+
+            <div class="compare-stats csv-inline-stats">
               <div class="compare-stat">
-                <span>图片总数</span>
-                <strong id="excelTotalCount">0</strong>
+                <span>总行数</span>
+                <strong id="csvTotalRowCount">0</strong>
+              </div>
+              <div class="compare-stat" id="csvFilteredStatItem" style="display: none;">
+                <span>筛选匹配</span>
+                <strong id="csvFilteredCount" class="accent-text">0</strong>
               </div>
               <div class="compare-stat">
-                <span>已选中</span>
-                <strong id="excelSelectedCount">0</strong>
-              </div>
-              <div class="compare-stat">
-                <span>总大小</span>
-                <strong id="excelTotalSize">0 B</strong>
+                <span>列数</span>
+                <strong id="csvColCount">0</strong>
               </div>
             </div>
-            <div id="excelImageGrid" class="excel-image-grid empty-state">选择 Excel / Word 文件后可提取其中的图片</div>
+          </div>
+        </article>
+
+        <article class="card csv-viewer-card">
+          <div class="csv-toolbar">
+            <div class="csv-search-area">
+              <div class="csv-search-input-wrap">
+                <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="search-icon">
+                  <circle cx="11" cy="11" r="8"/>
+                  <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+                </svg>
+                <input type="text" id="csvSearchInput" class="csv-search-input" placeholder="在表格中搜索关键字（即时过滤）..." />
+              </div>
+              <select id="csvSearchColumn" class="csv-column-select" title="选择搜索的目标列">
+                <option value="all">全部列</option>
+              </select>
+            </div>
+
+            <div class="csv-actions-group">
+              <div class="csv-page-size-wrap">
+                <label>
+                  <span>每页显示</span>
+                  <select id="csvPageSizeSelect">
+                    <option value="15">15 条</option>
+                    <option value="20" selected>20 条</option>
+                    <option value="50">50 条</option>
+                    <option value="100">100 条</option>
+                    <option value="0">全部显示</option>
+                  </select>
+                </label>
+              </div>
+
+              <button class="secondary" data-action="toggleHeaderFilter" type="button" id="csvToggleHeaderFilterBtn" disabled title="手动开启或关闭表头列筛选（默认关闭以保障性能）">开启表头过滤</button>
+              <button class="secondary" data-action="copyCsvAsMarkdown" type="button" id="csvCopyMdBtn" disabled title="复制为 Markdown 格式表格">复制 Markdown</button>
+              <button class="secondary" data-action="copyCsvAsJson" type="button" id="csvCopyJsonBtn" disabled title="复制为 JSON 数组格式">复制 JSON</button>
+              <button class="secondary" data-action="sendCsvToJsonTool" type="button" title="将数据送入 JSON 工具面板进一步处理">转到 JSON 工具</button>
+              <button class="accent-green" data-action="exportFilteredCsv" type="button" id="csvExportCsvBtn" disabled title="导出下载当前（含筛选后）数据为 CSV 文件">导出 CSV</button>
+            </div>
+          </div>
+
+          <div class="csv-active-filters-bar" id="csvActiveFiltersBar" style="display: none;"></div>
+
+          <div class="csv-table-container" id="csvTableContainer"></div>
+
+          <div class="csv-pagination-bar" id="csvPaginationBar" style="display: none;">
+            <span class="csv-page-info" id="csvPageInfo">第 0 - 0 条，共 0 条</span>
+            <div class="csv-pagination-btns">
+              <button type="button" class="secondary" id="csvPrevPageBtn" disabled>上一页</button>
+              <button type="button" class="secondary" id="csvNextPageBtn" disabled>下一页</button>
+            </div>
+          </div>
+        </article>
+
+        <div class="csv-detail-modal" id="csvDetailModal">
+          <div class="csv-detail-box">
+            <div class="csv-detail-header">
+              <h4 id="csvDetailTitle">行数据明细</h4>
+              <div class="csv-detail-header-actions">
+                <button class="secondary" id="csvCopyRowJsonBtn" type="button">复制单行 JSON</button>
+                <button class="icon-close-btn" id="csvDetailCloseBtn" type="button" aria-label="关闭">✕</button>
+              </div>
+            </div>
+            <div class="csv-detail-body" id="csvDetailContent"></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="tool-panel" id="sqlSection" data-panel-title="SQL 工具"
+        data-panel-description="压缩 SQL、去除注释，并根据 CREATE TABLE 生成 Java 实体类。">
+        <div class="section-banner">
+          <div>
+            <p class="panel-kicker">SQL</p>
+            <h3>SQL 处理</h3>
+            <p class="section-text">一键压缩 SQL（移除注释、合并空白、整理函数括号），也可根据 CREATE TABLE 语句生成 Java 实体类。</p>
+          </div>
+          <div class="section-tags">
+            <span>Compress</span>
+            <span>Comment</span>
+            <span>Java POJO</span>
+          </div>
+        </div>
+
+        <div class="section-tabs" data-subtab-group="sql">
+          <button class="section-tab active" data-subtab-target="sqlCompressPane" type="button">SQL 压缩</button>
+          <button class="section-tab" data-subtab-target="sqlJavaPane" type="button">生成 Java 对象</button>
+        </div>
+
+        <div class="subpanel-stack">
+          <div class="subpanel active" id="sqlCompressPane">
+            <div class="split-workbench">
+              <article class="card workspace-pane">
+                <div class="card-header">
+                  <h3>输入 SQL</h3>
+                  <span class="info-badge" id="sqlInputCharCount">0 字符</span>
+                </div>
+                <textarea id="sqlInput" class="workbench-input"
+                  placeholder="在此粘贴 SQL 语句...&#10;&#10;例如:&#10;SELECT COUNT(*), SUM(price) FROM orders;"></textarea>
+                <div class="action-row wrap">
+                  <button data-action="compressSql" type="button">压缩</button>
+                  <button class="secondary" data-action="clearSqlPanels" type="button">清空</button>
+                  <button class="secondary" data-action="fillSqlExampleSelect" type="button">简单</button>
+                  <button class="secondary" data-action="fillSqlExampleInsert" type="button">插入</button>
+                  <button class="secondary" data-action="fillSqlExampleComplex" type="button">复杂 SQL</button>
+                </div>
+                <p class="helper-text">支持 Ctrl+Enter 快速压缩；所有处理均在浏览器本地完成，不上传服务器。</p>
+              </article>
+
+              <article class="card workspace-pane">
+                <div class="card-header">
+                  <h3>压缩结果</h3>
+                  <button class="copy-btn" data-copy-target="sqlOutput" type="button">复制结果</button>
+                </div>
+                <div class="compare-stats">
+                  <div class="compare-stat">
+                    <span>输出长度</span>
+                    <strong id="sqlOutputCharCount">0 字符</strong>
+                  </div>
+                  <div class="compare-stat">
+                    <span>压缩比</span>
+                    <strong id="sqlCompressRatio">-</strong>
+                  </div>
+                  <div class="compare-stat">
+                    <span>行数</span>
+                    <strong><span id="sqlLineCountBefore">0</span> → <span id="sqlLineCountAfter">0</span></strong>
+                  </div>
+                </div>
+                <textarea id="sqlOutput" class="output wide-output" readonly placeholder="压缩结果会显示在这里"></textarea>
+                <p class="helper-text">压缩后会移除多行/单行注释，合并换行与多余空格，并整理逗号与括号后的间距。</p>
+              </article>
+            </div>
+          </div>
+
+          <div class="subpanel" id="sqlJavaPane">
+            <div class="split-workbench">
+              <article class="card workspace-pane">
+                <div class="card-header">
+                  <h3>CREATE TABLE 语句</h3>
+                  <span class="info-badge" id="sqlJavaInputBadge">0 字段</span>
+                </div>
+                <textarea id="sqlJavaInput" class="workbench-input"
+                  placeholder="在此粘贴 CREATE TABLE 语句...&#10;&#10;例如:&#10;CREATE TABLE `user_info` (&#10;  `id` BIGINT NOT NULL AUTO_INCREMENT COMMENT '主键',&#10;  `user_name` VARCHAR(64) NOT NULL COMMENT '用户名',&#10;  `age` INT DEFAULT NULL,&#10;  `create_time` DATETIME DEFAULT NULL&#10;) ENGINE=InnoDB DEFAULT CHARSET=utf8;"></textarea>
+                <div class="field-grid">
+                  <label>
+                    <span>类名</span>
+                    <input id="sqlJavaClassName" type="text" placeholder="留空则按表名生成" />
+                  </label>
+                  <label>
+                    <span>包名</span>
+                    <input id="sqlJavaPackage" type="text" placeholder="如 com.example.entity" />
+                  </label>
+                </div>
+                <details class="config-details">
+                  <summary>更多生成选项</summary>
+                  <div class="field-grid">
+                    <label>
+                      <span>字段命名</span>
+                      <select id="sqlJavaFieldStyle">
+                        <option value="camel" selected>转驼峰</option>
+                        <option value="original">保持原样</option>
+                      </select>
+                    </label>
+                    <label>
+                      <span>类型策略</span>
+                      <select id="sqlJavaTypeStrategy">
+                        <option value="wrapper" selected>包装类</option>
+                        <option value="primitive">基本类型</option>
+                      </select>
+                    </label>
+                  </div>
+                  <div class="field-grid">
+                    <label>
+                      <span>日期类型</span>
+                      <select id="sqlJavaDateType">
+                        <option value="local">java.time</option>
+                        <option value="sql" selected>java.util / sql</option>
+                      </select>
+                    </label>
+                    <label>
+                      <span>生成风格</span>
+                      <select id="sqlJavaStyle">
+                        <option value="lombok" selected>Lombok @Data</option>
+                        <option value="getterSetter">Getter/Setter</option>
+                        <option value="fields">仅字段</option>
+                      </select>
+                    </label>
+                  </div>
+                </details>
+                <div class="action-row wrap">
+                  <button data-action="generateJavaFromSql" type="button">生成 Java 对象</button>
+                  <button class="secondary" data-action="fillSqlExampleJava" type="button">示例</button>
+                  <button class="secondary" data-action="clearSqlJavaPanels" type="button">清空</button>
+                </div>
+                <p class="helper-text">解析 CREATE TABLE 的列定义，自动映射 Java 类型并生成实体类；支持注释、主键识别与选项配置。所有解析均在浏览器本地完成。</p>
+              </article>
+
+              <article class="card workspace-pane">
+                <div class="card-header">
+                  <h3>Java 代码</h3>
+                  <button class="copy-btn" data-copy-target="sqlJavaOutput" type="button">复制结果</button>
+                </div>
+                <div class="compare-stats">
+                  <div class="compare-stat">
+                    <span>类名</span>
+                    <strong id="sqlJavaClassNameOut">-</strong>
+                  </div>
+                  <div class="compare-stat">
+                    <span>字段数</span>
+                    <strong id="sqlJavaFieldCount">0</strong>
+                  </div>
+                  <div class="compare-stat">
+                    <span>风格</span>
+                    <strong id="sqlJavaStyleOut">Lombok</strong>
+                  </div>
+                </div>
+                <textarea id="sqlJavaOutput" class="output wide-output" readonly
+                  placeholder="生成的 Java 实体类会显示在这里"></textarea>
+                <p class="helper-text">生成的代码可直接复制到项目中使用；切换上方选项会即时重新生成。</p>
+              </article>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="tool-panel" id="timeSection" data-panel-title="时间工具"
+        data-panel-description="当前时间和两种常用转换放在同一屏里，减少来回跳转。">
+        <div class="section-banner">
+          <div>
+            <p class="panel-kicker">Time</p>
+            <h3>时间戳与时间互转</h3>
+            <p class="section-text">输入一个值即可自动识别是时间还是时间戳，再在右侧给出完整转换结果。</p>
+          </div>
+          <div class="section-tags">
+            <span>Now</span>
+            <span>Timestamp</span>
+            <span>DateTime</span>
+          </div>
+        </div>
+
+        <div class="split-workbench">
+          <article class="card workspace-pane">
+            <div class="card-header">
+              <h3>输入与当前时间</h3>
+              <button class="copy-btn" data-copy-target="nowDisplay" type="button">复制当前时间</button>
+            </div>
+            <div class="mini-stat-grid">
+              <div class="stat-item">
+                <span>本地时间</span>
+                <strong id="nowDisplay">-</strong>
+                <button class="copy-btn mini" data-copy-target="nowDisplay" type="button">复制</button>
+              </div>
+              <div class="stat-item">
+                <span>秒级时间戳</span>
+                <strong id="nowSeconds">-</strong>
+                <button class="copy-btn mini" data-copy-target="nowSeconds" type="button">复制</button>
+              </div>
+              <div class="stat-item">
+                <span>毫秒级时间戳</span>
+                <strong id="nowMilliseconds">-</strong>
+                <button class="copy-btn mini" data-copy-target="nowMilliseconds" type="button">复制</button>
+              </div>
+            </div>
+            <textarea id="timeSmartInput" class="workbench-input"
+              placeholder="输入 10/13 位时间戳，或 2026-04-24 18:30:00"></textarea>
+            <div class="action-row">
+              <button data-action="smartConvertTime" type="button">智能转换</button>
+              <button class="secondary" data-action="fillNowSeconds" type="button">当前秒戳</button>
+              <button class="secondary" data-action="fillNowDatetime" type="button">当前时间</button>
+              <button class="secondary" data-action="fillTimePrimaryResult" type="button">结果回填</button>
+              <button class="secondary" data-action="clearTimePanels" type="button">清空</button>
+            </div>
+            <p class="helper-text">支持秒级时间戳、毫秒级时间戳、`yyyy-MM-dd HH:mm:ss` 和浏览器可识别的日期时间格式。</p>
           </article>
-        </section>
 
-        <section class="tool-panel" id="wordPdfSection" data-panel-title="文档转换" data-panel-description="在浏览器本地完成 Word 转 PDF 与 PDF 转图片，全程不上传服务器。">
-          <div class="section-banner">
-            <div>
-              <p class="panel-kicker">Document</p>
-              <h3>文档格式转换</h3>
-              <p class="section-text">支持 .docx / .docm → PDF，以及 PDF 逐页转 PNG / JPEG 图片，均在本地处理。</p>
+          <article class="card workspace-pane">
+            <div class="card-header">
+              <h3>识别结果</h3>
+              <button class="copy-btn" data-copy-target="timeConversionOutput" type="button">复制结果</button>
             </div>
-            <div class="section-tags">
-              <span>Word → PDF</span>
-              <span>PDF → 图片</span>
-              <span>Local</span>
+            <div class="result-metrics">
+              <div class="compare-stat">
+                <span>识别类型</span>
+                <strong id="timeDetectedType">等待输入</strong>
+              </div>
+              <div class="compare-stat">
+                <span id="timePrimaryLabel">主结果</span>
+                <strong id="timePrimaryValue">-</strong>
+              </div>
+              <div class="compare-stat">
+                <span id="timeSecondaryLabel">补充结果</span>
+                <strong id="timeSecondaryValue">-</strong>
+              </div>
+              <div class="compare-stat">
+                <span>时区</span>
+                <strong id="timeResultZone">-</strong>
+              </div>
             </div>
+            <textarea id="timeConversionOutput" class="output wide-output" placeholder="转换结果会显示在这里"></textarea>
+            <p class="helper-text">输入后会自动识别类型，右侧会给出适合复制的完整结果和关键摘要。</p>
+          </article>
+        </div>
+      </section>
+
+      <section class="tool-panel" id="imageSection" data-panel-title="图片工具"
+        data-panel-description="把压缩和批量看图拆开，方便单独操作，也更容易快速定位。">
+        <div class="section-banner">
+          <div>
+            <p class="panel-kicker">Image</p>
+            <h3>压缩与批量看图</h3>
+            <p class="section-text">图片压缩和图片地址对比预览分别独立，降低操作干扰。</p>
+          </div>
+          <div class="section-tags">
+            <span>Compress</span>
+            <span>Preview</span>
+            <span>Failed Only</span>
+          </div>
+        </div>
+
+        <div class="section-tabs" data-subtab-group="image">
+          <button class="section-tab active" data-subtab-target="imageCompressPane" type="button">图片压缩</button>
+          <button class="section-tab" data-subtab-target="imageComparePane" type="button">批量对比</button>
+        </div>
+
+        <div class="subpanel-stack">
+          <div class="subpanel active" id="imageCompressPane">
+            <article class="card">
+              <div class="card-header">
+                <h3>百分比压缩</h3>
+              </div>
+              <label class="upload-box" for="imageCompressInput">
+                <input id="imageCompressInput" type="file" accept="image/*" multiple />
+                <span>选择一张或多张图片，或按 Ctrl+V 粘贴截图</span>
+              </label>
+              <div id="imagePreviewGrid" class="image-preview-grid" style="display:none;"></div>
+              <label class="range-label" for="compressQuality">
+                压缩比例：<strong id="compressQualityValue">80%</strong>
+              </label>
+              <input id="compressQuality" type="range" min="10" max="100" value="80" />
+              <div class="action-row">
+                <button data-action="compressImages" type="button">下载全部</button>
+              </div>
+              <div id="compressResult" class="result-list empty-state">压缩结果会显示在这里</div>
+            </article>
           </div>
 
-          <div class="section-tabs" data-subtab-group="wordpdf">
-            <button class="section-tab active" data-subtab-target="wordPdfConvertPane" type="button">Word 转 PDF</button>
-            <button class="section-tab" data-subtab-target="pdfToImagePane" type="button">PDF 转图片</button>
-          </div>
-
-          <div class="subpanel-stack">
-            <div class="subpanel active" id="wordPdfConvertPane">
-              <article class="card">
-                <div class="card-header">
-                  <h3>选择 Word 文件</h3>
-                  <span class="info-badge" id="wordPdfBadge">未选择</span>
-                </div>
-                <label class="upload-box word-pdf-drop-zone" id="wordPdfDropZone" for="wordPdfFileInput">
-                  <input id="wordPdfFileInput" type="file" accept=".docx,.docm,application/vnd.openxmlformats-officedocument.wordprocessingml.document" />
-                  <svg class="upload-icon" viewBox="0 0 24 24" width="36" height="36" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
-                    <polyline points="14 2 14 8 20 8"/>
-                  </svg>
-                  <strong>拖拽 Word 文件到此处，或点击选择</strong>
-                  <span class="helper-text">仅支持 .docx / .docm，所有处理均在浏览器本地完成，不上传服务器。</span>
+          <div class="subpanel" id="imageComparePane">
+            <article class="card">
+              <div class="card-header">
+                <h3>批量解析图片地址并对比查看</h3>
+              </div>
+              <textarea id="imageUrlInput" placeholder="粘贴大段文本，自动提取其中的图片 URL"></textarea>
+              <div class="action-row">
+                <button data-action="parseImageUrls" type="button">解析图片地址</button>
+                <button class="secondary" data-action="copyParsedImageUrls" type="button">复制地址列表</button>
+                <button class="secondary" data-action="toggleFailedOnly" id="toggleFailedOnlyBtn"
+                  type="button">只看失败</button>
+              </div>
+              <div class="field-grid">
+                <label>
+                  <span>对比列数</span>
+                  <select id="imageCompareColumns">
+                    <option value="1">1 列</option>
+                    <option value="2">2 列</option>
+                    <option value="3">3 列</option>
+                    <option value="4" selected>4 列</option>
+                    <option value="5">5 列</option>
+                    <option value="6">6 列</option>
+                    <option value="7">7 列</option>
+                    <option value="8">8 列</option>
+                    <option value="9">9 列</option>
+                    <option value="10">10 列</option>
+                  </select>
                 </label>
-                <div class="action-row wrap">
-                  <button data-action="wordPdfConvert" type="button" id="wordPdfConvertBtn" disabled>转换为 PDF</button>
-                  <button class="accent-green" data-action="wordPdfDownload" type="button" id="wordPdfDownloadBtn" disabled>下载 PDF</button>
-                  <button class="secondary" data-action="wordPdfClear" type="button" id="wordPdfClearBtn" style="display: none">清空</button>
-                </div>
-                <p class="word-pdf-progress" id="wordPdfProgress"></p>
-                <div id="wordPdfPreview" class="word-pdf-preview empty-state">转换后可在此预览</div>
-              </article>
-            </div>
-
-            <div class="subpanel" id="pdfToImagePane">
-              <article class="card">
-                <div class="card-header">
-                  <h3>选择 PDF 文件</h3>
-                  <span class="info-badge" id="pdfImageBadge">未选择</span>
-                </div>
-                <label class="upload-box pdf-image-drop-zone" id="pdfImageDropZone" for="pdfImageFileInput">
-                  <input id="pdfImageFileInput" type="file" accept=".pdf,application/pdf" />
-                  <svg class="upload-icon" viewBox="0 0 24 24" width="36" height="36" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
-                    <polyline points="14 2 14 8 20 8"/>
-                  </svg>
-                  <strong>拖拽 PDF 到此处，或点击选择</strong>
-                  <span class="helper-text">仅支持 .pdf，按原样逐页精确渲染为图片，全程不上传服务器。</span>
+                <label class="range-label" for="imageCompareZoom">
+                  预览缩放：<strong id="imageCompareZoomValue">60%</strong>
                 </label>
-                <div class="field-grid pdf-image-options">
-                  <label>
-                    <span>图片格式</span>
-                    <select id="pdfImageFormat">
-                      <option value="image/png">PNG（无损）</option>
-                      <option value="image/jpeg">JPEG（体积更小）</option>
-                    </select>
-                  </label>
-                  <label>
-                    <span>清晰度</span>
-                    <select id="pdfImageScale">
-                      <option value="1.5">标准（约 108 DPI）</option>
-                      <option value="2" selected>高清（约 144 DPI）</option>
-                      <option value="3">超清（约 216 DPI）</option>
-                    </select>
-                  </label>
+              </div>
+              <input id="imageCompareZoom" type="range" min="60" max="180" value="60" />
+              <div class="compare-stats">
+                <div class="compare-stat">
+                  <span>总数</span>
+                  <strong id="imageTotalCount">0</strong>
                 </div>
-                <div class="action-row wrap">
-                  <button data-action="pdfImageConvert" type="button" id="pdfImageConvertBtn" disabled>转为图片</button>
-                  <button class="accent-green" data-action="pdfImageDownloadAll" type="button" id="pdfImageDownloadAllBtn" disabled>下载全部（ZIP）</button>
-                  <button class="secondary" data-action="pdfImageClear" type="button" id="pdfImageClearBtn" style="display: none">清空</button>
+                <div class="compare-stat">
+                  <span>成功</span>
+                  <strong id="imageLoadedCount">0</strong>
                 </div>
-                <p class="pdf-image-progress" id="pdfImageProgress"></p>
-                <div class="compare-stats pdf-image-stats">
-                  <div class="compare-stat">
-                    <span>总页数</span>
-                    <strong id="pdfImagePageCount">0</strong>
-                  </div>
-                  <div class="compare-stat">
-                    <span>已转换</span>
-                    <strong id="pdfImageConvertedCount">0</strong>
-                  </div>
-                  <div class="compare-stat">
-                    <span>总大小</span>
-                    <strong id="pdfImageTotalSize">0 B</strong>
-                  </div>
+                <div class="compare-stat">
+                  <span>失败</span>
+                  <strong id="imageFailedCount">0</strong>
                 </div>
-                <div id="pdfImageGrid" class="pdf-image-grid empty-state">转换后可在此预览每一页</div>
-              </article>
+              </div>
+              <div id="imageCompareResult" class="image-compare-grid empty-state">解析出的图片会显示在这里</div>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <section class="tool-panel" id="fapiaoSection" data-panel-title="发票工具"
+        data-panel-description="拖拽、选择或粘贴发票图片及 PDF，按页面尺寸合并导出 PDF 或 Word。">
+        <div class="section-banner">
+          <div>
+            <p class="panel-kicker">Invoice</p>
+            <h3>发票图片合并</h3>
+            <p class="section-text">支持 JPG / PNG / WEBP / BMP / PDF，可配置纸张与图片尺寸，一键生成 PDF 或 Word。</p>
+          </div>
+          <div class="section-tags">
+            <span>PDF</span>
+            <span>Word</span>
+            <span>Preview</span>
+            <span>Drag Sort</span>
+          </div>
+        </div>
+
+        <details class="settings-details fapiao-settings" open>
+          <summary>页面与图片设置</summary>
+          <p class="helper-text section-label">页面设置</p>
+          <div class="field-grid fapiao-field-grid cols-3">
+            <label>
+              <span>纸张</span>
+              <select id="fapiaoPageSize">
+                <option value="a4">A4（21 × 29.7 cm）</option>
+                <option value="a5">A5（14.8 × 21 cm）</option>
+                <option value="custom">自定义</option>
+              </select>
+            </label>
+            <label id="fapiaoCustomWidthGroup" class="hidden-field">
+              <span>页面宽度（cm）</span>
+              <input id="fapiaoPageWidth" type="number" value="21" step="0.1" min="0.1" />
+            </label>
+            <label id="fapiaoCustomHeightGroup" class="hidden-field">
+              <span>页面高度（cm）</span>
+              <input id="fapiaoPageHeight" type="number" value="29.7" step="0.1" min="0.1" />
+            </label>
+          </div>
+          <p class="helper-text section-label">图片与裁剪设置（位置、尺寸及打印裁剪）</p>
+          <div class="field-grid fapiao-field-grid cols-4">
+            <label>
+              <span>图片宽度（cm）</span>
+              <input id="fapiaoImgWidth" type="number" value="21" step="0.1" min="0.1" />
+            </label>
+            <label>
+              <span>图片高度（cm）</span>
+              <input id="fapiaoImgHeight" type="number" value="11" step="0.1" min="0.1" />
+            </label>
+            <label>
+              <span>距左边距（cm）</span>
+              <input id="fapiaoImgOffsetX" type="number" value="0" step="0.1" min="0" />
+            </label>
+            <label>
+              <span>中间间隔与裁剪线</span>
+              <select id="fapiaoGapMode">
+                <option value="gap_line" selected>留缝隙 + 裁剪线（推荐 0.1cm）</option>
+                <option value="none">无间隔（紧凑无缝）</option>
+                <option value="gap_only">仅留微缝（0.1cm，无裁剪线）</option>
+                <option value="custom">自定义间隔...</option>
+              </select>
+            </label>
+            <label id="fapiaoCustomGapGroup" class="hidden-field">
+              <span>自定义间距（cm）</span>
+              <input id="fapiaoImgGap" type="number" value="0.1" step="0.1" min="0" />
+            </label>
+            <label id="fapiaoCustomCutLineGroup" class="hidden-field">
+              <span>打印裁剪参考线</span>
+              <select id="fapiaoCutLineOption">
+                <option value="yes" selected>绘制分割线（虚线）</option>
+                <option value="no">不绘制</option>
+              </select>
+            </label>
+          </div>
+        </details>
+
+        <article class="card">
+          <div class="card-header">
+            <h3>文件列表</h3>
+            <span class="info-badge" id="fapiaoFileCount">0 张</span>
+          </div>
+          <label class="upload-box fapiao-drop-zone" id="fapiaoDropZone" for="fapiaoFileInput">
+            <input id="fapiaoFileInput" type="file" accept="image/*,.pdf" multiple />
+            <svg class="upload-icon" viewBox="0 0 24 24" width="36" height="36" fill="none" stroke="currentColor"
+              stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+              <polyline points="17 8 12 3 7 8" />
+              <line x1="12" y1="3" x2="12" y2="15" />
+            </svg>
+            <strong>拖拽发票图片或 PDF 到此处，点击选择，或按 Ctrl+V 粘贴</strong>
+            <span class="helper-text">支持 JPG / PNG / WEBP / BMP / PDF（PDF 每页作为一张图片），也可直接粘贴截图</span>
+          </label>
+          <div id="fapiaoPreviewList" class="fapiao-preview-list empty-state">尚未添加文件</div>
+          <p class="fapiao-progress" id="fapiaoProgress"></p>
+          <div class="action-row wrap">
+            <button class="secondary" data-action="previewFapiaoOutput" id="fapiaoPreviewBtn" type="button"
+              disabled>在线预览</button>
+            <button data-action="generateFapiaoPdf" id="fapiaoGeneratePdfBtn" type="button" disabled>生成并下载 PDF</button>
+            <button class="accent-green" data-action="generateFapiaoWord" id="fapiaoGenerateWordBtn" type="button"
+              disabled>生成并下载 Word</button>
+            <button class="secondary" data-action="clearFapiaoList" id="fapiaoClearBtn" type="button"
+              style="display: none">清空列表</button>
+          </div>
+          <p class="helper-text">可拖拽列表项调整顺序；所有处理均在浏览器本地完成，不上传服务器。</p>
+        </article>
+
+        <dialog class="fapiao-preview-dialog" id="fapiaoPreviewDialog" aria-labelledby="fapiaoPreviewTitle">
+          <div class="fapiao-preview-dialog-panel">
+            <div class="fapiao-preview-dialog-header">
+              <div>
+                <p class="panel-kicker">Preview</p>
+                <h3 id="fapiaoPreviewTitle">合并结果预览</h3>
+              </div>
+              <div class="fapiao-preview-dialog-actions">
+                <span class="info-badge" id="fapiaoPreviewPageCount">0 页</span>
+                <button class="fapiao-preview-close" id="fapiaoPreviewCloseBtn" type="button" aria-label="关闭预览">
+                  <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"
+                    stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="18" y1="6" x2="6" y2="18"></line>
+                    <line x1="6" y1="6" x2="18" y2="18"></line>
+                  </svg>
+                </button>
+              </div>
+            </div>
+            <div class="fapiao-preview-pages" id="fapiaoPreviewPages"></div>
+          </div>
+        </dialog>
+      </section>
+
+      <section class="tool-panel" id="httpSection" data-panel-title="HTTP 工具"
+        data-panel-description="GET 与 POST 请求互转，支持 Form 表单和 JSON 参数格式。">
+        <div class="section-banner">
+          <div>
+            <p class="panel-kicker">HTTP</p>
+            <h3>GET / POST 互转 cURL</h3>
+            <p class="section-text">支持 GET URL 与 POST（Form / JSON）双向转换，自动生成对应参数的 cURL 命令。</p>
+          </div>
+          <div class="section-tags">
+            <span>GET</span>
+            <span>Form</span>
+            <span>JSON</span>
+            <span>cURL</span>
+          </div>
+        </div>
+
+        <div class="split-workbench">
+          <article class="card workspace-pane">
+            <div class="card-header">
+              <h3>请求参数</h3>
+            </div>
+            <div class="field-grid">
+              <label>
+                <span>输入类型</span>
+                <select id="httpInputMode">
+                  <option value="json">JSON 请求体</option>
+                  <option value="getUrl">GET URL（含查询参数）</option>
+                </select>
+              </label>
+              <label id="httpBodyFormatGroup">
+                <span id="httpBodyFormatLabelText">请求体格式</span>
+                <select id="httpBodyFormat">
+                  <option value="form">Form 表单</option>
+                  <option value="json">JSON</option>
+                </select>
+                <span class="helper-text" id="httpBodyFormatHint" style="display:none;">GET 模式下，此选项决定 URL 中的参数值是否按 JSON
+                  解析（例如数组、对象会保留为 JSON 字符串）。</span>
+              </label>
+            </div>
+            <label>
+              <span id="httpFormUrlLabel">请求 URL</span>
+              <input id="httpFormUrl" type="text" placeholder="https://example.com/api/submit" />
+            </label>
+            <div class="field-grid">
+              <label>
+                <span>输出方法</span>
+                <select id="httpOutputMethod">
+                  <option value="GET">GET</option>
+                  <option value="POST" selected>POST</option>
+                  <option value="PUT">PUT</option>
+                  <option value="PATCH">PATCH</option>
+                </select>
+              </label>
+              <label id="httpFormKeyStyleGroup">
+                <span>嵌套键风格</span>
+                <select id="httpFormKeyStyle">
+                  <option value="bracket">括号式 user[name]</option>
+                  <option value="dot">点号式 user.name</option>
+                </select>
+              </label>
+              <label>
+                <span>输出格式</span>
+                <select id="httpFormOutputStyle">
+                  <option value="curl">cURL (bash)</option>
+                  <option value="curlPowerShell">cURL (PowerShell)</option>
+                </select>
+              </label>
+            </div>
+            <label id="httpFormJsonGroup">
+              <span>请求体 JSON</span>
+              <textarea id="httpFormJsonInput" class="workbench-input"
+                placeholder='{"username": "admin", "profile": {"age": 25}, "tags": ["a", "b"]}'></textarea>
+            </label>
+            <div class="action-row">
+              <button data-action="convertHttpFormCurl" type="button">生成 cURL</button>
+              <button class="secondary" data-action="fillHttpFormExample" type="button">填充示例</button>
+              <button class="secondary" data-action="clearHttpFormPanels" type="button">清空</button>
+            </div>
+            <p class="helper-text" id="httpInputModeHint">选择输入类型和输出方法后，可双向转换 GET 查询参数与 POST 请求体。</p>
+          </article>
+
+          <article class="card workspace-pane">
+            <div class="card-header">
+              <h3>cURL 输出</h3>
+              <button class="copy-btn" data-copy-target="httpFormOutput" type="button">复制结果</button>
+            </div>
+            <div class="compare-stats">
+              <div class="compare-stat">
+                <span>字段数</span>
+                <strong id="httpFormFieldCount">0</strong>
+              </div>
+              <div class="compare-stat">
+                <span>输入类型</span>
+                <strong id="httpInputModeLabel">JSON 请求体</strong>
+              </div>
+              <div class="compare-stat">
+                <span>请求体格式</span>
+                <strong id="httpBodyFormatLabel">Form 表单</strong>
+              </div>
+              <div class="compare-stat">
+                <span>输出方法</span>
+                <strong id="httpOutputMethodLabel">POST</strong>
+              </div>
+              <div class="compare-stat">
+                <span>输出格式</span>
+                <strong id="httpFormFormatLabel">cURL (bash)</strong>
+              </div>
+            </div>
+            <textarea id="httpFormBodyPreview" class="output" readonly placeholder="参数预览"></textarea>
+            <textarea id="httpFormOutput" class="output wide-output" placeholder="生成的 cURL 命令会显示在这里"></textarea>
+            <p class="helper-text">上方为参数预览（GET 为 query，POST 为请求体），下方为完整 cURL 命令，参数保持原文不转义。</p>
+          </article>
+        </div>
+      </section>
+
+      <section class="tool-panel" id="arraySection" data-panel-title="数组工具"
+        data-panel-description="换行、逗号、JSON 数组等多种格式之间快速互转。">
+        <div class="section-banner">
+          <div>
+            <p class="panel-kicker">Array</p>
+            <h3>数组格式互转</h3>
+            <p class="section-text">支持换行分隔、逗号分隔、去引号逗号、JSON 数组、双引号逗号五种格式相互转换，并支持去重和排序。</p>
+          </div>
+          <div class="section-tags">
+            <span>换行</span>
+            <span>逗号</span>
+            <span>JSON</span>
+            <span>去重</span>
+          </div>
+        </div>
+
+        <div class="split-workbench">
+          <article class="card workspace-pane">
+            <div class="card-header">
+              <h3>输入</h3>
+            </div>
+            <label>
+              <span>输入格式</span>
+              <select id="arrayInputFormat">
+                <option value="auto">自动检测</option>
+                <option value="newline">每行一个</option>
+                <option value="comma">逗号分隔</option>
+                <option value="jsonArray">JSON 数组</option>
+                <option value="quotedComma">双引号逗号</option>
+              </select>
+            </label>
+            <textarea id="arrayInput"
+              placeholder="粘贴数据，支持自动检测格式&#10;例如：&#10;26070713452925944&#10;26070713331025518&#10;26070713195124733"></textarea>
+            <label>
+              <span>输出格式</span>
+              <select id="arrayOutputFormat">
+                <option value="newline">每行一个</option>
+                <option value="comma">逗号分隔</option>
+                <option value="plainComma">去引号逗号</option>
+                <option value="jsonArray">JSON 数组</option>
+                <option value="quotedComma" selected>双引号逗号</option>
+              </select>
+            </label>
+            <div class="action-row">
+              <button data-action="convertArray" type="button">转换</button>
+              <button class="secondary" data-action="dedupArray" type="button">去重</button>
+              <button class="secondary" data-action="sortArrayAsc" type="button">升序</button>
+              <button class="secondary" data-action="sortArrayDesc" type="button">降序</button>
+            </div>
+          </article>
+
+          <article class="card workspace-pane">
+            <div class="card-header">
+              <h3>输出</h3>
+              <button class="copy-btn" data-copy-target="arrayOutput" type="button">复制结果</button>
+            </div>
+            <div class="compare-stats">
+              <div class="compare-stat">
+                <span>条目数</span>
+                <strong id="arrayItemCount">0</strong>
+              </div>
+              <div class="compare-stat">
+                <span>去重后</span>
+                <strong id="arrayUniqueCount">0</strong>
+              </div>
+              <div class="compare-stat">
+                <span>输出格式</span>
+                <strong id="arrayOutputFormatLabel">双引号逗号</strong>
+              </div>
+            </div>
+            <div class="field-grid array-affix-grid">
+              <label>
+                <span>前缀（可选）</span>
+                <input id="arrayPrefix" type="text" placeholder="默认不加，如 id_" />
+              </label>
+              <label>
+                <span>后缀（可选）</span>
+                <input id="arraySuffix" type="text" placeholder="默认不加，如 .png" />
+              </label>
+            </div>
+            <textarea id="arrayOutput" class="output wide-output" readonly placeholder="转换结果会显示在这里"></textarea>
+          </article>
+        </div>
+      </section>
+
+
+      <section class="tool-panel" id="esSection" data-panel-title="ES 工具"
+        data-panel-description="查询结果转换、字段筛选和导出格式都收敛在一个操作面板里。">
+        <div class="section-banner">
+          <div>
+            <p class="panel-kicker">Elasticsearch</p>
+            <h3>查询结果转 API 语句</h3>
+            <p class="section-text">支持 Console 和 cURL，两栏布局更适合边调参数边看输出。</p>
+          </div>
+          <div class="section-tags es-section-tags">
+            <a href="es-cheatsheet.html" target="_blank" class="es-cheat-badge">
+              <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2"
+                stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" />
+              </svg>
+              <span>语法速查表</span>
+              <svg class="es-badge-arrow" viewBox="0 0 24 24" width="11" height="11" fill="none" stroke="currentColor"
+                stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <line x1="7" y1="17" x2="17" y2="7" />
+                <polyline points="7 7 17 7 17 17" />
+              </svg>
+            </a>
+            <span>Index</span>
+            <span>Bulk</span>
+            <span>cURL</span>
+          </div>
+        </div>
+
+        <!-- 快速跳转速查表 Banner -->
+        <div class="es-cheat-banner">
+          <div class="es-cheat-banner-main">
+            <span class="es-cheat-banner-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2"
+                stroke-linecap="round" stroke-linejoin="round">
+                <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" />
+                <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z" />
+              </svg>
+            </span>
+            <div class="es-cheat-banner-text">
+              <strong class="es-cheat-banner-title">Elasticsearch 常见用法速查备忘单</strong>
+              <span class="es-cheat-banner-sub">覆盖索引管理、新增 Create、查询 Read、更新 Update、删除 Delete 及运维进阶用法</span>
             </div>
           </div>
-        </section>
-      </main>
+          <a href="es-cheatsheet.html" target="_blank" class="es-cheat-banner-cta">
+            <span>打开速查表</span>
+            <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2"
+              stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <line x1="7" y1="17" x2="17" y2="7" />
+              <polyline points="7 7 17 7 17 17" />
+            </svg>
+          </a>
+        </div>
 
-      <div id="toast" class="toast"></div>
-      <div class="sidebar-overlay" id="sidebarOverlay"></div>
-    </div>
-    <script src="static/sql-tool.js" defer></script>
-    <script src="static/image-tool.js" defer></script>
-    <script src="static/core.js" defer></script>
-    <script src="static/encoding.js" defer></script>
-    <script src="static/json.js" defer></script>
-    <script src="static/time.js" defer></script>
-    <script src="static/fapiao.js" defer></script>
-    <script src="static/es.js" defer></script>
-    <script src="static/http-form.js" defer></script>
-    <script src="static/array.js" defer></script>
-    <script src="static/tsv-json.js" defer></script>
-    <script src="static/excel.js" defer></script>
-    <script src="static/word-pdf.js" defer></script>
-    <script src="static/pdf-to-image.js" defer></script>
-  </body>
+        <div class="split-workbench es-workbench">
+          <article class="card tall">
+            <div class="card-header">
+              <h3>查询结果输入</h3>
+            </div>
+            <textarea id="esInput" placeholder='粘贴 ES 查询结果 JSON，例如 hits.hits、数组文档或单条 _source 文档'></textarea>
+            <div class="field-grid">
+              <label>
+                <span>目标索引名</span>
+                <input id="esIndexName" type="text" placeholder="可修改索引名，留空时使用原索引" />
+              </label>
+              <label>
+                <span>输出模式</span>
+                <select id="esMode">
+                  <option value="index">Index API</option>
+                  <option value="update">Update API</option>
+                  <option value="bulkIndex">Bulk Index</option>
+                  <option value="bulkUpdate">Bulk Update</option>
+                  <option value="bulkDelete">Bulk Delete</option>
+                </select>
+              </label>
+            </div>
+            <div class="field-grid">
+              <label>
+                <span>输出格式</span>
+                <select id="esOutputStyle">
+                  <option value="console">Kibana Console</option>
+                  <option value="curl">cURL (bash)</option>
+                  <option value="curlPowerShell">cURL (PowerShell)</option>
+                </select>
+              </label>
+              <label>
+                <span>ES 地址</span>
+                <input id="esBaseUrl" type="text" value="http://localhost:9200"
+                  placeholder="例如 http://localhost:9200" />
+              </label>
+            </div>
+            <details class="config-details">
+              <summary>高级字段筛选（可选）</summary>
+              <div class="field-grid">
+                <label>
+                  <span>ID 字段名（可选）</span>
+                  <input id="esIdField" type="text" placeholder="当原始数据没有 _id 时可指定，例如 id" />
+                </label>
+                <label>
+                  <span>导出字段（可选）</span>
+                  <input id="esSourceFields" type="text" placeholder="逗号分隔，如 user.id,name,age" />
+                </label>
+              </div>
+            </details>
+            <div class="action-row">
+              <button data-action="convertEsData" type="button">生成 API 语句</button>
+            </div>
+            <p class="helper-text">支持数组、<code>hits.hits</code>、单条文档；可只保留指定字段，并输出
+              <code>Kibana Console</code>、<code>cURL (bash)</code> 或 <code>cURL (PowerShell)</code>。</p>
+          </article>
+
+          <article class="card tall es-output-card">
+            <div class="card-header">
+              <div class="es-output-heading">
+                <h3>输出结果</h3>
+                <p class="helper-text">生成后可直接复制，适合贴到 Kibana Console、bash 或 PowerShell。</p>
+              </div>
+              <button class="copy-btn" data-copy-target="esOutput" type="button">复制结果</button>
+            </div>
+            <div class="compare-stats es-output-stats">
+              <div class="compare-stat">
+                <span>文档数</span>
+                <strong id="esDocumentCount">0</strong>
+              </div>
+              <div class="compare-stat">
+                <span>请求类型</span>
+                <strong id="esModeLabel">Index API</strong>
+              </div>
+              <div class="compare-stat">
+                <span>输出格式</span>
+                <strong id="esFormatLabel">Kibana Console</strong>
+              </div>
+              <div class="compare-stat">
+                <span>总行数</span>
+                <strong id="esOutputLineCount">0</strong>
+              </div>
+            </div>
+            <textarea id="esOutput" class="output es-output-area"
+              placeholder="生成的 Index / Update / Bulk API 语句"></textarea>
+            <p class="helper-text">Bulk 文本会自动补齐 ES 需要的结尾换行；带特殊字符的文档 ID 也会自动做路径编码。</p>
+          </article>
+        </div>
+      </section>
+      <section class="tool-panel" id="excelSection" data-panel-title="Office 图片提取"
+        data-panel-description="从 Excel / Word 中提取内嵌图片，勾选后单独或打包下载。">
+        <div class="section-banner">
+          <div>
+            <p class="panel-kicker">Office</p>
+            <h3>提取并下载图片</h3>
+            <p class="section-text">支持 .xlsx / .xlsm（xl/media）与 .docx / .docm（word/media），读取压缩包内的图片，按缩略图勾选，可逐个或打包下载。</p>
+          </div>
+          <div class="section-tags">
+            <span>Extract</span>
+            <span>Select</span>
+            <span>Download</span>
+          </div>
+        </div>
+
+        <article class="card">
+          <div class="card-header">
+            <h3>选择 Excel / Word 文件</h3>
+            <span class="info-badge" id="excelFileBadge">未选择</span>
+          </div>
+          <label class="upload-box excel-drop-zone" id="excelDropZone" for="excelFileInput">
+            <input id="excelFileInput" type="file"
+              accept=".xlsx,.xlsm,.docx,.docm,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.openxmlformats-officedocument.wordprocessingml.document" />
+            <svg class="upload-icon" viewBox="0 0 24 24" width="36" height="36" fill="none" stroke="currentColor"
+              stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+              <polyline points="17 8 12 3 7 8" />
+              <line x1="12" y1="3" x2="12" y2="15" />
+            </svg>
+            <strong>拖拽 Excel / Word 文件到此处，或点击选择</strong>
+            <span class="helper-text">仅支持 xlsx / xlsm / docx / docm，所有处理均在浏览器本地完成，不上传服务器。</span>
+          </label>
+          <div class="action-row wrap">
+            <button data-action="excelSelectAll" type="button" class="secondary">全选</button>
+            <button data-action="excelSelectNone" type="button" class="secondary">取消全选</button>
+            <button data-action="excelDownloadSelected" type="button" id="excelDownloadBtn" disabled>下载选中图片</button>
+            <button class="accent-green" data-action="excelDownloadZip" type="button" id="excelDownloadZipBtn"
+              disabled>打包下载 ZIP</button>
+            <button class="secondary" data-action="excelClearList" type="button" id="excelClearBtn"
+              style="display: none">清空</button>
+          </div>
+          <p class="excel-progress" id="excelProgress"></p>
+          <div class="compare-stats excel-stats">
+            <div class="compare-stat">
+              <span>图片总数</span>
+              <strong id="excelTotalCount">0</strong>
+            </div>
+            <div class="compare-stat">
+              <span>已选中</span>
+              <strong id="excelSelectedCount">0</strong>
+            </div>
+            <div class="compare-stat">
+              <span>总大小</span>
+              <strong id="excelTotalSize">0 B</strong>
+            </div>
+          </div>
+          <div id="excelImageGrid" class="excel-image-grid empty-state">选择 Excel / Word 文件后可提取其中的图片</div>
+        </article>
+      </section>
+
+      <section class="tool-panel" id="wordPdfSection" data-panel-title="文档转换"
+        data-panel-description="在浏览器本地完成 Word 转 PDF 与 PDF 转图片，全程不上传服务器。">
+        <div class="section-banner">
+          <div>
+            <p class="panel-kicker">Document</p>
+            <h3>文档格式转换</h3>
+            <p class="section-text">支持 .docx / .docm → PDF，以及 PDF 逐页转 PNG / JPEG 图片，均在本地处理。</p>
+          </div>
+          <div class="section-tags">
+            <span>Word → PDF</span>
+            <span>PDF → 图片</span>
+            <span>Local</span>
+          </div>
+        </div>
+
+        <div class="section-tabs" data-subtab-group="wordpdf">
+          <button class="section-tab active" data-subtab-target="wordPdfConvertPane" type="button">Word 转 PDF</button>
+          <button class="section-tab" data-subtab-target="pdfToImagePane" type="button">PDF 转图片</button>
+        </div>
+
+        <div class="subpanel-stack">
+          <div class="subpanel active" id="wordPdfConvertPane">
+            <article class="card">
+              <div class="card-header">
+                <h3>选择 Word 文件</h3>
+                <span class="info-badge" id="wordPdfBadge">未选择</span>
+              </div>
+              <label class="upload-box word-pdf-drop-zone" id="wordPdfDropZone" for="wordPdfFileInput">
+                <input id="wordPdfFileInput" type="file"
+                  accept=".docx,.docm,application/vnd.openxmlformats-officedocument.wordprocessingml.document" />
+                <svg class="upload-icon" viewBox="0 0 24 24" width="36" height="36" fill="none" stroke="currentColor"
+                  stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+                  <polyline points="14 2 14 8 20 8" />
+                </svg>
+                <strong>拖拽 Word 文件到此处，或点击选择</strong>
+                <span class="helper-text">仅支持 .docx / .docm，所有处理均在浏览器本地完成，不上传服务器。</span>
+              </label>
+              <div class="action-row wrap">
+                <button data-action="wordPdfConvert" type="button" id="wordPdfConvertBtn" disabled>转换为 PDF</button>
+                <button class="accent-green" data-action="wordPdfDownload" type="button" id="wordPdfDownloadBtn"
+                  disabled>下载 PDF</button>
+                <button class="secondary" data-action="wordPdfClear" type="button" id="wordPdfClearBtn"
+                  style="display: none">清空</button>
+              </div>
+              <p class="word-pdf-progress" id="wordPdfProgress"></p>
+              <div id="wordPdfPreview" class="word-pdf-preview empty-state">转换后可在此预览</div>
+            </article>
+          </div>
+
+          <div class="subpanel" id="pdfToImagePane">
+            <article class="card">
+              <div class="card-header">
+                <h3>选择 PDF 文件</h3>
+                <span class="info-badge" id="pdfImageBadge">未选择</span>
+              </div>
+              <label class="upload-box pdf-image-drop-zone" id="pdfImageDropZone" for="pdfImageFileInput">
+                <input id="pdfImageFileInput" type="file" accept=".pdf,application/pdf" />
+                <svg class="upload-icon" viewBox="0 0 24 24" width="36" height="36" fill="none" stroke="currentColor"
+                  stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+                  <polyline points="14 2 14 8 20 8" />
+                </svg>
+                <strong>拖拽 PDF 到此处，或点击选择</strong>
+                <span class="helper-text">仅支持 .pdf，按原样逐页精确渲染为图片，全程不上传服务器。</span>
+              </label>
+              <div class="field-grid pdf-image-options">
+                <label>
+                  <span>图片格式</span>
+                  <select id="pdfImageFormat">
+                    <option value="image/png">PNG（无损）</option>
+                    <option value="image/jpeg">JPEG（体积更小）</option>
+                  </select>
+                </label>
+                <label>
+                  <span>清晰度</span>
+                  <select id="pdfImageScale">
+                    <option value="1.5">标准（约 108 DPI）</option>
+                    <option value="2" selected>高清（约 144 DPI）</option>
+                    <option value="3">超清（约 216 DPI）</option>
+                  </select>
+                </label>
+              </div>
+              <div class="action-row wrap">
+                <button data-action="pdfImageConvert" type="button" id="pdfImageConvertBtn" disabled>转为图片</button>
+                <button class="accent-green" data-action="pdfImageDownloadAll" type="button" id="pdfImageDownloadAllBtn"
+                  disabled>下载全部（ZIP）</button>
+                <button class="secondary" data-action="pdfImageClear" type="button" id="pdfImageClearBtn"
+                  style="display: none">清空</button>
+              </div>
+              <p class="pdf-image-progress" id="pdfImageProgress"></p>
+              <div class="compare-stats pdf-image-stats">
+                <div class="compare-stat">
+                  <span>总页数</span>
+                  <strong id="pdfImagePageCount">0</strong>
+                </div>
+                <div class="compare-stat">
+                  <span>已转换</span>
+                  <strong id="pdfImageConvertedCount">0</strong>
+                </div>
+                <div class="compare-stat">
+                  <span>总大小</span>
+                  <strong id="pdfImageTotalSize">0 B</strong>
+                </div>
+              </div>
+              <div id="pdfImageGrid" class="pdf-image-grid empty-state">转换后可在此预览每一页</div>
+            </article>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <div id="toast" class="toast"></div>
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+  </div>
+  <script src="static/sql-tool.js" defer></script>
+  <script src="static/image-tool.js" defer></script>
+  <script src="static/core.js" defer></script>
+  <script src="static/encoding.js" defer></script>
+  <script src="static/json.js" defer></script>
+  <script src="static/time.js" defer></script>
+  <script src="static/fapiao.js" defer></script>
+  <script src="static/es.js" defer></script>
+  <script src="static/http-form.js" defer></script>
+  <script src="static/array.js" defer></script>
+  <script src="static/tsv-json.js" defer></script>
+  <script src="static/csv-tool.js" defer></script>
+  <script src="static/excel.js" defer></script>
+  <script src="static/word-pdf.js" defer></script>
+  <script src="static/pdf-to-image.js" defer></script>
+</body>
+
 </html>
