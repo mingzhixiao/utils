@@ -502,6 +502,7 @@ function init() {
   bindEncodingActions();
   bindJsonActions();
   bindSqlActions();
+  bindMongoActions();
   bindTimeActions();
   bindImageActions();
   bindFapiaoActions();

@@ -11,7 +11,8 @@ The shared page lives under `site/`, so the extension and the website always use
 
 - Encoding tools: URL, Unicode, Base64, and string escape/unescape
 - JSON tools: format, minify, tree view, diff, JSON/CSV conversion, path extraction
-- SQL tools: compress, strip comments, generate Java entity from `CREATE TABLE`
+- SQL tools: compress, strip comments, and generate Java POJO from CREATE TABLE
+- MongoDB tools: JSON to MongoDB insert / update statements, auto _id or custom primary key, bulkWrite & upsert
 - Time tools: current time and timestamp/date conversion (cross-browser safe)
 - Image tools: compression and batch image comparison with failed-only filter
 - Invoice tools: merge invoice images / PDF into a single PDF or Word document
@@ -37,6 +38,7 @@ The shared page lives under `site/`, so the extension and the website always use
 │  │  ├─ encoding.js      # encoding / decoding tools
 │  │  ├─ json.js          # JSON format / tree / diff / CSV
 │  │  ├─ sql-tool.js      # SQL compress + Java POJO
+│  │  ├─ mongo-tool.js    # JSON → MongoDB insert/update
 │  │  ├─ time.js          # time / timestamp conversion
 │  │  ├─ image-tool.js    # image compress + batch compare
 │  │  ├─ fapiao.js        # invoice merge to PDF / Word

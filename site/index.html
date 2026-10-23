@@ -59,7 +59,7 @@
           </div>
           <span class="chip-desc">格式化、树视图、Java toString、制表符转 JSON</span>
         </button>
-                <button class="panel-chip" data-panel="csvSection" type="button">
+        <button class="panel-chip" data-panel="csvSection" type="button">
           <div class="chip-lead">
             <svg class="nav-icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor"
               stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -79,6 +79,17 @@
             <span class="chip-title">SQL 工具</span>
           </div>
           <span class="chip-desc">压缩、去注释、生成 Java 对象</span>
+        </button>
+        <button class="panel-chip" data-panel="mongoSection" type="button">
+          <div class="chip-lead">
+            <svg class="nav-icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor"
+              stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M12 2C9 5 6 9 6 13a6 6 0 0 0 12 0c0-4-3-8-6-11z" />
+              <path d="M12 2v20" />
+            </svg>
+            <span class="chip-title">Mongo 工具</span>
+          </div>
+          <span class="chip-desc">JSON 转插入/更新语句、主键识别</span>
         </button>
         <button class="panel-chip" data-panel="timeSection" type="button">
           <div class="chip-lead">
@@ -392,7 +403,8 @@
                   <button class="secondary" data-action="clearJsonExtract" type="button">清空</button>
                 </div>
                 <p class="helper-text">路径语法：<code>$.a.b</code>、<code>a[0].c</code>、<code>a["带空格的键"]</code>；数组支持
-                  <code>[n]</code>、<code>[-1]</code> 末位、<code>[*]</code> 全部元素。</p>
+                  <code>[n]</code>、<code>[-1]</code> 末位、<code>[*]</code> 全部元素。
+                </p>
                 <p class="helper-text section-label">按键查找（输入键名，自动列出可提取的候选路径）</p>
                 <label class="field-label" for="jsonExtractKeys">
                   <span>键名<small>逗号或空格分隔可填多个；带空格的键用引号包住</small></span>
@@ -605,8 +617,9 @@
         </div>
       </section>
 
-      
-      <section class="tool-panel" id="csvSection" data-panel-title="CSV 查看" data-panel-description="支持表格浏览、即时搜索过滤、列排序、分页以及 Markdown / JSON / CSV 导出。">
+
+      <section class="tool-panel" id="csvSection" data-panel-title="CSV 查看"
+        data-panel-description="支持表格浏览、即时搜索过滤、列排序、分页以及 Markdown / JSON / CSV 导出。">
         <div class="section-banner">
           <div>
             <p class="panel-kicker">Data Viewer</p>
@@ -629,7 +642,8 @@
               <span class="info-badge success" id="csvDetectedDelimBadge" title="自动检测到的分隔符">逗号 (,)</span>
             </div>
             <div class="action-row wrap">
-              <button class="secondary" data-action="toggleCsvConfigCollapse" type="button" id="csvToggleConfigBtn" title="折叠或展开数据输入配置面板">折叠配置</button>
+              <button class="secondary" data-action="toggleCsvConfigCollapse" type="button" id="csvToggleConfigBtn"
+                title="折叠或展开数据输入配置面板">折叠配置</button>
               <button class="secondary" data-action="fillCsvExample" type="button">载入示例数据</button>
               <button class="secondary" data-action="clearCsvData" type="button" id="csvClearBtn" disabled>清空</button>
             </div>
@@ -638,12 +652,13 @@
           <div class="csv-upload-and-text">
             <label class="upload-box csv-drop-zone" id="csvDropZone" for="csvFileInput">
               <input id="csvFileInput" type="file" accept=".csv,.tsv,.txt" />
-              <svg class="upload-icon" viewBox="0 0 24 24" width="32" height="32" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
-                <polyline points="14 2 14 8 20 8"/>
-                <line x1="12" y1="18" x2="12" y2="12"/>
-                <line x1="9" y1="15" x2="12" y2="12"/>
-                <line x1="15" y1="15" x2="12" y2="12"/>
+              <svg class="upload-icon" viewBox="0 0 24 24" width="32" height="32" fill="none" stroke="currentColor"
+                stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+                <polyline points="14 2 14 8 20 8" />
+                <line x1="12" y1="18" x2="12" y2="12" />
+                <line x1="9" y1="15" x2="12" y2="12" />
+                <line x1="15" y1="15" x2="12" y2="12" />
               </svg>
               <div class="upload-text-group">
                 <strong>点击上传或拖拽文件到此处</strong>
@@ -652,7 +667,8 @@
             </label>
 
             <div class="csv-text-input-wrap">
-              <textarea id="csvInput" class="workbench-input csv-workbench-input" placeholder="或在此直接粘贴 CSV / TSV 文本...&#10;支持自动检测分隔符，支持双引号包裹字段与换行内容"></textarea>
+              <textarea id="csvInput" class="workbench-input csv-workbench-input"
+                placeholder="或在此直接粘贴 CSV / TSV 文本...&#10;支持自动检测分隔符，支持双引号包裹字段与换行内容"></textarea>
             </div>
           </div>
 
@@ -704,9 +720,10 @@
           <div class="csv-toolbar">
             <div class="csv-search-area">
               <div class="csv-search-input-wrap">
-                <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="search-icon">
-                  <circle cx="11" cy="11" r="8"/>
-                  <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+                <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"
+                  stroke-linecap="round" stroke-linejoin="round" class="search-icon">
+                  <circle cx="11" cy="11" r="8" />
+                  <line x1="21" y1="21" x2="16.65" y2="16.65" />
                 </svg>
                 <input type="text" id="csvSearchInput" class="csv-search-input" placeholder="在表格中搜索关键字（即时过滤）..." />
               </div>
@@ -729,11 +746,16 @@
                 </label>
               </div>
 
-              <button class="secondary" data-action="toggleHeaderFilter" type="button" id="csvToggleHeaderFilterBtn" disabled title="手动开启或关闭表头列筛选（默认关闭以保障性能）">开启表头过滤</button>
-              <button class="secondary" data-action="copyCsvAsMarkdown" type="button" id="csvCopyMdBtn" disabled title="复制为 Markdown 格式表格">复制 Markdown</button>
-              <button class="secondary" data-action="copyCsvAsJson" type="button" id="csvCopyJsonBtn" disabled title="复制为 JSON 数组格式">复制 JSON</button>
-              <button class="secondary" data-action="sendCsvToJsonTool" type="button" title="将数据送入 JSON 工具面板进一步处理">转到 JSON 工具</button>
-              <button class="accent-green" data-action="exportFilteredCsv" type="button" id="csvExportCsvBtn" disabled title="导出下载当前（含筛选后）数据为 CSV 文件">导出 CSV</button>
+              <button class="secondary" data-action="toggleHeaderFilter" type="button" id="csvToggleHeaderFilterBtn"
+                disabled title="手动开启或关闭表头列筛选（默认关闭以保障性能）">开启表头过滤</button>
+              <button class="secondary" data-action="copyCsvAsMarkdown" type="button" id="csvCopyMdBtn" disabled
+                title="复制为 Markdown 格式表格">复制 Markdown</button>
+              <button class="secondary" data-action="copyCsvAsJson" type="button" id="csvCopyJsonBtn" disabled
+                title="复制为 JSON 数组格式">复制 JSON</button>
+              <button class="secondary" data-action="sendCsvToJsonTool" type="button" title="将数据送入 JSON 工具面板进一步处理">转到
+                JSON 工具</button>
+              <button class="accent-green" data-action="exportFilteredCsv" type="button" id="csvExportCsvBtn" disabled
+                title="导出下载当前（含筛选后）数据为 CSV 文件">导出 CSV</button>
             </div>
           </div>
 
@@ -917,6 +939,128 @@
               </article>
             </div>
           </div>
+        </div>
+      </section>
+
+      <section class="tool-panel" id="mongoSection" data-panel-title="Mongo 工具"
+        data-panel-description="JSON 转 MongoDB 插入与更新语句，自动识别 _id 或自定义主键更新，支持 bulkWrite 与批量操作。">
+        <div class="section-banner">
+          <div>
+            <p class="panel-kicker">MongoDB</p>
+            <h3>MongoDB 语句生成</h3>
+            <p class="section-text">粘贴 JSON 数据，一键生成 MongoDB 的 insert 或 update 语句；支持 _id 自动识别、自定义主键字段、upsert、以及 bulkWrite
+              批量脚本。</p>
+          </div>
+          <div class="section-tags">
+            <span>Insert</span>
+            <span>Update / $set</span>
+            <span>Upsert</span>
+            <span>bulkWrite</span>
+            <span>Primary Key</span>
+          </div>
+        </div>
+
+        <div class="split-workbench">
+          <article class="card workspace-pane">
+            <div class="card-header">
+              <h3>输入 JSON</h3>
+              <span class="info-badge" id="mongoInputBadge">0 条记录</span>
+            </div>
+            <textarea id="mongoInput" class="workbench-input"
+              placeholder="在此粘贴 JSON 数组或单条 JSON 对象...&#10;&#10;例如:&#10;[&#10;  { &quot;_id&quot;: &quot;2a83790eed08dbaedde5245bd17e249b&quot;, &quot;hotelId&quot;: &quot;elong_64861717&quot;, ... }&#10;]"></textarea>
+
+            <div class="field-grid">
+              <label>
+                <span>目标集合名 (Collection)</span>
+                <input id="mongoCollection" type="text" value="hotelNewImage" placeholder="例如 hotelNewImage" />
+              </label>
+              <label>
+                <span>操作语句类型</span>
+                <select id="mongoOpType">
+                  <option value="updateOne" selected>updateOne ($set 更新)</option>
+                  <option value="bulkWrite">bulkWrite (批量写入脚本)</option>
+                  <option value="insertMany">insertMany (整批插入)</option>
+                  <option value="insertOne">insertOne (逐条插入)</option>
+                  <option value="replaceOne">replaceOne (整文档替换)</option>
+                </select>
+              </label>
+            </div>
+
+            <div class="field-grid">
+              <label>
+                <span>选择更新主键字段</span>
+                <select id="mongoKeySelect">
+                  <option value="_id" selected>_id (默认/自动识别)</option>
+                </select>
+              </label>
+              <label>
+                <span>或手动输入主键字段名</span>
+                <input id="mongoKeyField" type="text" value="_id" placeholder="更新条件字段名，如 _id、hotelId"
+                  list="mongoKeyDatalist" />
+                <datalist id="mongoKeyDatalist"></datalist>
+              </label>
+            </div>
+
+            <div id="mongoKeyTags" class="mongo-key-tags"></div>
+
+            <div class="mongo-checkboxes">
+              <label title="勾选后在更新语句中加入 { upsert: true }，当数据不存在时自动创建">
+                <input id="mongoOptUpsert" type="checkbox" checked />
+                <span>Upsert (不存在时插入)</span>
+              </label>
+              <label title="更新时不在 $set 中包含主键字段自身（避免 Mongo 报 Cannot update immutable field 错误）">
+                <input id="mongoOptExcludePk" type="checkbox" checked />
+                <span>$set 排除主键字段</span>
+              </label>
+              <label title="过滤 Spring Data Mongo 等框架自动注入的 _class 字段">
+                <input id="mongoOptExcludeClass" type="checkbox" />
+                <span>排除 _class 字段</span>
+              </label>
+              <label title="是否压缩为单行模式，方便直接贴入命令行终端">
+                <input id="mongoOptCompact" type="checkbox" />
+                <span>紧凑单行模式</span>
+              </label>
+            </div>
+
+            <div class="action-row wrap">
+              <button data-action="generateMongo" type="button">生成 Mongo 语句</button>
+              <button class="secondary" data-action="fillMongoExampleUser" type="button">载入 hotelNewImage 示例</button>
+              <button class="secondary" data-action="fillMongoExampleCustomKey" type="button">无 _id 示例 (自定义主键)</button>
+              <button class="secondary" data-action="clearMongoPanels" type="button">清空</button>
+            </div>
+            <p class="helper-text">支持 Ctrl+Enter 快速生成；自动解析顶层属性列表，若存在 _id 自动作为更新主键，也可点选或指定任意字段作为更新主键。</p>
+          </article>
+
+          <article class="card workspace-pane">
+            <div class="card-header">
+              <h3>生成的 Mongo 语句</h3>
+              <div style="display:flex; gap:8px;">
+                <button class="secondary btn-sm" data-action="downloadMongoScript" type="button">下载 .js 脚本</button>
+                <button class="copy-btn" data-copy-target="mongoOutput" type="button">复制结果</button>
+              </div>
+            </div>
+            <div class="compare-stats">
+              <div class="compare-stat">
+                <span>目标集合</span>
+                <strong id="mongoStatCollection">hotelNewImage</strong>
+              </div>
+              <div class="compare-stat">
+                <span>文档数</span>
+                <strong id="mongoStatDocCount">0</strong>
+              </div>
+              <div class="compare-stat">
+                <span>操作模式</span>
+                <strong id="mongoStatMode">updateOne</strong>
+              </div>
+              <div class="compare-stat">
+                <span>主键字段</span>
+                <strong id="mongoStatKeyField">_id</strong>
+              </div>
+            </div>
+            <textarea id="mongoOutput" class="output wide-output" readonly
+              placeholder="生成的 MongoDB 语句会显示在这里..."></textarea>
+            <p class="helper-text">输出结果可直接复制到 Mongosh、MongoDB Compass、Robo 3T、Navicat 或 Node.js / Python 运维脚本中运行。</p>
+          </article>
         </div>
       </section>
 
@@ -1528,7 +1672,8 @@
               <button data-action="convertEsData" type="button">生成 API 语句</button>
             </div>
             <p class="helper-text">支持数组、<code>hits.hits</code>、单条文档；可只保留指定字段，并输出
-              <code>Kibana Console</code>、<code>cURL (bash)</code> 或 <code>cURL (PowerShell)</code>。</p>
+              <code>Kibana Console</code>、<code>cURL (bash)</code> 或 <code>cURL (PowerShell)</code>。
+            </p>
           </article>
 
           <article class="card tall es-output-card">
@@ -1739,6 +1884,7 @@
     <div class="sidebar-overlay" id="sidebarOverlay"></div>
   </div>
   <script src="static/sql-tool.js" defer></script>
+  <script src="static/mongo-tool.js" defer></script>
   <script src="static/image-tool.js" defer></script>
   <script src="static/core.js" defer></script>
   <script src="static/encoding.js" defer></script>
